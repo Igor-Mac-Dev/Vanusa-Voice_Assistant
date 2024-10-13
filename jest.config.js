@@ -14,4 +14,5 @@ module.exports = {
   testRegex: "((\\.|/)(test|spec))\\.tsx?$",
   // File extensions to recognize in module resolution
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
+  moduleNameMapper: { "^@/(.*)$": "<rootDir>/src/$1" },
 };

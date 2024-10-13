@@ -1,0 +1,32 @@
+export default class RecordHolder {
+    constructor() {
+        this.recordC = [];
+        this.recordL = new Int16Array();
+    }
+    addRecord(frame) {
+        this.recordC.push(frame);
+    }
+    setRecordL() {
+        const totalLength = this.recordC.reduce((acc, frame) => acc + frame.length, 0);
+        let output = new Int16Array(totalLength);
+        let offset = 0;
+        for (let frame of this.recordC) {
+            for (let i = 0; i * 512 < frame.length; i++) {
+                output.set(frame, offset);
+                offset += frame.length;
+            }
+        }
+        this.recordL = output;
+    }
+    getRecordC() {
+        return this.recordC;
+    }
+    getRecordL() {
+        return this.recordL;
+    }
+    clearRecord() {
+        this.recordC = [];
+        this.recordL = new Int16Array();
+    }
+}
+//# sourceMappingURL=record-holder.js.map

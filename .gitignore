@@ -1,1 +1,5 @@
 node_modules
+dist/process-files/conf.json
+dist/cobaia.js
+src/cobaia.ts
+log/log.txt
