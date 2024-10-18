@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export default async function errorLog(err: unknown): Promise<void> {
-   let date = new Date(Date.now());
-   let now = date.toUTCString();
+   const date = new Date(Date.now());
+   const now = date.toUTCString();
    fs.appendFile(
       path.resolve('log/log.txt'),
       `\n ${now} - ERROR: ${err}`,

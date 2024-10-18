@@ -16,7 +16,7 @@ export default {
          name: 'V-node-red',
          script: 'node-red',
          exec_mode: 'fork',
-         args: '-u . -s ./dist/process-files/VoiceAssist.json',
+         args: '-u . -s ./assets/RED-VoiceAssist.json',
          instances: 1,
          watch: false,
       },
