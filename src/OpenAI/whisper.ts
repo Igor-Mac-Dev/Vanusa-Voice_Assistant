@@ -1,8 +1,8 @@
 import OpenAI from 'openai';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as conf from '../configuration/conf';
-import * as interfaces from '../interfaces/config-json';
+import * as conf from '../configuration/conf.js';
+import * as interfaces from '../interfaces/config-json.js';
 
 export default async function whisperStt(): Promise<string> {
    try {

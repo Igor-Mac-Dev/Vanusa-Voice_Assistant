@@ -8,9 +8,9 @@ export default class RecordHolder {
     }
     setRecordL() {
         const totalLength = this.recordC.reduce((acc, frame) => acc + frame.length, 0);
-        let output = new Int16Array(totalLength);
+        const output = new Int16Array(totalLength);
         let offset = 0;
-        for (let frame of this.recordC) {
+        for (const frame of this.recordC) {
             for (let i = 0; i * 512 < frame.length; i++) {
                 output.set(frame, offset);
                 offset += frame.length;

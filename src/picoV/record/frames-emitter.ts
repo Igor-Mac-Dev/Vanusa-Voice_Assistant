@@ -1,5 +1,5 @@
-import AudioInputReader from './audio-input-reader';
-import { CustomError } from '../../utils/error';
+import AudioInputReader from './audio-input-reader.js';
+import { CustomError } from '../../utils/error.js';
 
 export default class FramesEmitter extends AudioInputReader {
    constructor(

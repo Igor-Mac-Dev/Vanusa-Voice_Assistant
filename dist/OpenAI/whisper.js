@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as conf from '../configuration/conf';
+import * as conf from '../configuration/conf.js';
 export default async function whisperStt() {
     try {
         const config = conf.readConfigFile();

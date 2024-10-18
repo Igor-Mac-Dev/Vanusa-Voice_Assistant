@@ -1,8 +1,8 @@
 import { Orca } from '@picovoice/orca-node';
-import { CustomError } from '../utils/error';
-import * as conf from '../configuration/conf';
-import * as interfaces from '../interfaces/config-json';
-import makeWav from '../utils/wav-maker';
+import { CustomError } from '../utils/error.js';
+import * as conf from '../configuration/conf.js';
+import * as interfaces from '../interfaces/config-json.js';
+import makeWav from '../utils/wav-maker.js';
 
 export default class OrcaTts {
    private config: interfaces.config = conf.readConfigFile();

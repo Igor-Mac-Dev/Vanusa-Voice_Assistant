@@ -1,5 +1,6 @@
 export interface config {
    LANGUAGE: 'en' | 'pt';
+   AUTO_START: boolean;
    PPN: string;
    PPN_WW: string[];
    PPN_CANCEL: string[];
@@ -11,13 +12,12 @@ export interface config {
    LEOPARD: string;
    LEOPARD_AVAILABLE: boolean;
    ORCA_AVAILABLE: boolean;
-   RECORD_TIME: 300;
+   RECORD_TIME: number;
    FRAME_LENGHT: number;
    SAMPLE_RATE: number;
    SELECTED_DEVICE: number | undefined;
-   SENSITIVITY: number[];
+   SENSITIVITY: number;
    COBRA_LENGHT: number;
-   COBRA_SENSITIVITY: number[];
    OAI_MODEL:
       | 'gpt-4o'
       | 'gpt-3.5-turbo'

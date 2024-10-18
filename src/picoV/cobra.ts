@@ -1,8 +1,8 @@
 import { Cobra } from '@picovoice/cobra-node';
-import { CustomError } from '../utils/error';
+import { CustomError } from '../utils/error.js';
 import { EventEmitter } from 'events';
-import * as conf from '../configuration/conf';
-import * as interfaces from '../interfaces/config-json';
+import * as conf from '../configuration/conf.js';
+import * as interfaces from '../interfaces/config-json.js';
 
 const config: interfaces.config = conf.readConfigFile();
 

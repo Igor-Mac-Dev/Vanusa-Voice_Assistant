@@ -1,5 +1,5 @@
 import { PvRecorder } from '@picovoice/pvrecorder-node';
-import { CustomError } from '../utils/error';
+import { CustomError } from '../utils/error.js';
 
 const availableDevices: string[] = PvRecorder.getAvailableDevices();
 let selectedDevice: number | undefined;
@@ -10,8 +10,6 @@ async function testDevices(deviceIndex: number): Promise<boolean> {
    try {
       await recorder.start();
       const frame: Int16Array[] = await recorder.read();
-      await recorder.stop();
-      await recorder.release();
       return true;
    } catch (err) {
       throw new CustomError(

@@ -1,10 +1,10 @@
-import FramesEmitter from './frames-emitter';
-import PorcupineDetector from '../porcupin';
-import CobraDetector from '../cobra';
-import RecordHolder from './record-holder';
-import RhinoSti from '../rhino/rhino';
-import * as conf from '../../configuration/conf';
-import makeWav from '../../utils/wav-maker';
+import FramesEmitter from './frames-emitter.js';
+import PorcupineDetector from '../porcupin.js';
+import CobraDetector from '../cobra.js';
+import RecordHolder from './record-holder.js';
+import RhinoSti from '../rhino/rhino.js';
+import * as conf from '../../configuration/conf.js';
+import makeWav from '../../utils/wav-maker.js';
 export default class VoiceController {
     constructor() {
         this.config = conf.readConfigFile();
@@ -96,7 +96,7 @@ export default class VoiceController {
             });
             this.rhino.on('RHINO_cmd', () => {
                 this.sttRec.stopTimedRecording();
-                resolve('cmd');
+                resolve('cmd'); //logica composit ak
             });
         });
     }

@@ -1,9 +1,9 @@
 import OpenAI from 'openai';
-import * as conf from '../configuration/conf';
-import * as interfaces from '../interfaces/config-json';
+import * as conf from '../configuration/conf.js';
+import * as interfaces from '../interfaces/config-json.js';
 import * as path from 'path';
 import * as fs from 'fs';
-import { CustomError } from '../utils/error';
+import { CustomError } from '../utils/error.js';
 
 const historyPath = path.join(
    path.resolve('dist/process-files/'),

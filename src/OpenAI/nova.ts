@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
-import * as conf from '../configuration/conf';
-import * as interfaces from '../interfaces/config-json';
-import makeWav from '../utils/wav-maker';
+import * as conf from '../configuration/conf.js';
+import * as interfaces from '../interfaces/config-json.js';
+import makeWav from '../utils/wav-maker.js';
 
 export default async function novaTts(text: string): Promise<void> {
    try {

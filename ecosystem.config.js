@@ -13,19 +13,7 @@ export default {
          instances: 1,
       },
       {
-         name: 'Vanusa-safe',
-         script: './dist/safe-index.js',
-         watch: false,
-         autorestart: false,
-         env: {
-            NODE_ENV: 'production',
-         },
-         error_file: './logs/safe-error.log',
-         out_file: './logs/safe-out.log',
-         instances: 0,
-      },
-      {
-         name: 'node-red-V',
+         name: 'V-node-red',
          script: 'node-red',
          exec_mode: 'fork',
          args: '-u . -s ./dist/process-files/VoiceAssist.json',
@@ -34,7 +22,7 @@ export default {
       },
       {
          name: 'Vanusa-monitor',
-         script: './monitor.js',
+         script: './dist/utils/monitor.js',
          watch: false,
          autorestart: true,
          env: {

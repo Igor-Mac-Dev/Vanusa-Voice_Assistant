@@ -1,5 +1,5 @@
 import { PvRecorder } from '@picovoice/pvrecorder-node';
-import { CustomError } from '../../utils/error';
+import { CustomError } from '../../utils/error.js';
 import { EventEmitter } from 'events';
 
 export default class AudioInputReader extends EventEmitter {

@@ -1,16 +1,16 @@
 import OpenAI from 'openai';
-import * as conf from '../configuration/conf';
+import * as conf from '../configuration/conf.js';
 import * as path from 'path';
 import * as fs from 'fs';
-import { CustomError } from '../utils/error';
+import { CustomError } from '../utils/error.js';
 const historyPath = path.join(path.resolve('dist/process-files/'), 'history.txt');
 const config = conf.readConfigFile();
 function getHistory(input) {
     try {
         const history = fs.readFileSync(historyPath, 'utf8');
-        let result = [];
+        const result = [];
         if (history.length > 0) {
-            let lines = history.split(/\r?\n/);
+            const lines = history.split(/\r?\n/);
             lines.forEach(line => {
                 if (line.trim()) {
                     try {

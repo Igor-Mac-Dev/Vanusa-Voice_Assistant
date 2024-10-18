@@ -1,4 +1,4 @@
-import { CustomError } from '../../utils/error';
+import { CustomError } from '../../utils/error.js';
 import * as fs from 'fs';
 export default function rhinoHandler(cmd, composite) {
     try {

@@ -1,7 +1,6 @@
 import { parentPort } from 'worker_threads';
 import { Server } from 'ws';
 import * as portfinder from 'portfinder';
-import { resolve } from 'path';
 
 let redServer: Server | null;
 let connectedClient: Server | null = null;

@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
-import * as conf from '../configuration/conf';
-import makeWav from '../utils/wav-maker';
+import * as conf from '../configuration/conf.js';
+import makeWav from '../utils/wav-maker.js';
 export default async function novaTts(text) {
     try {
         const config = conf.readConfigFile();

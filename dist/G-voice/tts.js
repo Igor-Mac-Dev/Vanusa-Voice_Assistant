@@ -1,8 +1,8 @@
-const gTTS = require('gtts');
-const ffmpeg = require('fluent-ffmpeg');
+import gTTS from 'gtts';
+import ffmpeg from 'fluent-ffmpeg';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as conf from '../configuration/conf';
+import * as conf from '../configuration/conf.js';
 export default async function gTts(text) {
     const mp3FilePath = path.join(path.resolve('dist/process-files'), 'output.mp3');
     const wavFilePath = path.join(path.resolve('dist/process-files'), 'output.wav');

@@ -1,7 +1,7 @@
 import { Orca } from '@picovoice/orca-node';
-import { CustomError } from '../utils/error';
-import * as conf from '../configuration/conf';
-import makeWav from '../utils/wav-maker';
+import { CustomError } from '../utils/error.js';
+import * as conf from '../configuration/conf.js';
+import makeWav from '../utils/wav-maker.js';
 export default class OrcaTts {
     constructor() {
         this.config = conf.readConfigFile();

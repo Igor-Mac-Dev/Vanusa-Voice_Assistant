@@ -1,8 +1,8 @@
 import { Porcupine } from '@picovoice/porcupine-node';
-import { CustomError } from '../utils/error';
+import { CustomError } from '../utils/error.js';
 import { EventEmitter } from 'events';
-import * as conf from '../configuration/conf';
-import * as interfaces from '../interfaces/config-json';
+import * as conf from '../configuration/conf.js';
+import * as interfaces from '../interfaces/config-json.js';
 
 const config: interfaces.config = conf.readConfigFile();
 
@@ -30,7 +30,7 @@ export default class PorcupineDetector extends EventEmitter {
       }
 
       wakewords.forEach(() => {
-         sensitivity.push(config.SENSITIVITY[0]);
+         sensitivity.push(config.SENSITIVITY);
       });
       this.kwDetector = new Porcupine(
          config.PV_KEY,

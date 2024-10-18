@@ -1,6 +1,6 @@
 import { Cheetah } from '@picovoice/cheetah-node';
-import { CustomError } from '../utils/error';
-import * as conf from '../configuration/conf';
+import { CustomError } from '../utils/error.js';
+import * as conf from '../configuration/conf.js';
 const config = conf.readConfigFile();
 export default class CheetahStt {
     constructor() {

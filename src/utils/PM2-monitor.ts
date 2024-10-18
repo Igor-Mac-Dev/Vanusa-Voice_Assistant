@@ -9,7 +9,7 @@ pm2.launchBus((err, bus) => {
 
    bus.on('process:exit', packet => {
       if (
-         packet.process.name === 'app-main' &&
+         packet.process.name === 'Vanusa-main' &&
          packet.process.exit_code !== 0
       ) {
          console.log(`app-main crashed. Restarting in safe mode...`);

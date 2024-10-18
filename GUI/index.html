@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Vanusa Voice-Assistant</title>
+      <link rel="stylesheet" href="index.css" />
+      <link rel="icon" type="image/x-icon" href="robot.ico" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+         href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap"
+         rel="stylesheet"
+      />
+      <script src="GUI_config.js" type="module"></script>
+      <script src="index.js" type="module"></script>
+   </head>
+
+   <body>
+      <main>
+         <canvas class="Vanusa"> </canvas>
+
+         <form id="configForm">
+            <div class="coll">
+               <label for="lang">Language:</label>
+               <label>
+                  <input type="radio" name="lang" value="en" id="lang_en" />
+                  <img src="./USA.png" alt="en" title="English">
+               </label>
+             
+               <label>
+                  <input type="radio" name="lang" value="pt" id="lang_pt" />
+                  <img src="./br.png" alt="pt-BR" title="Português-BR">
+               </label>
+               <br /><br />
+
+               <label for="autoStart">Auto Start:</label>
+                  <div class="container"> <!--switch-->
+                     <label class="switch">
+                        <input class="togglesw" type="checkbox" checked="" />
+                        <div class="indicator left"></div>
+                        <div class="indicator right"></div>
+                        <div class="button"></div>
+                     </label>
+                  </div>
+               <br /><br />
+
+               <label for="recordTime">Record Time:</label>
+                  <input
+                     type="number"
+                     id="recordTime"
+                     name="RECORD_TIME"
+                     value="300"
+                  /><br /><br />
+
+               <label for="selectedDevice">Selected Device (number):</label>
+                  <input
+                     type="number"
+                     id="selectedDevice"
+                     name="SELECTED_DEVICE"
+                  /><br /><br />
+   
+               <label for="sensitivity">Sensitivity:</label>
+                  <input
+                     type="number"
+                     id="sensitivity"
+                     name="SENSITIVITY"
+                     min="0" 
+                     max="1" 
+                     step="0.1" 
+                     pattern="[0-9]+(\.[0-9]{1,2})?" 
+                     value=0.5 
+                  /><br /><br />
+
+               <label for="cobraLength">Silence Length:</label>
+               <input
+                  type="number"
+                  id="cobraLength"
+                  name="COBRA_LENGHT"
+                  placeholder="seconds"
+               />
+
+               <aside class="tooltip">
+                  <span class="tooltiptext">
+                     Idle time the recorder wait before stop.
+                  </span>
+               <br /><br />
+
+               <label for="sttEngine">STT Engine:</label>
+                  <select id="sttEngine" name="STT_ENGINE">
+                  <option value="Picovoice">Picovoice</option>
+                  <option value="whisper">Whisper</option></select>
+               <br /><br />
+
+            <label for="ttsEngine">TTS Engine:</label> 
+            <select id="ttsEngine" name="TTS_ENGINE">
+               <option value="Picovoice">Picovoice</option>
+                <option value="OpenAI">OpenAI</option>
+               <option value="Google">Google</option></select
+            ><br /><br />
+
+            <label for="pvKey"><a href="https://console.picovoice.ai/">Picovoice Key:</a></label>
+            <input type="password" id="pvKey" name="PV_KEY" /><br /><br />
+            </div>
+         <div class="coll">
+            <label for="oaiModel">OpenAI Model:</label>
+            <select id="oaiModel" name="OAI_MODEL">
+               <option value="gpt-4o">gpt-4o</option>
+               <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+               <option value="gpt-4o mini">gpt-4o mini</option>
+               <option value="gpt-4-turbo">gpt-4-turbo</option>
+               <option value="o1-preview">o1-preview</option>
+               <option value="o1-mini">o1-mini</option></select
+            ><br /><br />
+
+            <label for="oaiUserDef">OpenAI User Definition:</label>
+            <input
+               type="text"
+               id="oaiUserDef"
+               name="OAI_ASSIST_USER_DEFINITION"
+            /><br /><br />
+
+            <label for="oaiHistoryLength">OpenAI History Length:</label>
+            <input
+               type="number"
+               id="oaiHistoryLength"
+               name="OAI_HISTORY_LENGTH"
+            /><br /><br />
+
+            <label for="oaiTemperature">OpenAI Temperature:</label>
+            <input
+               type="number"
+               id="oaiTemperature"
+               name="OAI_TEMPERATURE"
+               step="0.01"
+            /><br /><br />
+
+            <label for="oaiMaxTokens">OpenAI Max Tokens:</label>
+            <input
+               type="number"
+               id="oaiMaxTokens"
+               name="OAI_MAX_TOKENS"
+            /><br /><br />
+ 
+            <label for="oaiKey"><a href="https://platform.openai.com/">OpenAI Key:</a></label>
+            <input type="password" id="oaiKey" name="OAI_KEY" /><br /><br />
+         </div>
+         </form>
+      </main>
+      <aside>
+    
+
+         <button class="neu-button">Press me</button>
+      </aside>
+   </body>
+</html>

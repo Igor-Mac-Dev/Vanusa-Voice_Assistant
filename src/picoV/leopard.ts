@@ -1,7 +1,7 @@
 import { Leopard } from '@picovoice/leopard-node';
-import { CustomError } from '../utils/error';
-import * as conf from '../configuration/conf';
-import * as interfaces from '../interfaces/config-json';
+import { CustomError } from '../utils/error.js';
+import * as conf from '../configuration/conf.js';
+import * as interfaces from '../interfaces/config-json.js';
 
 const config: interfaces.config = conf.readConfigFile();
 
@@ -33,7 +33,7 @@ export default class LeopardStt {
 
    public processAudio(record: Int16Array): void {
       if (this.transcriptor) {
-         const result: { transcript: string; words: Array<{}> } =
+         const result: { transcript: string; words: Array<object> } =
             this.transcriptor.process(record);
          if (
             typeof result.transcript === 'string' &&

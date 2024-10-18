@@ -1,7 +1,7 @@
 import { Porcupine } from '@picovoice/porcupine-node';
-import { CustomError } from '../utils/error';
+import { CustomError } from '../utils/error.js';
 import { EventEmitter } from 'events';
-import * as conf from '../configuration/conf';
+import * as conf from '../configuration/conf.js';
 const config = conf.readConfigFile();
 export default class PorcupineDetector extends EventEmitter {
     constructor(useCase) {
@@ -11,7 +11,7 @@ export default class PorcupineDetector extends EventEmitter {
     }
     porcupineInit() {
         let wakewords = [];
-        let sensitivity = [];
+        const sensitivity = [];
         switch (this.useCase) {
             case 1:
                 wakewords = [...config.PPN_WW, ...config.PPN_REPEAT];
@@ -22,8 +22,8 @@ export default class PorcupineDetector extends EventEmitter {
             default:
                 throw new CustomError('°PPN invalid use case');
         }
-        wakewords.forEach(e => {
-            sensitivity.push(config.SENSITIVITY[0]);
+        wakewords.forEach(() => {
+            sensitivity.push(config.SENSITIVITY);
         });
         this.kwDetector = new Porcupine(config.PV_KEY, wakewords, sensitivity, config.PPN);
     }

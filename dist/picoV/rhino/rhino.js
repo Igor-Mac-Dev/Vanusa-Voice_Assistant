@@ -1,6 +1,6 @@
 import { Rhino } from '@picovoice/rhino-node';
-import { CustomError } from '../../utils/error';
-import * as conf from '../../configuration/conf';
+import { CustomError } from '../../utils/error.js';
+import * as conf from '../../configuration/conf.js';
 import { EventEmitter } from 'events';
 import * as path from 'path';
 import * as fs from 'fs';

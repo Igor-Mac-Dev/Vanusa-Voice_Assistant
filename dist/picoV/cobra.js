@@ -1,7 +1,7 @@
 import { Cobra } from '@picovoice/cobra-node';
-import { CustomError } from '../utils/error';
+import { CustomError } from '../utils/error.js';
 import { EventEmitter } from 'events';
-import * as conf from '../configuration/conf';
+import * as conf from '../configuration/conf.js';
 const config = conf.readConfigFile();
 export default class CobraDetector extends EventEmitter {
     constructor() {

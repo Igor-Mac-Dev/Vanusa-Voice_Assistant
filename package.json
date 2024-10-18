@@ -13,8 +13,9 @@
       "safe-start": "node dist/safe-index.js"
    },
    "keywords": [],
-   "author": "",
-   "license": "ISC",
+   "author": "Igor Mac_Dev",
+   "type": "module",
+   "license": "AGPL-3.0",
    "devDependencies": {
       "@eslint/js": "^9.11.1",
       "@tsconfig/node20": "^20.1.4",
@@ -46,6 +47,7 @@
       "node": "file:",
       "node-red": "^4.0.3",
       "node-wav-player": "^1.0.0",
+      "open": "^10.1.0",
       "openai": "^4.66.1",
       "pm2": "^5.4.2",
       "portfinder": "^1.0.32",
