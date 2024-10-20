@@ -1,7 +1,7 @@
 import { parentPort } from 'worker_threads';
-import errorLog from '../utils/error';
-import successLog from '../utils/sucess';
-import completion from '../OpenAI/completion';
+import errorLog from '../utils/error.js';
+import successLog from '../utils/sucess.js';
+import completion from '../OpenAI/completion.js';
 
 parentPort?.on('message', event => {
    console.log('child progress hand received:', event);
@@ -20,6 +20,7 @@ parentPort?.on('message', event => {
                parentPort?.postMessage(['error', err]);
             });
       } else if (event[0] === 'abort') {
+         //...
       } else {
          console.log('Unknown utils event received:', event);
       }

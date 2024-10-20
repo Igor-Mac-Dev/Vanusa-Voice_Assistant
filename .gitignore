@@ -1,5 +1,8 @@
 node_modules
-dist/process-files
+dist/process-files/*
 dist/cobaia.js
+dist/cobaia.js.map
+dist/cobaia.d.ts
 src/cobaia.ts
 log/log.txt
+log/log.log

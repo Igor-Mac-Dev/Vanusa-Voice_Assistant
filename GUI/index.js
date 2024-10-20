@@ -1,42 +1,45 @@
-// const canvas = document.getElementById('maskCanvas');
-// const ctx = canvas.getContext('2d');
+const canvas = document.getElementById('Vanusa');
+const ctx = canvas.getContext('2d');
+let fontSize = 100;
+const text = 'VANUSA';
+const dpr = window.devicePixelRatio || 1;
+const rect = canvas.getBoundingClientRect();
+let x = 30;
+canvas.width = rect.width * dpr;
+canvas.height = rect.height * dpr;
+ctx.scale(dpr, dpr);
 
-// let fontSize = 30; // Tamanho inicial do texto
-// let increasing = true; // Controle de aumento/diminuição do texto
-// const maxFontSize = 100;
-// const minFontSize = 30;
-// const text = 'Aurora';
+function drawMask() {
+   ctx.clearRect(0, 0, canvas.width, canvas.height);
+   ctx.globalCompositeOperation = 'source-over';
+   ctx.fillStyle = 'rgb(12, 6, 6)';
+   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-// function drawMask() {
-//    // Limpa o canvas
-//    ctx.clearRect(0, 0, canvas.width, canvas.height);
+   // Definir a área que será transparente (texto)
+   ctx.globalCompositeOperation = 'destination-out';
+   ctx.font = `${fontSize}px 'Zen Tokyo Zoo'`;
+   ctx.textAlign = 'start';
+   ctx.textBaseline = 'top';
+   ctx.fillText(text, x, 20);
+}
 
-//    // Preencher o canvas com uma cor opaca
-//    ctx.globalCompositeOperation = 'source-over';
-//    ctx.fillStyle = 'rgba(150, 10, 100, 0.8)';
-//    ctx.fillRect(0, 0, canvas.width, canvas.height);
+function animate() {
+   if (fontSize >= 80) {
+      fontSize -= 0.3;
+      x -= 0.3;
+   } else {
+      return;
+   }
 
-//    // Definir a área que será transparente (texto)
-//    ctx.globalCompositeOperation = 'destination-out';
-//    ctx.font = `${fontSize}px Arial`;
-//    ctx.textAlign = 'center';
-//    ctx.textBaseline = 'middle';
-//    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-//    console.log(ctx);
-// }
+   drawMask();
 
-// function animate() {
-//    if (increasing) {
-//       fontSize += 2;
-//       if (fontSize >= maxFontSize) increasing = false;
-//    } else {
-//       fontSize -= 2;
-//       if (fontSize <= minFontSize) increasing = true;
-//    }
+   requestAnimationFrame(animate);
+}
 
-//    drawMask();
+setTimeout(() => {
+   drawMask();
+}, 200);
 
-//    requestAnimationFrame(animate);
-// }
-
-// animate();
+setTimeout(() => {
+   animate();
+}, 1000);

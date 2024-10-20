@@ -46,7 +46,7 @@ export default async function completion(input) {
                 ...getHistory(input),
             ],
             model: config.OAI_MODEL,
-            max_tokens: config.OAI_MAX_TOKENS,
+            max_completion_tokens: config.OAI_MAX_TOKENS,
             temperature: config.OAI_TEMPERATURE,
         });
         const message = response.choices[0].message;

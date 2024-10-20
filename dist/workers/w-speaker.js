@@ -32,6 +32,9 @@ async function addToQueue(instruct) {
             audioQueue = [];
             audioPlaying = false;
             return;
+        default:
+            audioQueue.push(path.resolve('assets/std-msgs/' + instruct + '.wav'));
+            break;
     }
     if (!audioPlaying) {
         await playNextAudio();

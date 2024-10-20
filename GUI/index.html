@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="%%LANG%%">
    <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Vanusa Voice-Assistant</title>
       <link rel="stylesheet" href="index.css" />
+      <link rel="stylesheet" href="elements.css" />
       <link rel="icon" type="image/x-icon" href="robot.ico" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,145 +13,255 @@
          href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap"
          rel="stylesheet"
       />
-      <script src="GUI_config.js" type="module"></script>
-      <script src="index.js" type="module"></script>
+      <link
+         href="https://fonts.googleapis.com/css2?family=Zen+Tokyo+Zoo&display=swap"
+         rel="stylesheet"
+      />
+      <link
+         href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap"
+         rel="stylesheet"
+      />
    </head>
 
    <body>
+      <div class="black"></div>
       <main>
-         <canvas class="Vanusa"> </canvas>
+         <canvas id="Vanusa"></canvas>
 
          <form id="configForm">
             <div class="coll">
-               <label for="lang">Language:</label>
-               <label>
-                  <input type="radio" name="lang" value="en" id="lang_en" />
-                  <img src="./USA.png" alt="en" title="English">
-               </label>
-             
-               <label>
-                  <input type="radio" name="lang" value="pt" id="lang_pt" />
-                  <img src="./br.png" alt="pt-BR" title="Português-BR">
-               </label>
-               <br /><br />
+               <div class="ConfInput">
+                  <label for="lang">Language:</label>
+                  <label>
+                     <input
+                        type="radio"
+                        name="lang"
+                        value="en"
+                        id="lang_en"
+                        checked
+                     />
+                     <img src="./USA.png" alt="en" title="English" />
+                  </label>
 
-               <label for="autoStart">Auto Start:</label>
-                  <div class="container"> <!--switch-->
-                     <label class="switch">
-                        <input class="togglesw" type="checkbox" checked="" />
+                  <label>
+                     <input type="radio" name="lang" value="pt" id="lang_pt" />
+                     <img src="./br.png" alt="pt-BR" title="Português-BR" />
+                  </label>
+               </div>
+
+               <div class="ConfInput">
+                  <label>Auto Start:</label>
+                  <div class="switch_container">
+                     <label for="autoStart" class="switch">
+                        <input id="autoStart" class="togglesw" type="checkbox" checked />
                         <div class="indicator left"></div>
                         <div class="indicator right"></div>
-                        <div class="button"></div>
+                        <div class="switch_button"></div>
                      </label>
                   </div>
-               <br /><br />
+               </div>
 
-               <label for="recordTime">Record Time:</label>
+               <div class="ConfInput">
+                  <label for="recordTime">Record time:</label>
                   <input
                      type="number"
                      id="recordTime"
                      name="RECORD_TIME"
+                     min="10"
+                     max="300"
                      value="300"
-                  /><br /><br />
+                  />
+               </div>
+               <aside class="tooltip">
+                  <span class="tooltiptext">
+                     Max. recording duration in seconds.
+                  </span>
+               </aside>
 
-               <label for="selectedDevice">Selected Device (number):</label>
-                  <input
-                     type="number"
-                     id="selectedDevice"
-                     name="SELECTED_DEVICE"
-                  /><br /><br />
-   
-               <label for="sensitivity">Sensitivity:</label>
+               <div class="ConfInput">
+                  <label for="selectedDevice">Selected microphone:</label>
+                  <select id="selectedDevice" name="SELECTED_DEVICE"></select>
+               </div>
+
+               <div class="ConfInput">
+                  <label for="sensitivity">Sensitivity:</label>
                   <input
                      type="number"
                      id="sensitivity"
                      name="SENSITIVITY"
-                     min="0" 
-                     max="1" 
-                     step="0.1" 
-                     pattern="[0-9]+(\.[0-9]{1,2})?" 
-                     value=0.5 
-                  /><br /><br />
+                     min="0"
+                     max="1"
+                     step="0.1"
+                     pattern="[0-9]+(\.[0-9]{1,2})?"
+                     value="0.5"
+                  />
+               </div>
+               <aside class="tooltip">
+                  <span class="tooltiptext">
+                     If higher gives lower miss rate of speak detection, and
+                     higher false alarm rate.
+                  </span>
+               </aside>
 
-               <label for="cobraLength">Silence Length:</label>
-               <input
-                  type="number"
-                  id="cobraLength"
-                  name="COBRA_LENGHT"
-                  placeholder="seconds"
-               />
+               <div class="ConfInput">
+                  <label for="cobraLength">Silence Length:</label>
+                  <input
+                     type="number"
+                     id="cobraLength"
+                     name="COBRA_LENGHT"
+                     min="2"
+                     max="30"
+                     value="5"
+                  />
+               </div>
 
                <aside class="tooltip">
                   <span class="tooltiptext">
-                     Idle time the recorder wait before stop.
+                     Seconds of silence until the recorder stops.
                   </span>
-               <br /><br />
+               </aside>
 
-               <label for="sttEngine">STT Engine:</label>
+               <div class="ConfInput">
+                  <label for="sttEngine">STT Engine:</label>
                   <select id="sttEngine" name="STT_ENGINE">
-                  <option value="Picovoice">Picovoice</option>
-                  <option value="whisper">Whisper</option></select>
-               <br /><br />
+                     <option value="Picovoice">Picovoice</option>
+                     <option value="whisper">Whisper</option>
+                  </select>
+               </div>
+               <aside class="tooltip">
+                  <span class="tooltiptext">Speech-To-Text.</span>
+               </aside>
 
-            <label for="ttsEngine">TTS Engine:</label> 
-            <select id="ttsEngine" name="TTS_ENGINE">
-               <option value="Picovoice">Picovoice</option>
-                <option value="OpenAI">OpenAI</option>
-               <option value="Google">Google</option></select
-            ><br /><br />
+               <div class="ConfInput">
+                  <label for="ttsEngine">TTS Engine:</label>
+                  <select id="ttsEngine" name="TTS_ENGINE">
+                     <option value="Picovoice">Picovoice</option>
+                     <option value="OpenAI">OpenAI</option>
+                     <option value="Google">Google</option>
+                  </select>
+               </div>
+               <aside class="tooltip">
+                  <span class="tooltiptext">Text-To-Speech.</span>
+               </aside>
 
-            <label for="pvKey"><a href="https://console.picovoice.ai/">Picovoice Key:</a></label>
-            <input type="password" id="pvKey" name="PV_KEY" /><br /><br />
+               <div class="ConfInput">
+                  <label for="pvKey">
+                     <a href="https://console.picovoice.ai/" target="_blank">
+                        Picovoice Key:
+                     </a>
+                  </label>
+                  <input
+                     type="password"
+                     id="pvKey"
+                     name="PV_KEY"
+                     placeholder="&lt;=Get yours"
+                  />
+               </div>
             </div>
-         <div class="coll">
-            <label for="oaiModel">OpenAI Model:</label>
-            <select id="oaiModel" name="OAI_MODEL">
-               <option value="gpt-4o">gpt-4o</option>
-               <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-               <option value="gpt-4o mini">gpt-4o mini</option>
-               <option value="gpt-4-turbo">gpt-4-turbo</option>
-               <option value="o1-preview">o1-preview</option>
-               <option value="o1-mini">o1-mini</option></select
-            ><br /><br />
 
-            <label for="oaiUserDef">OpenAI User Definition:</label>
-            <input
-               type="text"
-               id="oaiUserDef"
-               name="OAI_ASSIST_USER_DEFINITION"
-            /><br /><br />
+            <div class="coll">
+               <div class="ConfInput">
+                  <label for="oaiModel">OpenAI Model:</label>
+                  <select id="oaiModel" name="OAI_MODEL">
+                     <option value="gpt-4o">gpt-4o</option>
+                     <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                     <option value="gpt-4o mini">gpt-4o mini</option>
+                     <option value="gpt-4-turbo">gpt-4-turbo</option>
+                     <option value="o1-preview">o1-preview</option>
+                     <option value="o1-mini">o1-mini</option>
+                  </select>
+               </div>
 
-            <label for="oaiHistoryLength">OpenAI History Length:</label>
-            <input
-               type="number"
-               id="oaiHistoryLength"
-               name="OAI_HISTORY_LENGTH"
-            /><br /><br />
+               <div class="ConfInput">
+                  <label for="oaiUserDef">User specification:</label>
+                  <br />
+                  <textarea rows="5" cols="40"
+                     id="oaiUserDef"
+                     name="OAI_ASSIST_USER_DEFINITION"
+                     placeholder="Introduce yourself to your assistant and tell your expectations."></textarea>
+               </textarea>
+               </div>
 
-            <label for="oaiTemperature">OpenAI Temperature:</label>
-            <input
-               type="number"
-               id="oaiTemperature"
-               name="OAI_TEMPERATURE"
-               step="0.01"
-            /><br /><br />
+               <div class="ConfInput">
+                  <label for="oaiHistoryLength">Message history length:</label>
+                  <input
+                     type="number"
+                     id="oaiHistoryLength"
+                     name="OAI_HISTORY_LENGTH"
+                     min="2"
+                     max="300"
+                     value="25"
+                  />
+               </div>
+               <aside class="tooltip">
+                  <span class="tooltiptext"
+                     >Number of messages the assistant will remember.</span
+                  >
+               </aside>
 
-            <label for="oaiMaxTokens">OpenAI Max Tokens:</label>
-            <input
-               type="number"
-               id="oaiMaxTokens"
-               name="OAI_MAX_TOKENS"
-            /><br /><br />
- 
-            <label for="oaiKey"><a href="https://platform.openai.com/">OpenAI Key:</a></label>
-            <input type="password" id="oaiKey" name="OAI_KEY" /><br /><br />
-         </div>
+               <div class="ConfInput">
+                  <label for="oaiTemperature">Temperature:</label>
+                  <input
+                     type="number"
+                     id="oaiTemperature"
+                     name="OAI_TEMPERATURE"
+                     step="0.1"
+                     min="0"
+                     max="1"
+                     value="0.5"
+                  />
+               </div>
+               <aside class="tooltip">
+                  <span class="tooltiptext">
+                     Controls the seriousness(0) and creativiness(1) of the
+                     assistant.
+                  </span>
+               </aside>
+
+               <div class="ConfInput">
+                  <label for="oaiMaxTokens">Max. tokens/asnwer:</label>
+                  <input
+                     type="number"
+                     id="oaiMaxTokens"
+                     name="OAI_MAX_TOKENS"
+                     min="5"
+                     value="25"
+                  />
+               </div>
+               <aside class="tooltip">
+                  <span class="tooltiptext">Controls the asnwer's length.</span>
+               </aside>
+
+               <div class="ConfInput">
+                  <label for="oaiKey">
+                     <a href="https://platform.openai.com/" target="_blank">
+                        OpenAI API Key:
+                     </a>
+                  </label>
+                  <input
+                     type="password"
+                     id="oaiKey"
+                     name="OAI_KEY"
+                     placeholder="&lt;=Get yours"
+                  />
+               </div>
+            </div>
          </form>
+         <a
+            href="https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant"
+            target="_blank"
+            id="git"
+         >
+            <img src="git.png" alt="Github" title="Github" id="gitimg" />
+         </a>
       </main>
-      <aside>
-    
 
-         <button class="neu-button">Press me</button>
-      </aside>
+      <section>
+         <button class="neu-button"> Save </button>
+         <button class="neu-button"> Cancel </button>
+         <button class="neu-button"> Exit </button>
+      </section>
    </body>
+   <script src="GUI_config.js" type="module"></script>
+   <script src="index.js" type="module"></script>
 </html>

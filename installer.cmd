@@ -37,8 +37,10 @@ IF NOT EXIST "%INSTALL_DIR%\.git" (
     git clone %REPO_URL% .
 ) ELSE (
     echo Repository already exists. Pulling the latest updates...
+    git stash
     git pull
-)
+    git stash apply
+    )
 
 npm install
 

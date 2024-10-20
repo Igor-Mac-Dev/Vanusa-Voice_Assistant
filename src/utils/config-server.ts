@@ -106,7 +106,6 @@ export async function startConfServer(): Promise<string> {
                   });
 
                   confServer.on('close', () => {
-                     console.log('busgranha');
                      connectedClient = null;
                   });
                });

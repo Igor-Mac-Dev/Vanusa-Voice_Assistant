@@ -90,7 +90,6 @@ export async function startConfServer() {
                         console.log('Conf Voice assistant Client disconnected ws');
                     });
                     confServer.on('close', () => {
-                        console.log('busgranha');
                         connectedClient = null;
                     });
                 });
