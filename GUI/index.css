@@ -103,8 +103,8 @@ form {
    opacity: 0;
    width: 50%;
    padding: 10px;
-   animation: form 2s ease-in forwards;
-   animation-delay: 500ms;
+   animation: form 3s ease-in forwards;
+   animation-delay: 800ms;
    display: flex;
    flex-wrap: wrap;
    justify-content: center;
@@ -149,21 +149,21 @@ span {
 }
 
 #git {
-   min-height: 10vh;
    display: flex;
    width: 100%;
    height: fit-content;
    align-items: center;
    justify-content: center;
-   animation-delay: 500ms;
    background-color: var(--main-bg-color);
    flex-grow: 1;
 }
 
 #gitimg {
+   opacity: 0;
    position: relative;
    height: 8vh;
    animation: form 2s ease-in forwards;
+   animation-delay: 1000ms;
    transition-duration: 0.7s;
 }
 
