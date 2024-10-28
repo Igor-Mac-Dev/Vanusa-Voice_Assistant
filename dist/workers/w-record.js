@@ -1,5 +1,5 @@
 import { parentPort } from 'worker_threads';
-import VoiceController from '../picoV/record/voice-controller';
+import VoiceController from '../picoV/record/voice-controller.js';
 const voiceControl = new VoiceController();
 parentPort?.on('message', async (message) => {
     console.log('recorder child Received:', message);
@@ -13,6 +13,8 @@ async function switchController(input) {
         case 'idle':
             return await voiceControl.idlePhase();
         case 'record':
+            return await voiceControl.recordPhase();
+        case 'cmdrecord':
             return await voiceControl.recordPhase();
         case 'wait':
             return await voiceControl.waitPhase();

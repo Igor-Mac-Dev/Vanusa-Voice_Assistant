@@ -19,10 +19,10 @@ function readConfigFile(): interfaces.config {
 
 function pathmkr(
    model: string,
-   lang: '_pt' | '_en' = '_en',
+   lang: 'pt' | 'en' = 'en',
    ext: '.ppn' | '.pv' = '.ppn',
 ): string {
-   return path.join(path.resolve('/assets/models/'), model + lang + ext);
+   return path.join(path.resolve('./assets/models/'), model + lang + ext);
 }
 
 const createConfigFile = (confJson): void => {

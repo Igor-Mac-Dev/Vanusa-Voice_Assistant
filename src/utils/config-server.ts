@@ -15,6 +15,13 @@ let server: http.Server<
 let confServer: ws | null;
 let connectedClient: ws | null = null;
 const confPath: string = path.resolve('./dist/process-files/conf.json');
+let config: interfaces.config | undefined;
+if (fs.existsSync(confPath)) {
+   config = conf.readConfigFile();
+} else {
+   config = undefined;
+}
+
 export async function startConfServer(): Promise<string> {
    return new Promise((resolve, reject) => {
       if (!confServer) {
@@ -65,6 +72,14 @@ export async function startConfServer(): Promise<string> {
                               .toString()
                               .replace('%%PORT%%', port.toString());
                            res.end(contentModified, 'utf8');
+                        } else if (contentType === 'text/html') {
+                           const contentModified = content
+                              .toString()
+                              .replace(
+                                 '%%LANG%%',
+                                 config?.LANGUAGE ? config.LANGUAGE : 'en',
+                              );
+                           res.end(contentModified, 'utf8');
                         } else {
                            res.end(content, 'utf8');
                         }
@@ -97,8 +112,22 @@ export async function startConfServer(): Promise<string> {
                   );
 
                   ws.on('message', message => {
-                     setFinalConf(JSON.parse(message.toString()));
-                     resolve('ok_conf');
+                     const ms = message.toString();
+                     if (ms == 'cancel') {
+                        resolve('cancel');
+                     } else if (ms == 'exit') {
+                        resolve('exit');
+                     } else {
+                        const msg = JSON.parse(ms);
+                        if (msg[msg.length - 1] === 'exit') {
+                           msg.pop();
+                           setFinalConf(msg);
+                           resolve('exit');
+                        } else {
+                           setFinalConf(msg);
+                           resolve('ok_conf');
+                        }
+                     }
                   });
 
                   ws.on('close', () => {
@@ -125,7 +154,7 @@ export async function startConfServer(): Promise<string> {
    });
 }
 
-function stopConfServer() {
+export function stopConfServer() {
    if (server) {
       server.close();
    }
@@ -141,8 +170,7 @@ function stopConfServer() {
 }
 
 function setInitConf(): BaseConf | undefined {
-   const config: interfaces.config = conf.readConfigFile();
-   if (fs.existsSync(confPath)) {
+   if (config) {
       return [
          config.LANGUAGE,
          config.AUTO_START,
@@ -166,41 +194,72 @@ function setInitConf(): BaseConf | undefined {
 }
 
 function setFinalConf(base: BaseConf): void {
-   console.log(base);
+   const lang = () => {
+      if (base[0]) {
+         return 'pt';
+      } else {
+         return 'en';
+      }
+   };
+   const oaiModel:
+      | 'gpt-4o'
+      | 'gpt-3.5-turbo'
+      | 'gpt-4o mini'
+      | 'gpt-4-turbo'
+      | 'o1-preview'
+      | 'o1-mini' = (base[9] ?? 'gpt-4o') as
+      | 'gpt-4o'
+      | 'gpt-3.5-turbo'
+      | 'gpt-4o mini'
+      | 'gpt-4-turbo'
+      | 'o1-preview'
+      | 'o1-mini';
+   const sttEngine: 'Picovoice' | 'Whisper' = (base[6] ?? 'Picovoice') as
+      | 'Picovoice'
+      | 'Whisper';
+   const ttsEngine: 'Picovoice' | 'OpenAI' | 'Google' = (base[7] ??
+      'Picovoice') as 'Picovoice' | 'OpenAI' | 'Google';
+
    const createConfig: interfaces.config = {
-      LANGUAGE: 'en',
-      AUTO_START: false,
-      PPN: conf.pathmkr('a'),
-      PPN_WW: [conf.pathmkr('a'), conf.pathmkr('b')],
-      PPN_CANCEL: [conf.pathmkr('c')],
-      PPN_REPEAT: ['a', 'b'],
-      OAI_KEY: 'a',
-      PV_KEY: 'a',
-      CHEETAH: 'a',
-      CHEETAH_AVAILABLE: true,
-      LEOPARD: conf.pathmkr('a', '_en', '.pv'),
-      LEOPARD_AVAILABLE: true,
-      ORCA_AVAILABLE: true,
-      RECORD_TIME: 300,
+      LANGUAGE: lang(),
+      AUTO_START: base[1] ?? false,
+      PPN: conf.pathmkr('porcupine_params_', lang(), '.pv'),
+      PPN_WW: [
+         conf.pathmkr('wake_word1_', lang()),
+         conf.pathmkr('wake_word2_', lang()),
+         conf.pathmkr('wake_word3_', lang()),
+      ],
+      PPN_CANCEL: [conf.pathmkr('cancel_', lang())],
+      PPN_REPEAT: [
+         conf.pathmkr('repeat_', lang()),
+         //conf.pathmkr('repeat_last_', lang()),
+      ],
+      OAI_KEY: base[14] ?? 'invalid',
+      PV_KEY: base[8] ?? 'invalid',
+      CHEETAH: path.resolve('assets/models/cheetah_params.pv'),
+      CHEETAH_AVAILABLE: config ? config.CHEETAH_AVAILABLE : true,
+      LEOPARD: conf.pathmkr('leopard_params_', lang(), '.pv'),
+      LEOPARD_AVAILABLE: config ? config.LEOPARD_AVAILABLE : true,
+      ORCA_AVAILABLE: config ? config.ORCA_AVAILABLE : true,
+      RECORD_TIME: parseInt(base[2]) ?? 300,
       FRAME_LENGHT: 512,
       SAMPLE_RATE: 16000,
-      SELECTED_DEVICE: undefined,
-      SENSITIVITY: 0.5,
-      COBRA_LENGHT: 3,
-      OAI_MODEL: 'gpt-4o',
-      OAI_ASSIST_DEFINITION:
-         "You are a voice assistant. I speak on my desktop, and a program sends it to you as text. You process it and return an answer that will be spoken by my device. Please avoid using the word 'cancel,' as it may interrupt the playback of your response. Keep in mind that the Speech to Text engine isn't perfect: if words are missing, assume they were intended; if words seem out of context, replace them with what likely fits, normally uncommon names or terms. Additional specifications, if any, will follow: ",
-      OAI_ASSIST_USER_DEFINITION: '',
-      OAI_HISTORY_LENGTH: 10,
-      OAI_TEMPERATURE: 0.6,
-      OAI_MAX_TOKENS: 100,
-      STT_ENGINE: 'Picovoice',
-      TTS_ENGINE: 'Picovoice',
+      SELECTED_DEVICE: parseInt(base[3]) ?? undefined,
+      SENSITIVITY: parseFloat(base[4]) ?? 0.5,
+      COBRA_LENGHT: parseInt(base[5]) ?? 5,
+      OAI_MODEL: oaiModel,
+      OAI_ASSIST_DEFINITION: base[0]
+         ? "Você é um assistente de voz. Eu falo no meu computador, e um programa envia isso para você em formato de texto. Você processa e retorna uma resposta que será falada pelo meu dispositivo. Por favor, evite usar a palavra 'cancelar', pois ela pode interromper a reprodução da resposta. Voce também não pode usar formatação de texto nessa resposta, como '\n', '**' etc. Use apenas texto plano. Responda con formatação especial apenas se solicitado posteriormente. Lembre-se de que o mecanismo de reconhecimento de fala não é perfeito: se faltar alguma palavra, presuma que ela deveria estar lá; se alguma palavra parecer fora de contexto, substitua por uma mais adequada, especialmente nomes ou termos incomuns. Algumas vezes o motor de reconhecimento de fala mescla duas palavras em uma e vice-versa. Por favor, responda em portugues. Especificações adicionais, se houver, serão indicadas a seguir: "
+         : "You are a voice assistant. I speak on my desktop, and a program sends it to you as text. You process it and return an answer that will be spoken by my device. Please avoid using the word 'cancel,' as it may interrupt the playback of your response. You also can't format the text in this asnwer, unless in especifc requests. Avoid  '\n', '**' etc. Use only plane text. Keep in mind that the Speech to Text engine isn't perfect: if words are missing, assume they were intended; if words seem out of context, replace them with what likely fits, normally uncommon names or terms. Additional specifications, if any, will follow: ",
+      OAI_ASSIST_USER_DEFINITION: base[10] ?? '',
+      OAI_HISTORY_LENGTH: parseInt(base[11]) ?? 20,
+      OAI_TEMPERATURE: parseFloat(base[12]) ?? 0.5,
+      OAI_MAX_TOKENS: parseInt(base[13]) ?? 100,
+      STT_ENGINE: sttEngine,
+      TTS_ENGINE: ttsEngine,
    };
+   conf.createConfigFile(createConfig);
 }
-
-await startConfServer();
-stopConfServer();
 
 type BaseConf = [
    string?,

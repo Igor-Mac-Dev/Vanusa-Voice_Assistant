@@ -1,6 +1,6 @@
 import { Rhino } from '@picovoice/rhino-node';
 import { CustomError } from '../../utils/error.js';
-import * as conf from '../../configuration/conf.js';
+import { readConfigFile } from '../../configuration/conf.js';
 import * as interfaces from '../../interfaces/config-json.js';
 import { EventEmitter } from 'events';
 import * as path from 'path';
@@ -10,14 +10,13 @@ export default class RhinoSti extends EventEmitter {
    protected rhinos: string[];
    protected compositeCmds: number[];
    protected intentDetector: { [name: string]: Rhino } = {};
-   protected config: interfaces.config = conf.readConfigFile();
+   protected config: interfaces.config = readConfigFile();
    protected modelPath: string | undefined = undefined;
    protected intent: { intent: string; [slot: string]: string } = {
       intent: '',
       slot: '',
    };
    protected isComposite: boolean = false;
-
    constructor() {
       super();
       const rhinosArray: string[] = fs.readdirSync(
@@ -51,8 +50,8 @@ export default class RhinoSti extends EventEmitter {
                this.intentDetector[`!${i}rhin`] = new Rhino(
                   this.config.PV_KEY,
                   this.rhinos[i],
-                  this.config.SENSITIVITY[0],
-                  0.6,
+                  this.config.SENSITIVITY,
+                  0.9,
                   true,
                   this.modelPath,
                );
@@ -60,8 +59,8 @@ export default class RhinoSti extends EventEmitter {
                this.intentDetector[`${i}rhin`] = new Rhino(
                   this.config.PV_KEY,
                   this.rhinos[i],
-                  this.config.SENSITIVITY[0],
-                  0.6,
+                  this.config.SENSITIVITY,
+                  0.9,
                   true,
                   this.modelPath,
                );

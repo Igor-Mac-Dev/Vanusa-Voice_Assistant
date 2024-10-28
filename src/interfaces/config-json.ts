@@ -30,6 +30,6 @@ export interface config {
    OAI_HISTORY_LENGTH: number;
    OAI_TEMPERATURE: number;
    OAI_MAX_TOKENS: number;
-   STT_ENGINE: 'Picovoice' | 'whisper';
+   STT_ENGINE: 'Picovoice' | 'Whisper';
    TTS_ENGINE: 'Picovoice' | 'OpenAI' | 'Google';
 }

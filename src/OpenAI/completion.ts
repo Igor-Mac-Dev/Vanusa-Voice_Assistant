@@ -1,21 +1,20 @@
 import OpenAI from 'openai';
-import * as conf from '../configuration/conf.js';
+import { readConfigFile } from '../configuration/conf.js';
 import * as interfaces from '../interfaces/config-json.js';
 import * as path from 'path';
 import * as fs from 'fs';
 import { CustomError } from '../utils/error.js';
 
 const historyPath = path.join(
-   path.resolve('dist/process-files/'),
+   path.resolve('./dist/process-files/'),
    'history.txt',
 );
-const config: interfaces.config = conf.readConfigFile();
+const config: interfaces.config = readConfigFile();
 
 function getHistory(input: string): { role: string; content: string }[] {
    try {
       const history = fs.readFileSync(historyPath, 'utf8');
       const result: { role: string; content: string }[] = [];
-
       if (history.length > 0) {
          const lines = history.split(/\r?\n/);
          lines.forEach(line => {
@@ -40,7 +39,7 @@ function getHistory(input: string): { role: string; content: string }[] {
       });
       return result;
    } catch (err) {
-      throw new CustomError('°OAI failed while reading history:' + err);
+      throw new CustomError('°OAI failed while reading history: ' + err);
    }
 }
 
@@ -65,11 +64,9 @@ export default async function completion(
       if ('refusal' in message) {
          delete message.refusal;
       }
-      fs.appendFileSync(
-         historyPath,
-         JSON.stringify(response.choices[0].message),
-         'utf8',
-      );
+      let messageContent = response.choices[0].message.content;
+      messageContent = messageContent.replace(/[{}]/g, '');
+      fs.appendFileSync(historyPath, JSON.stringify(messageContent), 'utf8');
       return response.choices[0].message.content;
    } catch (error: unknown) {
       if (isOpenAIError(error)) {

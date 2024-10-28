@@ -1,14 +1,15 @@
 import { parentPort } from 'worker_threads';
-import * as conf from '../configuration/conf';
-import * as interfaces from '../interfaces/config-json';
-import OrcaTts from '../picoV/orca';
-import novaTts from '../OpenAI/nova';
-import gTts from '../G-voice/tts';
+import { readConfigFile } from '../configuration/conf.js';
+import * as interfaces from '../interfaces/config-json.js';
+import OrcaTts from '../picoV/orca.js';
+import novaTts from '../OpenAI/nova.js';
+import gTts from '../G-voice/tts.js';
 
-const config: interfaces.config = conf.readConfigFile();
+const config: interfaces.config = readConfigFile();
 
 parentPort?.on('message', async message => {
    console.log('child stt Received:', message);
+   await tts(message[1]);
 });
 
 async function tts(text: string): Promise<void> {
@@ -20,7 +21,7 @@ async function tts(text: string): Promise<void> {
             await orcaTts.generateAudio(text, 1);
 
             parentPort?.postMessage({
-               message: 'STT_done',
+               message: 'TTS_done',
             });
          } else {
             parentPort?.postMessage('Picovoice_TTS_limit_reached');
@@ -29,14 +30,14 @@ async function tts(text: string): Promise<void> {
       case 'OpenAI':
          await novaTts(text);
          parentPort?.postMessage({
-            message: 'STT_done',
+            message: 'TTS_done',
          });
 
          break;
       case 'Google':
          await gTts(text);
          parentPort?.postMessage({
-            message: 'STT_done',
+            message: 'TTS_done',
          });
 
          break;

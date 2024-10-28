@@ -153,8 +153,12 @@
    color: #ffffff4f;
    cursor: pointer;
    font-family: 'Bruno Ace SC', Arial, Helvetica, sans-serif;
-   font-size: 18px;
-   padding: 15px 40px;
+   font-size: 100%;
+   white-space: nowrap;
+   text-align: center;
+   padding: auto;
+   padding-top: 5%;
+   padding-bottom: 5%;
    transition: all 0.2s ease-in-out;
    border: 2px solid rgba(3, 1, 20, 0.151);
    margin-top: 10%;

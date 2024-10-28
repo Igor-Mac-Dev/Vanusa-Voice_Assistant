@@ -1,4 +1,4 @@
-import { audioPlayer, audioPlayerStop } from '../speak/audio-player';
+import { audioPlayer, audioPlayerStop } from '../utils/audio-player.js';
 import { parentPort } from 'worker_threads';
 import * as path from 'path';
 
@@ -13,22 +13,22 @@ parentPort?.on('message', async message => {
 async function addToQueue(instruct: string): Promise<void> {
    switch (instruct) {
       case 'play_start':
-         audioQueue.push(path.resolve('assets/beeps/init.wav'));
+         audioQueue.push(path.resolve('./assets/beeps/init.wav'));
          break;
       case 'play':
          audioQueue.push(path.resolve('./dist/process-files/output.wav'));
          break;
       case 'play_last':
-         audioQueue.push(path.resolve('dist/process-files/output_last.wav'));
+         audioQueue.push(path.resolve('./dist/process-files/output_last.wav'));
          break;
       case 'play_err':
-         audioQueue.push(path.resolve('assets/beeps/err.wav'));
+         audioQueue.push(path.resolve('./assets/beeps/err.wav'));
          break;
       case 'play_sucess':
-         audioQueue.push(path.resolve('assets/beeps/sucess.wav'));
+         audioQueue.push(path.resolve('./assets/beeps/sucess.wav'));
          break;
       case 'play_cmd':
-         audioQueue.push(path.resolve('assets/beeps/cmd.wav'));
+         audioQueue.push(path.resolve('./assets/beeps/cmd.wav'));
          break;
 
       case 'stop':
@@ -37,7 +37,9 @@ async function addToQueue(instruct: string): Promise<void> {
          audioPlaying = false;
          return;
       default:
-         audioQueue.push(path.resolve('assets/std-msgs/' + instruct + '.wav'));
+         audioQueue.push(
+            path.resolve('./assets/std-msgs/' + instruct + '.wav'),
+         );
          break;
    }
    if (!audioPlaying) {

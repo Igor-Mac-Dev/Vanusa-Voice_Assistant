@@ -1,16 +1,15 @@
 import { Worker } from 'worker_threads';
 import * as path from 'path';
-import { error } from 'console';
 
-export const controll = new Worker(path.resolve('./dist/workers/w-record.js'));
+export const control = new Worker(path.resolve('./dist/workers/w-record.js'));
 export const stt = new Worker(path.resolve('./dist/workers/w-stt.js'));
 export const tts = new Worker(path.resolve('./dist/workers/w-tts.js'));
 export const speaker = new Worker(path.resolve('./dist/workers/w-speaker.js'));
 export const utils = new Worker(path.resolve('./dist/workers/w-utils.js'));
-export const red = new Worker(path.resolve('./disr/workers/w-red.js'));
+export const red = new Worker(path.resolve('./dist/workers/w-red.js'));
 
-controll.on('message', message => {
-   console.log('controll parent Received: ', message);
+control.on('message', message => {
+   console.log('control parent Received: ', message);
 });
 
 stt.on('message', message => {
@@ -33,22 +32,30 @@ red.on('message', message => {
    console.log('red parent Received: ', message);
 });
 
+export async function awaitWorkerOk(worker: Worker): Promise<string> {
+   return new Promise(resolve => {
+      worker.on('message', message => {
+         resolve(message);
+      });
+   });
+}
+
 /////////////////////////////////////////////////////////////////////
 
 export const handlers: { [key: string]: (param1?: any, param2?: any) => void } =
    {
       start: () => {
-         controll.postMessage('start');
-         red.postMessage('start');
+         control.postMessage('start');
+         red.postMessage(['start']);
       },
       idle: () => {
-         controll.postMessage('idle');
+         control.postMessage('idle');
       },
       record: () => {
-         controll.postMessage('record');
+         control.postMessage('record');
       },
       wait: () => {
-         controll.postMessage('wait');
+         control.postMessage('wait');
       },
       abort: () => {
          stt.postMessage('abort');
@@ -85,8 +92,10 @@ export const handlers: { [key: string]: (param1?: any, param2?: any) => void } =
          utils.postMessage(['error', err]);
          speaker.postMessage('play_err');
       },
-      sucess: sucess => {
-         utils.postMessage(['success', sucess]);
+      sucess: (sucess?: string) => {
+         if (sucess) {
+            utils.postMessage(['success', sucess]);
+         }
          speaker.postMessage('play_sucess');
       },
    };

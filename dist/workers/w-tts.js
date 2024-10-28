@@ -1,11 +1,12 @@
 import { parentPort } from 'worker_threads';
-import * as conf from '../configuration/conf';
-import OrcaTts from '../picoV/orca';
-import novaTts from '../OpenAI/nova';
-import gTts from '../G-voice/tts';
-const config = conf.readConfigFile();
+import { readConfigFile } from '../configuration/conf.js';
+import OrcaTts from '../picoV/orca.js';
+import novaTts from '../OpenAI/nova.js';
+import gTts from '../G-voice/tts.js';
+const config = readConfigFile();
 parentPort?.on('message', async (message) => {
     console.log('child stt Received:', message);
+    await tts(message[1]);
 });
 async function tts(text) {
     switch (config.TTS_ENGINE) {
@@ -14,7 +15,7 @@ async function tts(text) {
                 const orcaTts = new OrcaTts();
                 await orcaTts.generateAudio(text, 1);
                 parentPort?.postMessage({
-                    message: 'STT_done',
+                    message: 'TTS_done',
                 });
             }
             else {
@@ -24,13 +25,13 @@ async function tts(text) {
         case 'OpenAI':
             await novaTts(text);
             parentPort?.postMessage({
-                message: 'STT_done',
+                message: 'TTS_done',
             });
             break;
         case 'Google':
             await gTts(text);
             parentPort?.postMessage({
-                message: 'STT_done',
+                message: 'TTS_done',
             });
             break;
         default:

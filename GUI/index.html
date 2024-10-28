@@ -69,6 +69,7 @@
                      name="RECORD_TIME"
                      min="10"
                      max="300"
+                     required="true"
                      value="300"
                   />
                </div>
@@ -92,6 +93,7 @@
                      min="0"
                      max="1"
                      step="0.1"
+                     required="true"
                      pattern="[0-9]+(\.[0-9]{1,2})?"
                      value="0.5"
                   />
@@ -111,7 +113,8 @@
                      name="COBRA_LENGHT"
                      min="2"
                      max="30"
-                     value="5"
+                     required="true"
+                     value="6"
                   />
                </div>
 
@@ -123,9 +126,9 @@
 
                <div class="ConfInput">
                   <label for="sttEngine">STT Engine:</label>
-                  <select id="sttEngine" name="STT_ENGINE">
+                  <select id="sttEngine" name="STT_ENGINE" required="true">
                      <option value="Picovoice">Picovoice</option>
-                     <option value="whisper">Whisper</option>
+                     <option value="Whisper">Whisper</option>
                   </select>
                </div>
                <aside class="tooltip">
@@ -134,7 +137,7 @@
 
                <div class="ConfInput">
                   <label for="ttsEngine">TTS Engine:</label>
-                  <select id="ttsEngine" name="TTS_ENGINE">
+                  <select id="ttsEngine" name="TTS_ENGINE" required="true">
                      <option value="Picovoice">Picovoice</option>
                      <option value="OpenAI">OpenAI</option>
                      <option value="Google">Google</option>
@@ -154,6 +157,8 @@
                      type="password"
                      id="pvKey"
                      name="PV_KEY"
+                     minlength="15"
+                     required="true"
                      placeholder="&lt;=Get yours"
                   />
                </div>
@@ -162,7 +167,7 @@
             <div class="coll">
                <div class="ConfInput">
                   <label for="oaiModel">OpenAI Model:</label>
-                  <select id="oaiModel" name="OAI_MODEL">
+                  <select id="oaiModel" name="OAI_MODEL" required="true">
                      <option value="gpt-4o">gpt-4o</option>
                      <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
                      <option value="gpt-4o mini">gpt-4o mini</option>
@@ -189,7 +194,7 @@
                      id="oaiHistoryLength"
                      name="OAI_HISTORY_LENGTH"
                      min="2"
-                     max="300"
+                     required="true"
                      value="25"
                   />
                </div>
@@ -208,6 +213,7 @@
                      step="0.1"
                      min="0"
                      max="1"
+                     required="true"
                      value="0.5"
                   />
                </div>
@@ -225,6 +231,7 @@
                      id="oaiMaxTokens"
                      name="OAI_MAX_TOKENS"
                      min="5"
+                     required="true"
                      value="25"
                   />
                </div>
@@ -242,24 +249,26 @@
                      type="password"
                      id="oaiKey"
                      name="OAI_KEY"
+                     minlength="15"
+                     required="true"
                      placeholder="&lt;=Get yours"
                   />
                </div>
             </div>
          </form>
-         <a
+         <div id="git"><a
             href="https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant"
             target="_blank"
-            id="git"
-         >
+                     >
             <img src="git.png" alt="Github" title="Github" id="gitimg" />
-         </a>
+         </a></div>
       </main>
 
       <section>
-         <button class="neu-button"> Save </button>
-         <button class="neu-button"> Cancel </button>
-         <button class="neu-button"> Exit </button>
+         <button class="neu-button" id="save"> SAVE & START </button>
+         <button class="neu-button" id="saveexit"> SAVE & EXIT </button>
+         <button class="neu-button" id="cancel"> CANCEL </button>
+         <button class="neu-button" id="exit"> EXIT </button>
       </section>
    </body>
    <script src="GUI_config.js" type="module"></script>

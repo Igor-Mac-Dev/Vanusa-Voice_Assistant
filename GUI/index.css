@@ -187,7 +187,9 @@ input[type='number'] {
    padding: 10px;
    font-size: 13px;
    height: 40%;
+   width: 30%;
    border-radius: 4px;
+   text-align: center;
 }
 
 select,
@@ -213,4 +215,22 @@ input[type='number']:focus {
 select {
    padding: 0;
    height: 100%;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+}
+
+select:invalid,
+textarea:invalid,
+input[type='text']:invalid,
+input[type='email']:invalid,
+input[type='password']:invalid,
+input[type='search']:invalid,
+input[type='tel']:invalid,
+input[type='url']:invalid,
+input[type='number']:invalid {
+   border: #db000b 3px solid;
 }

@@ -1,13 +1,13 @@
 import { Worker } from 'worker_threads';
 import * as path from 'path';
-export const controll = new Worker(path.resolve('./dist/workers/w-record.js'));
+export const control = new Worker(path.resolve('./dist/workers/w-record.js'));
 export const stt = new Worker(path.resolve('./dist/workers/w-stt.js'));
 export const tts = new Worker(path.resolve('./dist/workers/w-tts.js'));
 export const speaker = new Worker(path.resolve('./dist/workers/w-speaker.js'));
 export const utils = new Worker(path.resolve('./dist/workers/w-utils.js'));
-export const red = new Worker(path.resolve('./disr/workers/w-red.js'));
-controll.on('message', message => {
-    console.log('controll parent Received: ', message);
+export const red = new Worker(path.resolve('./dist/workers/w-red.js'));
+control.on('message', message => {
+    console.log('control parent Received: ', message);
 });
 stt.on('message', message => {
     console.log('stt parent Received: ', message);
@@ -24,20 +24,27 @@ utils.on('message', message => {
 red.on('message', message => {
     console.log('red parent Received: ', message);
 });
+export async function awaitWorkerOk(worker) {
+    return new Promise(resolve => {
+        worker.on('message', message => {
+            resolve(message);
+        });
+    });
+}
 /////////////////////////////////////////////////////////////////////
 export const handlers = {
     start: () => {
-        controll.postMessage('start');
-        red.postMessage('start');
+        control.postMessage('start');
+        red.postMessage(['start']);
     },
     idle: () => {
-        controll.postMessage('idle');
+        control.postMessage('idle');
     },
     record: () => {
-        controll.postMessage('record');
+        control.postMessage('record');
     },
     wait: () => {
-        controll.postMessage('wait');
+        control.postMessage('wait');
     },
     abort: () => {
         stt.postMessage('abort');
@@ -74,8 +81,10 @@ export const handlers = {
         utils.postMessage(['error', err]);
         speaker.postMessage('play_err');
     },
-    sucess: sucess => {
-        utils.postMessage(['success', sucess]);
+    sucess: (sucess) => {
+        if (sucess) {
+            utils.postMessage(['success', sucess]);
+        }
         speaker.postMessage('play_sucess');
     },
 };

@@ -1,10 +1,10 @@
 import { parentPort } from 'worker_threads';
-import { Server } from 'ws';
+import { WebSocketServer } from 'ws';
 import * as portfinder from 'portfinder';
-let redServer;
+let redServer = null;
 let connectedClient = null;
 parentPort?.on('message', async (message) => {
-    console.log('recorder child Received:', message);
+    console.log('red child Received:', message);
     const sig = await switchServer(message);
     sendParent(sig);
 });
@@ -13,7 +13,11 @@ async function switchServer(input) {
         case 'start':
             return await startServer();
         case 'send':
-            return await sendRedMessage(input[1]);
+            if (input[1]) {
+                return await sendRedMessage(input[1]);
+            }
+            return 'Red server called with invalid send request';
+            break;
         default:
             return 'Red server called with unknow input';
     }
@@ -23,15 +27,23 @@ async function startServer() {
         if (!redServer) {
             portfinder
                 .getPortPromise()
-                .then(port => {
-                redServer = new Server({ port });
-                console.log(`Voice assistant WebSocket server is running on ws://localhost:${port}`);
+                .then(fport => {
+                redServer = new WebSocketServer({ port: fport });
+                let firstMessage = true;
+                console.log(`Voice assistant WebSocket server is running on ws://localhost:${fport}`);
                 redServer.on('connection', ws => {
                     connectedClient = ws;
                     ws.on('message', message => {
                         console.log('Received:', message.toString());
                         ws.send('Echo: ' + message);
-                        resolve('sucess');
+                        if (firstMessage) {
+                            firstMessage = false;
+                            resolve('started');
+                        }
+                        else {
+                            console.log('Sending to parent:', message);
+                            parentPort?.postMessage(JSON.parse(message));
+                        }
                     });
                     ws.on('close', () => {
                         connectedClient = null;
@@ -78,9 +90,6 @@ function sendRedMessage(message) {
         }
     });
 }
-parentPort?.on('message', message => {
-    console.log('Received from parent:', message);
-});
 function sendParent(sig) {
     switch (sig) {
         case 'stt':

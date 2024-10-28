@@ -1,14 +1,15 @@
 import { parentPort } from 'worker_threads';
-import * as conf from '../configuration/conf';
-import * as interfaces from '../interfaces/config-json';
-import CheetahStt from '../picoV/cheetah';
-import LeopardStt from '../picoV/leopard';
-import whisperStt from '../OpenAI/whisper';
+import { readConfigFile } from '../configuration/conf.js';
+import * as interfaces from '../interfaces/config-json.js';
+import CheetahStt from '../picoV/cheetah.js';
+import LeopardStt from '../picoV/leopard.js';
+import whisperStt from '../OpenAI/whisper.js';
 
-const config: interfaces.config = conf.readConfigFile();
+const config: interfaces.config = readConfigFile();
 
 parentPort?.on('message', async message => {
    console.log('child stt Received:', message);
+   await stt(message[1].recL, message[1].recC);
 });
 
 async function stt(recL: Int16Array, recC: Int16Array[]): Promise<void> {
@@ -36,7 +37,7 @@ async function stt(recL: Int16Array, recC: Int16Array[]): Promise<void> {
             parentPort?.postMessage('Picovoice_STT_limit_reached');
          }
          break;
-      case 'whisper': {
+      case 'Whisper': {
          const transcription = await whisperStt();
          parentPort?.postMessage({
             message: 'transcription',

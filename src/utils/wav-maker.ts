@@ -1,14 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { WaveFile } from 'wavefile';
-import { CustomError } from './error';
+import WaveFile from 'wavefile';
+import { CustomError } from './error.js';
 
 export default function makeWav(
    int16Array: Int16Array,
    sampleRate: number = 16000,
    usecase: number = 0,
 ): void {
-   const wav = new WaveFile();
+   const wav = new WaveFile.WaveFile();
    let pathToFile: string;
    switch (usecase) {
       case 0:
@@ -22,7 +22,7 @@ export default function makeWav(
             path.resolve('dist/process-files'),
             'output.wav',
          );
-         let rename = path.join(
+         const rename = path.join(
             path.resolve('dist/process-files'),
             'output_last.wav',
          );

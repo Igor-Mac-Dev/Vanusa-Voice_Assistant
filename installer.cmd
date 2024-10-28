@@ -42,7 +42,23 @@ IF NOT EXIST "%INSTALL_DIR%\.git" (
     git stash apply
     )
 
-npm install
+npm install --production
+
+if not exist ".\logs" (
+    echo Creating dir ./log...
+    mkdir .\log
+) 
+
+if not exist ".\dist\process-files" (
+    echo Creating dir ./dist/process-files...
+    mkdir .\dist\process-files
+) 
+
+set "startupFolder=%appdata%\Microsoft\Windows\Start Menu\Programs\Startup"
+echo @echo off > "%startupFolder%\pm2_resurrect.bat"
+echo call pm2 resurrect >> "%startupFolder%\pm2_resurrect.bat"
+
+echo File pm2_resurrect.bat created.
 
 echo Installation complete!
 echo Starting the app...

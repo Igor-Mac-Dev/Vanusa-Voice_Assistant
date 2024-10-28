@@ -1,5 +1,5 @@
 import { parentPort } from 'worker_threads';
-import VoiceController from '../picoV/record/voice-controller';
+import VoiceController from '../picoV/record/voice-controller.js';
 
 const voiceControl: VoiceController = new VoiceController();
 
@@ -10,7 +10,14 @@ parentPort?.on('message', async message => {
 });
 
 async function switchController(
-   input: 'idle' | 'record' | 'wait' | 'abort' | 'start' | 'turnoff',
+   input:
+      | 'idle'
+      | 'record'
+      | 'wait'
+      | 'abort'
+      | 'start'
+      | 'turnoff'
+      | 'cmdrecord',
 ): Promise<string> {
    switch (input) {
       case 'start':
@@ -18,6 +25,8 @@ async function switchController(
       case 'idle':
          return await voiceControl.idlePhase();
       case 'record':
+         return await voiceControl.recordPhase();
+      case 'cmdrecord':
          return await voiceControl.recordPhase();
       case 'wait':
          return await voiceControl.waitPhase();

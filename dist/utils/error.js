@@ -3,7 +3,7 @@ import * as path from 'path';
 export default async function errorLog(err) {
     const date = new Date(Date.now());
     const now = date.toUTCString();
-    fs.appendFile(path.resolve('log/log.txt'), `\n ${now} - ERROR: ${err}`, er => {
+    fs.appendFile(path.resolve('logs/log.txt'), `\n ${now} - ERROR: ${err}`, er => {
         if (er) {
             console.error(er);
         }

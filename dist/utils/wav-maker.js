@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { WaveFile } from 'wavefile';
-import { CustomError } from './error';
+import WaveFile from 'wavefile';
+import { CustomError } from './error.js';
 export default function makeWav(int16Array, sampleRate = 16000, usecase = 0) {
-    const wav = new WaveFile();
+    const wav = new WaveFile.WaveFile();
     let pathToFile;
     switch (usecase) {
         case 0:
@@ -11,7 +11,7 @@ export default function makeWav(int16Array, sampleRate = 16000, usecase = 0) {
             break;
         case 1:
             pathToFile = path.join(path.resolve('dist/process-files'), 'output.wav');
-            let rename = path.join(path.resolve('dist/process-files'), 'output_last.wav');
+            const rename = path.join(path.resolve('dist/process-files'), 'output_last.wav');
             if (fs.existsSync(rename)) {
                 fs.rmSync(rename);
             }

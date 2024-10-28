@@ -12,8 +12,8 @@ function readConfigFile() {
         throw new CustomError('°Error while reading config file: ' + err);
     }
 }
-function pathmkr(model, lang = '_en', ext = '.ppn') {
-    return path.join(path.resolve('/assets/models/'), model + lang + ext);
+function pathmkr(model, lang = 'en', ext = '.ppn') {
+    return path.join(path.resolve('./assets/models/'), model + lang + ext);
 }
 const createConfigFile = (confJson) => {
     try {

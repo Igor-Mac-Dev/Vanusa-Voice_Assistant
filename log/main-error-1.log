@@ -1,0 +1,95 @@
+Error: File not found at 'modelPath': C:\assets\models\porcupine_params_en.pv
+    at new Porcupine (C:\Users\whisk\Documents\Projetos\VANUSAR\node_modules\.pnpm\@picovoice+porcupine-node@3.0.4\node_modules\@picovoice\porcupine-node\dist\porcupine.js:72:19)
+    at PorcupineDetector.porcupineInit (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/picoV/porcupin.js:28:27)
+    at FramesEmitter.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/picoV/record/voice-controller.js:35:33)
+    at FramesEmitter.emit (node:events:519:28)
+    at FramesEmitter.startFramesEmittion (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/picoV/record/frames-emitter.js:11:18) {
+  _message: "File not found at 'modelPath': C:\\assets\\models\\porcupine_params_en.pv",
+  _messageStack: []
+}
+TypeError [Error]: player.play is not a function
+    at audioPlayer (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/utils/audio-player.js:3:18)
+    at playNextAudio (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/workers/w-speaker.js:47:15)
+    at addToQueue (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/workers/w-speaker.js:40:15)
+    at MessagePort.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/workers/w-speaker.js:8:5)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:820:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+TypeError [Error]: player.play is not a function
+    at audioPlayer (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/utils/audio-player.js:3:18)
+    at playNextAudio (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/workers/w-speaker.js:47:15)
+    at addToQueue (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/workers/w-speaker.js:40:15)
+    at MessagePort.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/workers/w-speaker.js:8:5)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:820:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+Error: File not found in 'keywords': C:\Users\whisk\Documents\Projetos\VANUSAR\assets\models\repeat_last_pt.ppn
+    at new Porcupine (C:\Users\whisk\Documents\Projetos\VANUSAR\node_modules\.pnpm\@picovoice+porcupine-node@3.0.4\node_modules\@picovoice\porcupine-node\dist\porcupine.js:82:27)
+    at PorcupineDetector.porcupineInit (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/picoV/porcupin.js:28:27)
+    at FramesEmitter.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/picoV/record/voice-controller.js:35:33)
+    at FramesEmitter.emit (node:events:519:28)
+    at FramesEmitter.startFramesEmittion (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/picoV/record/frames-emitter.js:11:18) {
+  _message: "File not found in 'keywords': C:\\Users\\whisk\\Documents\\Projetos\\VANUSAR\\assets\\models\\repeat_last_pt.ppn",
+  _messageStack: []
+}
+Erro inesperado: CustomError
+    at getHistory (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/OpenAI/completion.js:37:15)
+    at completion (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/OpenAI/completion.js:46:20)
+    at MessagePort.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/workers/w-utils.js:16:17)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:820:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28) {
+  logMsg: '°OAI failed while reading history: Error'
+}
+Erro inesperado: CustomError
+    at getHistory (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/OpenAI/completion.js:37:15)
+    at completion (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/OpenAI/completion.js:46:20)
+    at MessagePort.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/dist/workers/w-utils.js:16:17)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:820:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28) {
+  logMsg: '°OAI failed while reading history: Error'
+}
+Error: Failed to play the wav file (3221225786)
+    at ChildProcess.<anonymous> (C:\Users\whisk\Documents\Projetos\VANUSAR\node_modules\.pnpm\node-wav-player@1.0.0\node_modules\node-wav-player\lib\wav-player.js:123:32)
+    at ChildProcess.emit (node:events:519:28)
+    at maybeClose (node:internal/child_process:1105:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:305:5)
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'c:'
+    at throwIfUnsupportedURLScheme (node:internal/modules/esm/load:249:11)
+    at defaultLoad (node:internal/modules/esm/load:130:3)
+    at ModuleLoader.load (node:internal/modules/esm/loader:555:13)
+    at ModuleLoader.moduleProvider (node:internal/modules/esm/loader:434:56)
+    at new ModuleJob (node:internal/modules/esm/module_job:71:27)
+    at ModuleLoader.#createModuleJob (node:internal/modules/esm/loader:447:17)
+    at ModuleLoader.getJobFromResolveResult (node:internal/modules/esm/loader:259:34)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:240:17)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at ModuleLoader.import (node:internal/modules/esm/loader:472:23)
+TypeError: handlers.play_sucess is not a function
+    at Worker.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/src/index.ts:60:28)
+    at Worker.emit (node:events:531:35)
+    at MessagePort.<anonymous> (node:internal/worker:263:53)
+    at MessagePort.[nodejs.internal.kHybridDispatch] (node:internal/event_target:820:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+TypeError: handlers.play_sucess is not a function
+    at Worker.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/src/index.ts:60:28)
+    at Worker.emit (node:events:531:35)
+    at MessagePort.<anonymous> (node:internal/worker:263:53)
+    at MessagePort.[nodejs.internal.kHybridDispatch] (node:internal/event_target:820:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+TypeError: handlers.play_sucess is not a function
+    at Worker.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/src/index.ts:60:28)
+    at Worker.emit (node:events:531:35)
+    at MessagePort.<anonymous> (node:internal/worker:263:53)
+    at MessagePort.[nodejs.internal.kHybridDispatch] (node:internal/event_target:820:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+TypeError: handlers.play_sucess is not a function
+    at Worker.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/src/index.ts:60:28)
+    at Worker.emit (node:events:531:35)
+    at MessagePort.<anonymous> (node:internal/worker:263:53)
+    at MessagePort.[nodejs.internal.kHybridDispatch] (node:internal/event_target:820:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+TypeError: handlers.play_sucess is not a function
+    at Worker.<anonymous> (file:///C:/Users/whisk/Documents/Projetos/VANUSAR/src/index.ts:60:28)
+    at Worker.emit (node:events:531:35)
+    at MessagePort.<anonymous> (node:internal/worker:263:53)
+    at MessagePort.[nodejs.internal.kHybridDispatch] (node:internal/event_target:820:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)

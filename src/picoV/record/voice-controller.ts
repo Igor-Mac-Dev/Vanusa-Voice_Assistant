@@ -62,15 +62,12 @@ export default class VoiceController {
          this.kwDetector.on('PPN_keyword', async kw => {
             this.idleRec.setInfinityOff();
             this.kwDetector.porcupineRelease();
+            console.log('keyword detected: ', kw);
             switch (kw) {
-               // case 3:
-               //     resolve('repeat');
-               //  case 4:
-               //     resolve('repeat_last');
-               case 1:
+               case 3:
                   resolve('repeat');
                   break;
-               case 2:
+               case 4:
                   resolve('repeat_last');
                   break;
                default:

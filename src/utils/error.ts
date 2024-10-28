@@ -5,7 +5,7 @@ export default async function errorLog(err: unknown): Promise<void> {
    const date = new Date(Date.now());
    const now = date.toUTCString();
    fs.appendFile(
-      path.resolve('log/log.txt'),
+      path.resolve('logs/log.txt'),
       `\n ${now} - ERROR: ${err}`,
       er => {
          if (er) {

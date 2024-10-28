@@ -1,0 +1,10 @@
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+TypeError: pm2.launchBus is not a function
+    at file:///C:/Users/whisk/Documents/Projetos/VANUSAR/src/utils/PM2-monitor.ts:4:5
+    at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+    at ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+TypeError: pm2.launchBus is not a function
+    at file:///C:/Users/whisk/Documents/Projetos/VANUSAR/src/utils/PM2-monitor.ts:4:5
+    at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+    at ModuleLoader.import (node:internal/modules/esm/loader:473:24)

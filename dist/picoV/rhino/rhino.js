@@ -1,6 +1,6 @@
 import { Rhino } from '@picovoice/rhino-node';
 import { CustomError } from '../../utils/error.js';
-import * as conf from '../../configuration/conf.js';
+import { readConfigFile } from '../../configuration/conf.js';
 import { EventEmitter } from 'events';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -8,7 +8,7 @@ export default class RhinoSti extends EventEmitter {
     constructor() {
         super();
         this.intentDetector = {};
-        this.config = conf.readConfigFile();
+        this.config = readConfigFile();
         this.modelPath = undefined;
         this.intent = {
             intent: '',
@@ -33,10 +33,10 @@ export default class RhinoSti extends EventEmitter {
         try {
             for (let i = 0; i < this.rhinos.length; i++) {
                 if (this.compositeCmds.includes(i)) {
-                    this.intentDetector[`!${i}rhin`] = new Rhino(this.config.PV_KEY, this.rhinos[i], this.config.SENSITIVITY[0], 0.6, true, this.modelPath);
+                    this.intentDetector[`!${i}rhin`] = new Rhino(this.config.PV_KEY, this.rhinos[i], this.config.SENSITIVITY, 0.9, true, this.modelPath);
                 }
                 else {
-                    this.intentDetector[`${i}rhin`] = new Rhino(this.config.PV_KEY, this.rhinos[i], this.config.SENSITIVITY[0], 0.6, true, this.modelPath);
+                    this.intentDetector[`${i}rhin`] = new Rhino(this.config.PV_KEY, this.rhinos[i], this.config.SENSITIVITY, 0.9, true, this.modelPath);
                 }
             }
         }
