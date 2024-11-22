@@ -1,4 +1,4 @@
-import player from 'node-wav-player';
+import player from 'node-wav-player-optimized';
 export async function audioPlayer(file) {
     await player.play({
         path: file,

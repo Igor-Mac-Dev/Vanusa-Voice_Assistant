@@ -3,11 +3,11 @@ import PorcupineDetector from '../porcupin.js';
 import CobraDetector from '../cobra.js';
 import RecordHolder from './record-holder.js';
 import RhinoSti from '../rhino/rhino.js';
-import * as conf from '../../configuration/conf.js';
+import { readConfigFile } from '../../configuration/conf.js';
 import makeWav from '../../utils/wav-maker.js';
 export default class VoiceController {
     constructor() {
-        this.config = conf.readConfigFile();
+        this.config = readConfigFile();
         this.idleRec = new FramesEmitter(this.config.FRAME_LENGHT, this.config.SAMPLE_RATE, true, 0, this.config.SELECTED_DEVICE);
         this.sttRec = new FramesEmitter(this.config.FRAME_LENGHT, this.config.SAMPLE_RATE, false, this.config.RECORD_TIME, this.config.SELECTED_DEVICE);
         this.kwDetector = new PorcupineDetector(1);
@@ -18,7 +18,15 @@ export default class VoiceController {
         //////////////////////////////////////////////////////////////////////////////
     }
     getIntent() {
-        return [this.rhino.getIntent()[0], this.rhino.getIntent()[1]];
+        return this.rhino.getIntent();
+    }
+    removeAllListeners() {
+        this.idleRec.removeAllListeners();
+        this.sttRec.removeAllListeners();
+        this.kwDetector.removeAllListeners();
+        this.cancelDetector.removeAllListeners();
+        this.cobra.removeAllListeners();
+        this.rhino.removeAllListeners();
     }
     async start() {
         return new Promise(resolve => {
@@ -30,20 +38,22 @@ export default class VoiceController {
     async idlePhase() {
         return new Promise(resolve => {
             this.phase = 'idle';
+            this.idleRec.setInfinityOn();
             this.idleRec.startFramesEmittion();
-            this.idleRec.on('REC_start', () => {
+            this.idleRec.once('REC_start', () => {
                 this.kwDetector.porcupineInit();
             });
             this.idleRec.on('frame', frame => {
                 this.kwDetector.processFrame(frame);
             });
-            this.idleRec.on('REC_failed', err => {
+            this.idleRec.once('REC_failed', err => {
+                clearTimeout(memoryMercy);
                 throw err;
             });
-            this.kwDetector.on('PPN_keyword', async (kw) => {
+            this.kwDetector.once('PPN_keyword', async (kw) => {
+                clearTimeout(memoryMercy);
                 this.idleRec.setInfinityOff();
                 this.kwDetector.porcupineRelease();
-                console.log('keyword detected: ', kw);
                 switch (kw) {
                     case 3:
                         resolve('repeat');
@@ -56,6 +66,11 @@ export default class VoiceController {
                         break;
                 }
             });
+            const memoryMercy = setTimeout(() => {
+                this.idleRec.setInfinityOff();
+                this.kwDetector.porcupineRelease();
+                resolve('loop');
+            }, 600000);
         });
     }
     //////////////////////////////////////////////////////////////////////////////
@@ -63,8 +78,7 @@ export default class VoiceController {
         return new Promise(resolve => {
             this.phase = 'record';
             this.sttRec.startFramesEmittion();
-            this.sttRec.on('REC_start', () => {
-                this.rec.clearRecord();
+            this.sttRec.once('REC_start', () => {
                 this.cobra.cobraInit();
                 this.cancelDetector.porcupineInit();
             });
@@ -74,26 +88,30 @@ export default class VoiceController {
                 this.cobra.processFrame(frame);
                 this.cancelDetector.processFrame(frame);
             });
-            this.sttRec.on('REC_failed', err => {
+            this.sttRec.once('REC_failed', err => {
+                console.error('REC_failed: ', err);
                 throw err;
             });
-            this.cancelDetector.on('PPN_keyword', () => {
+            this.cancelDetector.once('PPN_keyword', () => {
                 this.sttRec.stopTimedRecording();
                 this.cobra.cobraRelease();
                 this.cancelDetector.porcupineRelease();
                 resolve('cancel');
             });
-            this.cobra.on('COBRA_stoped_talk', async () => {
+            this.cobra.once('COBRA_stoped_talk', async () => {
                 this.sttRec.stopTimedRecording();
                 this.rec.setRecordL();
-                await makeWav(this.rec.getRecordL());
+                if (this.config.STT_ENGINE === 'Whisper')
+                    await makeWav(this.rec.getRecordL());
                 this.cobra.cobraRelease();
                 this.cancelDetector.porcupineRelease();
                 resolve('stt');
             });
-            this.rhino.on('RHINO_cmd', () => {
+            this.rhino.once('RHINO_cmd', () => {
                 this.sttRec.stopTimedRecording();
-                resolve('cmd'); //logica composit ak
+                this.cobra.cobraRelease();
+                this.cancelDetector.porcupineRelease();
+                resolve('cmd');
             });
         });
     }
@@ -102,17 +120,23 @@ export default class VoiceController {
         return new Promise(resolve => {
             this.phase = 'wait';
             this.idleRec.startFramesEmittion();
-            this.idleRec.on('REC_start', () => {
+            this.idleRec.once('REC_start', () => {
                 this.cancelDetector.porcupineInit();
             });
             this.idleRec.on('frame', frame => {
                 this.cancelDetector.processFrame(frame);
             });
-            this.cancelDetector.on('PPN_keyword', async () => {
+            this.cancelDetector.once('PPN_keyword', async () => {
+                clearTimeout(memoryMercy);
                 this.idleRec.setInfinityOff();
                 this.cancelDetector.porcupineRelease();
                 resolve('cancel');
             });
+            const memoryMercy = setTimeout(() => {
+                this.idleRec.setInfinityOff();
+                this.kwDetector.porcupineRelease();
+                resolve('loop');
+            }, 600000);
         });
     }
     //////////////////////////////////////////////////////////////////////////////
@@ -120,64 +144,43 @@ export default class VoiceController {
         return new Promise(resolve => {
             this.phase = 'compositeRecord';
             this.sttRec.startFramesEmittion();
-            this.sttRec.on('REC_start', () => {
-                this.rec.clearRecord();
+            this.sttRec.once('REC_start', () => {
                 this.cobra.cobraInit();
                 this.cancelDetector.porcupineInit();
             });
             this.sttRec.on('frame', frame => {
                 this.rec.addRecord(frame);
-                this.rhino.processAudio(frame);
                 this.cobra.processFrame(frame);
                 this.cancelDetector.processFrame(frame);
             });
-            this.sttRec.on('REC_failed', err => {
+            this.sttRec.once('REC_failed', err => {
                 throw err;
             });
-            this.cancelDetector.on('PPN_keyword', () => {
+            this.cancelDetector.once('PPN_keyword', () => {
                 this.sttRec.stopTimedRecording();
                 this.cobra.cobraRelease();
                 this.cancelDetector.porcupineRelease();
                 resolve('cancel');
             });
-            this.cobra.on('COBRA_stoped_talk', async () => {
+            this.cobra.once('COBRA_stoped_talk', async () => {
                 this.sttRec.stopTimedRecording();
                 this.rec.setRecordL();
-                await makeWav(this.rec.getRecordL());
+                if (this.config.STT_ENGINE === 'Whisper')
+                    await makeWav(this.rec.getRecordL());
                 this.cobra.cobraRelease();
                 this.cancelDetector.porcupineRelease();
-                resolve('stt');
+                resolve('composite');
             });
         });
     }
     //////////////////////////////////////////////////////////////////////////////
-    async cancel(turnoff) {
+    async turnoff() {
         return new Promise(resolve => {
-            switch (this.phase) {
-                case 'idle':
-                    this.idleRec.setInfinityOff();
-                    this.kwDetector.porcupineRelease();
-                    break;
-                case 'record':
-                    this.sttRec.stopTimedRecording();
-                    this.cobra.cobraRelease();
-                    this.cancelDetector.porcupineRelease();
-                    this.rec.clearRecord();
-                    break;
-                case 'wait':
-                    this.idleRec.setInfinityOff();
-                    this.cancelDetector.porcupineRelease();
-                    break;
-                case 'compositeRecord':
-                    this.sttRec.stopTimedRecording();
-                    this.cobra.cobraRelease();
-                    this.cancelDetector.porcupineRelease();
-                    this.rec.clearRecord();
-                    break;
-            }
-            if (turnoff) {
-                this.rhino.rhinoRelease();
-            }
+            this.idleRec.setInfinityOff();
+            this.cancelDetector.porcupineRelease();
+            this.rhino.rhinoRelease();
+            console.log('Turned off');
+            resolve('finish');
         });
     }
 }

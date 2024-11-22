@@ -1,5 +1,5 @@
 import { CustomError } from '../../utils/error.js';
-import * as conf from '../../configuration/conf.js';
+import { readConfigFile } from '../../configuration/conf.js';
 import * as interfaces from '../../interfaces/config-json.js';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -13,6 +13,17 @@ export default function rhinoHandler(
       throw new CustomError('°Rhino handler: ' + err);
    }
 }
+
+// {
+//   intent: "orderBeverage",
+//   slots: {
+//     bebida: "café"
+//     tamanho: "grande"
+//     dose: "duplo"
+//   }
+// }
+
+//[ { intent: 'Explica', slot: '{}' }, false ]
 
 // Função para gerar o timestamp atual
 function getCurrentTimestamp(): string {

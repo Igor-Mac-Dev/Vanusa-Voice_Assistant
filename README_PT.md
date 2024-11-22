@@ -126,4 +126,5 @@ Este projeto está em sua versão inicial (0.0.1). Feedbacks e contribuições s
 bem-vindos! Se encontrar algum problema ou tiver sugestões, sinta-se à vontade
 para abrir uma _issue_ ou enviar um _pull request_.
 
-**Licença**: Este projeto é licenciado sob a AGPL-3.0.
+**Licença**: Este projeto é licenciado sob a AGPL-3.0. **Termos de uso**:
+[Aqui](https://github.com/Igor-Mac-Dev/teste/blob/main/TERMS_PT.md)

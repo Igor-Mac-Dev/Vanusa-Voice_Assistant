@@ -7,6 +7,15 @@ export default function rhinoHandler(cmd, composite) {
         throw new CustomError('°Rhino handler: ' + err);
     }
 }
+// {
+//   intent: "orderBeverage",
+//   slots: {
+//     bebida: "café"
+//     tamanho: "grande"
+//     dose: "duplo"
+//   }
+// }
+//[ { intent: 'Explica', slot: '{}' }, false ]
 // Função para gerar o timestamp atual
 function getCurrentTimestamp() {
     const now = new Date();

@@ -1,74 +1,104 @@
-import { handlers, awaitWorkerOk, control, tts, speaker, utils, red, } from './workers/workers-handler.js';
+//  * Licensed under the  GNU AFFERO GENERAL PUBLIC LICENSE, Version 3, 19 November 2007
+//  * you may not use this file except in compliance with the License.
+//  * You may obtain a copy of the License at
+//  *
+//  * https://www.gnu.org/licenses/agpl-3.0.en.html
+import { handlers } from './workers/workers-handler.js';
+import errorLog from './utils/error.js';
 import process from 'node:process';
-process.on('unhandledRejection', (reason, promise) => {
-    handlers.error('Promise rejected without catch:' + promise + ' ' + reason);
-});
 (async () => {
     try {
         await main();
     }
     catch (e) {
-        handlers.error(e);
+        errorLog(e);
+        handlers.play_err();
     }
 })();
+let mPhase = 'start';
+const wwHandler = async (ww) => {
+    switch (ww) {
+        case 'record':
+            await handlers.play_sucess();
+            mPhase = 'record';
+            const input = await handlers.record();
+            console.log('input', input);
+            goIdle();
+            break;
+        case 'repeat':
+            handlers.play_output();
+            break;
+        case 'repeat_last':
+            handlers.play_last();
+            break;
+        case 'cancel':
+            handlers.abort();
+            break;
+        case 'loop':
+            goIdle();
+            break;
+        default:
+            console.log('Unknown message from control worker');
+            break;
+    }
+};
+const goIdle = async () => {
+    const wakeWord = await handlers.idle();
+    mPhase = 'idle';
+    setTimeout(() => {
+        wwHandler(wakeWord);
+    }, 10);
+};
+const goWait = async () => {
+    const cancel = await handlers.wait();
+    if (cancel === 'cancel') {
+        goIdle();
+    }
+    else if (cancel === 'loop') {
+        goWait();
+    }
+};
 async function main() {
-    let mPhase = 'start';
-    let vPhase = null;
-    handlers.start();
-    const [controllOk, redOk] = await Promise.all([
-        awaitWorkerOk(control),
-        awaitWorkerOk(red),
-    ]);
-    if (controllOk === 'started' && redOk === 'started') {
+    const start = await handlers.start();
+    console.log('startAAAAAAAAAAAAA');
+    if (start === 'started') {
         handlers.play_start();
-        console.log('Control & Red init ok.');
-        mPhase = 'idle';
-        vPhase = 'idle';
-        handlers.idle();
+        goIdle();
     }
-    else {
-        throw new Error('Control & Red init failed.');
-    }
-    control.on('message', async (message) => {
-        switch (message) {
-            case 'record':
-                await handlers.sucess();
-                mPhase = 'record';
-                vPhase = 'record';
-                handlers.record();
-                control.once('message', message => {
-                    console.log(' Received:', message);
-                    handlers.stt(message);
-                });
-                break;
-            case 'repeat':
-                handlers.play_output();
-                break;
-            case 'repeat_last':
-                handlers.play_last();
-                break;
-            default:
-                console.log('Unknown message from control worker: ' + message);
-                break;
-        }
-        // stt.on('message', message => {
-        //    utils.postMessage(['completion', message.text]);
-        // });
-        utils.on('message', message => {
-            console.log('utils parent Received: ', message);
-            if (message[0] === 'completion') {
-                tts.postMessage(['tts', message[1]]);
-            }
-        });
-        tts.on('message', message => {
-            console.log('tts parent Received: ', message);
-            speaker.postMessage('play');
-        });
+    // stt.on('message', message => {
+    //    completion(event[1])
+    // .then(result => {
+    //    parentPort?.postMessage(['completion', result]);
+    // })
+    // .catch(err => {
+    //    parentPort?.postMessage(['error', err]);
+    // });
+    // tts.postMessage(['tts', message[1]]);
+    // });
+    // tts.on('message', message => {
+    //    console.log('tts parent Received: ', message);
+    //    addToQueue('play');
+    // });
+    process.on('unhandledRejection', (reason, promise) => {
+        errorLog('Promise rejected without catch:' + promise + ' ' + reason);
+        console.log(process.listenerCount('message') + ' listeners');
+        process.abort();
     });
-    console.log('Main loop started.');
 }
 // controll.on('message', message => {
 //    console.log('controll parent Received: ', message);
 // });
 // function start(): void {}
+// ,---.
+// /__./|                     ,---,           ,--,
+// ,---.;  ; |                 ,-+-. /  |        ,'_ /|    .--.--.
+// /___/ \  | |    ,--.--.     ,--.'|'   |   .--. |  | :   /  /    '      ,--.--.
+// \   ;  \ ' |   /       \   |   |  ,"' | ,'_ /| :  . |  |  :  /`./     /       \
+// \   \  \: |  .--.  .-. |  |   | /  | | |  ' | |  . .  |  :  ;_      .--.  .-. |
+// ;   \  ' .   \__\/: . .  |   | |  | | |  | ' |  | |   \  \    `.    \__\/: . .
+// \   \   '   ," .--.; |  |   | |  |/  :  | : ;  ; |    `----.   \   ," .--.; |
+// \   `  ;  /  /  ,.  |  |   | |--'   '  :  `--'   \  /  /`--'  /  /  /  ,.  |
+// :   \ | ;  :   .'   \ |   |/       :  ,      .-./ '--'.     /  ;  :   .'   \
+// '---"  |  ,     .-./ '---'         `--`----'       `--'---'   |  ,     .-./
+//         `--`---'                                               `--`---'
 //# sourceMappingURL=index.js.map

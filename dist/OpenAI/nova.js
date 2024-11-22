@@ -1,9 +1,9 @@
 import OpenAI from 'openai';
-import * as conf from '../configuration/conf.js';
+import { readConfigFile } from '../configuration/conf.js';
 import makeWav from '../utils/wav-maker.js';
 export default async function novaTts(text) {
     try {
-        const config = conf.readConfigFile();
+        const config = readConfigFile();
         const openai = new OpenAI({ apiKey: config.OAI_KEY });
         const output = await openai.audio.speech.create({
             model: 'tts-1',

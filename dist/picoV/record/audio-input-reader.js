@@ -12,10 +12,12 @@ export default class AudioInputReader extends EventEmitter {
         this.device = device;
         this.frameDuration = this.frameLength / this.sampleRate;
         this.calcFramesToRead = Math.floor(this.durationInSeconds / this.frameDuration);
+        this.fixedFramesToRead = this.calcFramesToRead;
     }
     recorderInit() {
         try {
             this.recorder = {};
+            this.calcFramesToRead = this.fixedFramesToRead;
             this.recorder = new PvRecorder(this.frameLength, this.device);
         }
         catch (err) {

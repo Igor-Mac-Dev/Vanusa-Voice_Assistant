@@ -46,7 +46,12 @@ npm install --production
 
 if not exist ".\logs" (
     echo Creating dir ./log...
-    mkdir .\log
+    mkdir .\logs
+) 
+
+if not exist ".\" (
+    echo Creating dir ./log...
+    mkdir .\logs
 ) 
 
 if not exist ".\dist\process-files" (

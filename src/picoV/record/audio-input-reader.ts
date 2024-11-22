@@ -11,6 +11,7 @@ export default class AudioInputReader extends EventEmitter {
    private frameDuration: number;
    protected calcFramesToRead: number;
    private device: number;
+   protected fixedFramesToRead: number;
 
    constructor(
       frameLength: number = 512,
@@ -29,11 +30,13 @@ export default class AudioInputReader extends EventEmitter {
       this.calcFramesToRead = Math.floor(
          this.durationInSeconds / this.frameDuration,
       );
+      this.fixedFramesToRead = this.calcFramesToRead;
    }
 
    protected recorderInit(): void {
       try {
          this.recorder = {};
+         this.calcFramesToRead = this.fixedFramesToRead;
          this.recorder = new PvRecorder(this.frameLength, this.device);
       } catch (err) {
          throw new CustomError('°Record failed to init:' + err);

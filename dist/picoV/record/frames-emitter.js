@@ -43,7 +43,7 @@ export default class FramesEmitter extends AudioInputReader {
             }
         }
         catch (err) {
-            this.emit('REC_failed', new CustomError('°Record emission failed a: ' + err));
+            this.emit('REC_failed', new CustomError('°Record emission failed: ' + err));
         }
         this.stopRecording();
         this.recorderRelease();
@@ -56,7 +56,11 @@ export default class FramesEmitter extends AudioInputReader {
         this.infinity = false;
     }
     stopTimedRecording() {
+        const holder = this.calcFramesToRead;
         this.calcFramesToRead = 0;
+        setTimeout(() => {
+            this.calcFramesToRead = holder;
+        }, 100);
     }
 }
 //# sourceMappingURL=frames-emitter.js.map

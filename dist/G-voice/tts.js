@@ -32,13 +32,13 @@ export default async function gTts(text) {
         return new Promise((resolve, reject) => {
             ffmpeg(mp3FilePath)
                 .toFormat('wav')
-                .on('end', () => {
+                .once('end', () => {
                 if (fs.existsSync(mp3FilePath)) {
                     fs.rmSync(mp3FilePath);
                 }
                 resolve();
             })
-                .on('error', (err) => {
+                .once('error', (err) => {
                 console.error('Error during wav conversion:', err);
                 reject(err);
             })

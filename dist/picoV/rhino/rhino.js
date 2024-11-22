@@ -12,7 +12,7 @@ export default class RhinoSti extends EventEmitter {
         this.modelPath = undefined;
         this.intent = {
             intent: '',
-            slot: '',
+            slots: '',
         };
         this.isComposite = false;
         const rhinosArray = fs.readdirSync(path.resolve('assets/models/Rhino/' + this.config.LANGUAGE));
@@ -46,10 +46,10 @@ export default class RhinoSti extends EventEmitter {
     }
     processAudio(frame) {
         try {
-            for (const [name, rhino] of Object.entries(this.intentDetector)) {
-                const result = rhino.process(frame);
+            for (const [name, Rhino] of Object.entries(this.intentDetector)) {
+                const result = Rhino.process(frame);
                 if (result) {
-                    const inference = rhino.getInference();
+                    const inference = Rhino.getInference();
                     if (inference.intent) {
                         this.intent.intent = inference.intent;
                         if (name.substring(0, 1) === '!') {
@@ -59,7 +59,7 @@ export default class RhinoSti extends EventEmitter {
                             this.isComposite = false;
                         }
                         if (inference.slots) {
-                            this.intent.slot = JSON.stringify(inference.slots);
+                            this.intent.slots = JSON.stringify(inference.slots);
                         }
                         this.emit('RHINO_cmd', this.intent);
                     }
@@ -75,8 +75,11 @@ export default class RhinoSti extends EventEmitter {
             this.intent,
             this.isComposite,
         ];
-        this.intentDetector = {};
         this.isComposite = false;
+        this.intent = {
+            intent: '',
+            slots: '',
+        };
         return result;
     }
     rhinoRelease() {

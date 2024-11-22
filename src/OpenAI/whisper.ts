@@ -1,12 +1,12 @@
 import OpenAI from 'openai';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as conf from '../configuration/conf.js';
+import { readConfigFile } from '../configuration/conf.js';
 import * as interfaces from '../interfaces/config-json.js';
 
 export default async function whisperStt(): Promise<string> {
    try {
-      const config: interfaces.config = conf.readConfigFile();
+      const config: interfaces.config = readConfigFile();
       const openai = new OpenAI({ apiKey: config.OAI_KEY });
       const wavFilePath = path.join(
          path.resolve('dist/process-files'),
@@ -15,6 +15,7 @@ export default async function whisperStt(): Promise<string> {
       const transcription = await openai.audio.transcriptions.create({
          file: fs.createReadStream(wavFilePath),
          model: 'whisper-1',
+         language: config.LANGUAGE,
       });
 
       return transcription.text;

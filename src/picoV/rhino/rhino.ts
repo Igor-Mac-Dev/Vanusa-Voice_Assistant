@@ -12,9 +12,9 @@ export default class RhinoSti extends EventEmitter {
    protected intentDetector: { [name: string]: Rhino } = {};
    protected config: interfaces.config = readConfigFile();
    protected modelPath: string | undefined = undefined;
-   protected intent: { intent: string; [slot: string]: string } = {
+   protected intent: { intent: string; [slots: string]: string } = {
       intent: '',
-      slot: '',
+      slots: '',
    };
    protected isComposite: boolean = false;
    constructor() {
@@ -73,10 +73,10 @@ export default class RhinoSti extends EventEmitter {
 
    public processAudio(frame: Int16Array): void {
       try {
-         for (const [name, rhino] of Object.entries(this.intentDetector)) {
-            const result = rhino.process(frame);
+         for (const [name, Rhino] of Object.entries(this.intentDetector)) {
+            const result = Rhino.process(frame);
             if (result) {
-               const inference = rhino.getInference();
+               const inference = Rhino.getInference();
                if (inference.intent) {
                   this.intent.intent = inference.intent;
                   if (name.substring(0, 1) === '!') {
@@ -85,7 +85,7 @@ export default class RhinoSti extends EventEmitter {
                      this.isComposite = false;
                   }
                   if (inference.slots) {
-                     this.intent.slot = JSON.stringify(inference.slots);
+                     this.intent.slots = JSON.stringify(inference.slots);
                   }
                   this.emit('RHINO_cmd', this.intent);
                }
@@ -101,8 +101,11 @@ export default class RhinoSti extends EventEmitter {
          this.intent,
          this.isComposite,
       ];
-      this.intentDetector = {};
       this.isComposite = false;
+      this.intent = {
+         intent: '',
+         slots: '',
+      };
       return result;
    }
 

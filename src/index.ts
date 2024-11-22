@@ -1,30 +1,25 @@
+//  * Licensed under the  GNU AFFERO GENERAL PUBLIC LICENSE, Version 3, 19 November 2007
+//  * you may not use this file except in compliance with the License.
+//  * You may obtain a copy of the License at
+//  *
+//  * https://www.gnu.org/licenses/agpl-3.0.en.html
+
 import { readConfigFile } from './configuration/conf.js';
-import {
-   handlers,
-   awaitWorkerOk,
-   control,
-   stt,
-   tts,
-   speaker,
-   utils,
-   red,
-} from './workers/workers-handler.js';
+import { handlers } from './workers/workers-handler.js';
+import errorLog from './utils/error.js';
 import { stopPm2 } from './utils/PM2-task-menager.js';
 import process from 'node:process';
-
-process.on('unhandledRejection', (reason, promise) => {
-   handlers.error('Promise rejected without catch:' + promise + ' ' + reason);
-});
+import completion from './OpenAI/completion.js';
 
 (async (): Promise<void> => {
    try {
       await main();
    } catch (e) {
-      handlers.error(e);
+      errorLog(e);
+      handlers.play_err();
    }
 })();
 
-type voicePhases = 'idle' | 'record' | 'wait' | 'compositeRecord' | null;
 type mainPhases =
    | 'start'
    | 'idle'
@@ -33,66 +28,83 @@ type mainPhases =
    | 'compositeRecord'
    | 'stt'
    | 'tts'
-   | 'cmd';
+   | 'cmd'
+   | 'turnoff';
+let mPhase: mainPhases = 'start';
+
+const wwHandler = async (ww: string) => {
+   switch (ww) {
+      case 'record':
+         await handlers.play_sucess();
+         mPhase = 'record';
+         const input = await handlers.record();
+         console.log('input', input);
+         goIdle();
+         break;
+      case 'repeat':
+         handlers.play_output();
+         break;
+      case 'repeat_last':
+         handlers.play_last();
+         break;
+      case 'cancel':
+         handlers.abort();
+         break;
+      case 'loop':
+         goIdle();
+         break;
+      default:
+         console.log('Unknown message from control worker');
+         break;
+   }
+};
+
+const goIdle = async () => {
+   const wakeWord: string = await handlers.idle();
+   mPhase = 'idle';
+   setTimeout(() => {
+      wwHandler(wakeWord);
+   }, 10);
+};
+
+const goWait = async () => {
+   const cancel = await handlers.wait();
+   if (cancel === 'cancel') {
+      goIdle();
+   } else if (cancel === 'loop') {
+      goWait();
+   }
+};
 
 async function main(): Promise<void> {
-   let mPhase: mainPhases = 'start';
-   let vPhase: voicePhases = null;
-
-   handlers.start();
-   const [controllOk, redOk] = await Promise.all([
-      awaitWorkerOk(control),
-      awaitWorkerOk(red),
-   ]);
-   if (controllOk === 'started' && redOk === 'started') {
+   const start = await handlers.start();
+   console.log('startAAAAAAAAAAAAA');
+   if (start === 'started') {
       handlers.play_start();
-      console.log('Control & Red init ok.');
-      mPhase = 'idle';
-      vPhase = 'idle';
-      handlers.idle();
-   } else {
-      throw new Error('Control & Red init failed.');
+      goIdle();
    }
 
-   control.on('message', async message => {
-      switch (message) {
-         case 'record':
-            await handlers.sucess();
-            mPhase = 'record';
-            vPhase = 'record';
-            handlers.record();
-            control.once('message', message => {
-               console.log(' Received:', message);
-               handlers.stt(message);
-            });
-            break;
-         case 'repeat':
-            handlers.play_output();
-            break;
-         case 'repeat_last':
-            handlers.play_last();
-            break;
-         default:
-            console.log('Unknown message from control worker: ' + message);
-            break;
-      }
+   // stt.on('message', message => {
+   //    completion(event[1])
+   // .then(result => {
+   //    parentPort?.postMessage(['completion', result]);
+   // })
+   // .catch(err => {
+   //    parentPort?.postMessage(['error', err]);
+   // });
+   // tts.postMessage(['tts', message[1]]);
+   // });
 
-      // stt.on('message', message => {
-      //    utils.postMessage(['completion', message.text]);
-      // });
+   // tts.on('message', message => {
+   //    console.log('tts parent Received: ', message);
+   //    addToQueue('play');
+   // });
 
-      utils.on('message', message => {
-         console.log('utils parent Received: ', message);
-         if (message[0] === 'completion') {
-            tts.postMessage(['tts', message[1]]);
-         }
-      });
-      tts.on('message', message => {
-         console.log('tts parent Received: ', message);
-         speaker.postMessage('play');
-      });
+   process.on('unhandledRejection', (reason, promise) => {
+      errorLog('Promise rejected without catch:' + promise + ' ' + reason);
+      console.log(process.listenerCount('message') + ' listeners');
+      process.abort();
    });
-   console.log('Main loop started.');
 }
 
 // controll.on('message', message => {
@@ -100,3 +112,16 @@ async function main(): Promise<void> {
 // });
 
 // function start(): void {}
+
+// ,---.
+// /__./|                     ,---,           ,--,
+// ,---.;  ; |                 ,-+-. /  |        ,'_ /|    .--.--.
+// /___/ \  | |    ,--.--.     ,--.'|'   |   .--. |  | :   /  /    '      ,--.--.
+// \   ;  \ ' |   /       \   |   |  ,"' | ,'_ /| :  . |  |  :  /`./     /       \
+// \   \  \: |  .--.  .-. |  |   | /  | | |  ' | |  . .  |  :  ;_      .--.  .-. |
+// ;   \  ' .   \__\/: . .  |   | |  | | |  | ' |  | |   \  \    `.    \__\/: . .
+// \   \   '   ," .--.; |  |   | |  |/  :  | : ;  ; |    `----.   \   ," .--.; |
+// \   `  ;  /  /  ,.  |  |   | |--'   '  :  `--'   \  /  /`--'  /  /  /  ,.  |
+// :   \ | ;  :   .'   \ |   |/       :  ,      .-./ '--'.     /  ;  :   .'   \
+// '---"  |  ,     .-./ '---'         `--`----'       `--'---'   |  ,     .-./
+//         `--`---'                                               `--`---'

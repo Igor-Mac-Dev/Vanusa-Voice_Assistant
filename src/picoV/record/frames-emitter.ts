@@ -49,7 +49,7 @@ export default class FramesEmitter extends AudioInputReader {
       } catch (err) {
          this.emit(
             'REC_failed',
-            new CustomError('°Record emission failed a: ' + err),
+            new CustomError('°Record emission failed: ' + err),
          );
       }
       this.stopRecording();
@@ -65,6 +65,10 @@ export default class FramesEmitter extends AudioInputReader {
    }
 
    public stopTimedRecording(): void {
+      const holder = this.calcFramesToRead;
       this.calcFramesToRead = 0;
+      setTimeout(() => {
+         this.calcFramesToRead = holder;
+      }, 100);
    }
 }

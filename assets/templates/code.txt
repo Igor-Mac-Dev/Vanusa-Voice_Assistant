@@ -1,0 +1,4 @@
+{
+    "code1": "requested code, create more items if necessary (code2, etc.)",
+    "msg": "message to be played for the user"
+}

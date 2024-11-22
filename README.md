@@ -1,6 +1,4 @@
-Aqui está a tradução para o inglês da versão final:
-
----
+### [Versão BR](https://github.com/Igor-Mac-Dev/teste/blob/main/README_PT.md)
 
 # Vanusa - Voice Assistant
 
@@ -16,7 +14,7 @@ the background on your computer, with a graphical interface to customize
 settings like language, speech sensitivity, text-to-speech (TTS) engines, and
 speech recognition (STT). Available in English and Portuguese, Vanusa activates
 with a keyword, simplifying your daily tasks with powerful commands and
-automations.
+automations. [This github issue](https://github.com/Unitech/pm2/issues/2182)
 
 ## 📌 Key Features
 
@@ -127,4 +125,5 @@ This project is in its initial version (0.0.1). Feedback and contributions are
 welcome! If you encounter any issues or have suggestions, feel free to open an
 issue or submit a pull request.
 
-**License**: This project is licensed under the AGPL-3.0.
+**License**: This project is licensed under the AGPL-3.0. **Terms of use**:
+[Here](https://github.com/Igor-Mac-Dev/teste/blob/main/TERMS.md).

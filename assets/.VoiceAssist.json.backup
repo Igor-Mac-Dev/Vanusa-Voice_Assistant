@@ -10,7 +10,7 @@
     {
         "id": "9dca3b73347bd783",
         "type": "websocket-listener",
-        "path": "ws://localhost:8001",
+        "path": "ws://localhost:8300",
         "wholemsg": "true"
     },
     {
@@ -20,8 +20,8 @@
         "name": "send to Vanusa",
         "server": "9dca3b73347bd783",
         "client": "",
-        "x": 1460,
-        "y": 380,
+        "x": 2820,
+        "y": 360,
         "wires": []
     },
     {
@@ -31,8 +31,8 @@
         "name": "Vanusa-input",
         "server": "9dca3b73347bd783",
         "client": "",
-        "x": 110,
-        "y": 460,
+        "x": 90,
+        "y": 260,
         "wires": [
             [
                 "1b6343ed3138ab30",
@@ -53,7 +53,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 320,
+        "x": 380,
         "y": 660,
         "wires": []
     },
@@ -78,26 +78,11 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 600,
+        "x": 940,
         "y": 300,
         "wires": [
             [
                 "c02105d86d4e734d",
-                "897da9b390c11c60"
-            ]
-        ]
-    },
-    {
-        "id": "1bec2386aa32893d",
-        "type": "catch",
-        "z": "60125a0ab74411c0",
-        "name": "",
-        "scope": null,
-        "uncaught": false,
-        "x": 1240,
-        "y": 240,
-        "wires": [
-            [
                 "897da9b390c11c60"
             ]
         ]
@@ -144,7 +129,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1040,
+        "x": 1700,
         "y": 220,
         "wires": []
     },
@@ -160,7 +145,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 660,
+        "x": 1000,
         "y": 200,
         "wires": [
             [
@@ -200,8 +185,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 4,
-        "x": 430,
-        "y": 460,
+        "x": 890,
+        "y": 440,
         "wires": [
             [
                 "98f6f1cba99481d6"
@@ -223,7 +208,7 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1120,
+        "x": 1780,
         "y": 540,
         "wires": []
     },
@@ -246,7 +231,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 890,
+        "x": 1550,
         "y": 420,
         "wires": [
             [
@@ -267,11 +252,125 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 280,
-        "y": 460,
+        "x": 360,
+        "y": 440,
         "wires": [
             [
                 "222f2b2fb165223a"
+            ]
+        ]
+    },
+    {
+        "id": "9815fcb52baa10d6",
+        "type": "inject",
+        "z": "60125a0ab74411c0",
+        "name": "Port_Config",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "2",
+        "topic": "",
+        "payload": ".",
+        "payloadType": "str",
+        "x": 130,
+        "y": 840,
+        "wires": [
+            [
+                "f0eb6ab4cbb4c789"
+            ]
+        ]
+    },
+    {
+        "id": "a4d8afc4a4abb47d",
+        "type": "function",
+        "z": "60125a0ab74411c0",
+        "name": "Port_Setter",
+        "func": "const newPort = msg.payload; // Porta nova lida do RED-port.txt\n\n// Obter configuração dos fluxos\nconst optionsGet = {\n    url: 'http://localhost:1880/flows',\n    method: 'GET',\n    headers: { 'Content-Type': 'application/json' }\n};\n\nnode.send({ payload: newPort, portUpdate: true });\n\nreturn optionsGet;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 130,
+        "y": 1000,
+        "wires": [
+            [
+                "d9931721891e96bf"
+            ]
+        ]
+    },
+    {
+        "id": "d9931721891e96bf",
+        "type": "debug",
+        "z": "60125a0ab74411c0",
+        "name": "Port_Debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 130,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "211ecd9331e76c10",
+        "type": "debug",
+        "z": "60125a0ab74411c0",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "ec038a7312b6868d",
+        "type": "catch",
+        "z": "60125a0ab74411c0",
+        "name": "",
+        "scope": null,
+        "uncaught": false,
+        "x": 400,
+        "y": 740,
+        "wires": [
+            [
+                "211ecd9331e76c10"
+            ]
+        ]
+    },
+    {
+        "id": "f0eb6ab4cbb4c789",
+        "type": "file in",
+        "z": "60125a0ab74411c0",
+        "name": "Port_Reader",
+        "filename": "./dist/process-files/RED-port.txt",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 130,
+        "y": 920,
+        "wires": [
+            [
+                "a4d8afc4a4abb47d"
             ]
         ]
     }

@@ -1,27 +1,51 @@
 import { parentPort } from 'worker_threads';
 import { WebSocketServer } from 'ws';
 import * as portfinder from 'portfinder';
+import fs from 'fs';
+import path from 'path';
 let redServer = null;
 let connectedClient = null;
 parentPort?.on('message', async (message) => {
+    let sig;
     console.log('red child Received:', message);
-    const sig = await switchServer(message);
-    sendParent(sig);
-});
-async function switchServer(input) {
-    switch (input[0]) {
+    switch (message) {
         case 'start':
-            return await startServer();
-        case 'send':
-            if (input[1]) {
-                return await sendRedMessage(input[1]);
-            }
-            return 'Red server called with invalid send request';
+            sig = await startServer();
+            break;
+        case 'cancel':
+            sig = await sendRedMessage('cancel');
+            break;
+        case 'stop':
+            await stopServer();
+            sig = 'stopped';
             break;
         default:
-            return 'Red server called with unknow input';
+            if (message.typeof === Array) {
+                sig = await sendRedMessage(message);
+            }
+            else {
+                sig = 'Red server called with unknow input';
+            }
     }
-}
+    parentPort?.postMessage(sig);
+});
+const saveCurrentPort = (port) => {
+    const filePath = path.resolve('./.node-red/VoiceAssist.json');
+    try {
+        const flowData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        flowData.forEach((node) => {
+            if (node.type === 'websocket-listener' &&
+                node.name === 'Vanusa-listener' &&
+                node.path.startsWith('ws://localhost:')) {
+                node.path = `ws://localhost:${port}`;
+            }
+        });
+        fs.writeFileSync(filePath, JSON.stringify(flowData, null, 2), 'utf-8');
+    }
+    catch (error) {
+        throw new Error('Error updating flow file: ' + error);
+    }
+};
 async function startServer() {
     return new Promise((resolve, reject) => {
         if (!redServer) {
@@ -29,21 +53,11 @@ async function startServer() {
                 .getPortPromise()
                 .then(fport => {
                 redServer = new WebSocketServer({ port: fport });
-                let firstMessage = true;
-                console.log(`Voice assistant WebSocket server is running on ws://localhost:${fport}`);
+                saveCurrentPort(fport);
                 redServer.on('connection', ws => {
                     connectedClient = ws;
-                    ws.on('message', message => {
-                        console.log('Received:', message.toString());
-                        ws.send('Echo: ' + message);
-                        if (firstMessage) {
-                            firstMessage = false;
-                            resolve('started');
-                        }
-                        else {
-                            console.log('Sending to parent:', message);
-                            parentPort?.postMessage(JSON.parse(message));
-                        }
+                    ws.once('message', message => {
+                        resolve('started');
                     });
                     ws.on('close', () => {
                         connectedClient = null;
@@ -89,17 +103,5 @@ function sendRedMessage(message) {
             reject('No Red client connected or client is not ready.');
         }
     });
-}
-function sendParent(sig) {
-    switch (sig) {
-        case 'stt':
-            break;
-        case 'cmd':
-            parentPort?.postMessage('a');
-            break;
-        default:
-            parentPort?.postMessage(sig);
-            break;
-    }
 }
 //# sourceMappingURL=w-red.js.map

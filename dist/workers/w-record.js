@@ -3,7 +3,9 @@ import VoiceController from '../picoV/record/voice-controller.js';
 const voiceControl = new VoiceController();
 parentPort?.on('message', async (message) => {
     console.log('recorder child Received:', message);
+    voiceControl.removeAllListeners();
     const sig = await switchController(message);
+    console.log('log sig w-record ' + sig);
     sendSig(sig);
 });
 async function switchController(input) {
@@ -15,11 +17,11 @@ async function switchController(input) {
         case 'record':
             return await voiceControl.recordPhase();
         case 'cmdrecord':
-            return await voiceControl.recordPhase();
+            return await voiceControl.compositeRecordPhase();
         case 'wait':
             return await voiceControl.waitPhase();
-        case 'abort':
-            return await voiceControl.cancel();
+        case 'turnoff':
+            return await voiceControl.turnoff();
         default:
             return 'ºController Message Receiver failed';
     }
@@ -34,12 +36,21 @@ function sendSig(sig) {
             });
             break;
         case 'cmd':
-            parentPort?.postMessage([voiceControl.getIntent()]);
+            const intent = voiceControl.getIntent();
+            parentPort?.postMessage(intent);
+            break;
+        case 'composite':
+            parentPort?.postMessage({
+                message: 'composite',
+                recC: voiceControl.rec.getRecordC(),
+                recL: voiceControl.rec.getRecordL(),
+            });
             break;
         default:
             parentPort?.postMessage(sig);
             break;
     }
+    voiceControl.rec.clearRecord();
 }
 //parentPort?.postMessage({ error: err.message, stack: err.stack });
 //# sourceMappingURL=w-record.js.map

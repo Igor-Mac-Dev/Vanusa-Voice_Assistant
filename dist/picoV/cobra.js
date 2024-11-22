@@ -1,8 +1,8 @@
 import { Cobra } from '@picovoice/cobra-node';
 import { CustomError } from '../utils/error.js';
 import { EventEmitter } from 'events';
-import * as conf from '../configuration/conf.js';
-const config = conf.readConfigFile();
+import { readConfigFile } from '../configuration/conf.js';
+const config = readConfigFile();
 export default class CobraDetector extends EventEmitter {
     constructor() {
         super();
@@ -15,6 +15,10 @@ export default class CobraDetector extends EventEmitter {
     }
     cobraInit() {
         try {
+            this.stillTalking = [];
+            for (let i = 0; i < config.COBRA_LENGHT; i++) {
+                this.stillTalking.push(1);
+            }
             this.activityDetector = new Cobra(config.PV_KEY);
         }
         catch (error) {
