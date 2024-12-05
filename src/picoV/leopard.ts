@@ -14,6 +14,7 @@ export default class LeopardStt {
          this.transcriptor = new Leopard(config.PV_KEY, {
             modelPath: config.LEOPARD,
          });
+         this.text = '';
       } catch (err) {
          throw new CustomError('°Cheetah failed to init:' + err);
       }
@@ -22,7 +23,6 @@ export default class LeopardStt {
    public leopardRelease(): void {
       if (this.transcriptor) {
          try {
-            this.text = '';
             this.transcriptor.release();
             this.transcriptor = null;
          } catch (err) {

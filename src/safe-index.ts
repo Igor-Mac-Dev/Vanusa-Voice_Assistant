@@ -4,7 +4,7 @@ import * as confGUI from './utils/config-server.js';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 const confPath: string = path.resolve('./dist/process-files/conf.json');
-let shouldClean;
+let shouldClean: boolean;
 
 main();
 

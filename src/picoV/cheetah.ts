@@ -18,6 +18,7 @@ export default class CheetahStt {
             endpointDurationSec: 10,
             enableAutomaticPunctuation: true,
          });
+         this.text = '';
       } catch (err) {
          throw new CustomError('°Cheetah failed to init: ' + err);
       }
@@ -26,7 +27,6 @@ export default class CheetahStt {
    public cheetahRelease(): void {
       try {
          if (this.transcriptor) {
-            this.text = '';
             this.transcriptor.release();
             this.transcriptor = null;
          }

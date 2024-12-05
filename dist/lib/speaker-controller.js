@@ -41,4 +41,4 @@ async function playNextAudio() {
     }
     audioPlaying = false;
 }
-//# sourceMappingURL=w-speaker.js.map
+//# sourceMappingURL=speaker-controller.js.map

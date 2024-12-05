@@ -21,7 +21,6 @@ pm2 delete V-node-red >nul 2>&1
       npm rm @picovoice/porcupine-node
       npm rm @picovoice/pvrecorder-node
       npm rm @picovoice/rhino-node
-      npm rm @types/ws
       npm rm fluent-ffmpeg
       npm rm gtts
       npm rm gtts.js

@@ -59,6 +59,14 @@ if not exist ".\dist\process-files" (
     mkdir .\dist\process-files
 ) 
 
+set "targetDir=%USERPROFILE%\Documents\process-files"
+
+if not exist "%targetDir%" (
+    echo Creating directory: %targetDir%...
+    mkdir "%targetDir%"
+    echo Directory created successfully.
+)
+
 set "startupFolder=%appdata%\Microsoft\Windows\Start Menu\Programs\Startup"
 echo @echo off > "%startupFolder%\pm2_resurrect.bat"
 echo call pm2 resurrect >> "%startupFolder%\pm2_resurrect.bat"

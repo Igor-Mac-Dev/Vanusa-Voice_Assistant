@@ -132,10 +132,12 @@ export async function startConfServer(): Promise<string> {
 
                   ws.on('close', () => {
                      console.log('Conf Voice assistant Client disconnected ws');
+                     ws.removeAllListeners();
                   });
 
                   confServer.on('close', () => {
                      connectedClient = null;
+                     confServer?.removeAllListeners();
                   });
                });
                server.listen(port, () => {
@@ -163,7 +165,7 @@ export function stopConfServer() {
          client.close();
       });
 
-      confServer.close(() => {});
+      confServer.close();
    } else {
       console.log('Cannot stop Conf: Server is not running.');
    }

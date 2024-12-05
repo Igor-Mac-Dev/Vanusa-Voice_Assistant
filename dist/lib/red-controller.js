@@ -1,4 +1,3 @@
-import { parentPort } from 'worker_threads';
 import { WebSocketServer } from 'ws';
 import * as portfinder from 'portfinder';
 import fs from 'fs';
@@ -6,31 +5,7 @@ import path from 'path';
 import { homedir } from 'os';
 let redServer = null;
 let connectedClient = null;
-parentPort?.on('message', async (message) => {
-    let sig;
-    console.log('red child Received:', message);
-    switch (message) {
-        case 'start':
-            sig = await startServer();
-            break;
-        case 'cancel':
-            sig = await sendRedMessage('cancel');
-            break;
-        case 'stop':
-            await stopServer();
-            sig = 'stopped';
-            break;
-        default:
-            if (message.typeof === Array) {
-                sig = await sendRedMessage(message);
-            }
-            else {
-                sig = 'Red server called with unknow input';
-            }
-    }
-    parentPort?.postMessage(sig);
-});
-const saveCurrentPort = (port) => {
+const setFlow = (port) => {
     const docsPath = path.resolve(path.join(homedir(), 'Documents'), 'Vanusa');
     const filePath = path.resolve('./.node-red/VoiceAssist.json');
     try {
@@ -53,14 +28,14 @@ const saveCurrentPort = (port) => {
         throw new Error('Error updating flow file: ' + error);
     }
 };
-async function startServer() {
+export async function startServer() {
     return new Promise((resolve, reject) => {
         if (!redServer) {
             portfinder
                 .getPortPromise()
                 .then(fport => {
                 redServer = new WebSocketServer({ port: fport });
-                saveCurrentPort(fport);
+                setFlow(fport);
                 redServer.on('connection', ws => {
                     connectedClient = ws;
                     ws.once('message', message => {
@@ -82,7 +57,7 @@ async function startServer() {
         }
     });
 }
-function stopServer() {
+export function stopServer() {
     if (redServer) {
         redServer.close(() => {
             console.log('Server closed.');
@@ -93,7 +68,7 @@ function stopServer() {
         console.log('Cannot stop Red: Server is not running.');
     }
 }
-function sendRedMessage(message) {
+export function sendRedMessage(message) {
     return new Promise((resolve, reject) => {
         if (connectedClient &&
             connectedClient.readyState === connectedClient.OPEN) {
@@ -111,4 +86,4 @@ function sendRedMessage(message) {
         }
     });
 }
-//# sourceMappingURL=w-red.js.map
+//# sourceMappingURL=red-controller.js.map
