@@ -3,24 +3,30 @@ import { CustomError } from '../utils/error.js';
 import * as conf from '../configuration/conf.js';
 import * as interfaces from '../interfaces/config-json.js';
 
-const config: interfaces.config = conf.readConfigFile();
-
 export default class CheetahStt {
    protected transcriptor: Cheetah | null = null;
    public text: string = '';
-   private available: boolean = config.CHEETAH_AVAILABLE;
+   protected config: interfaces.config;
+
+   constructor() {
+      try {
+         this.config = conf.readConfigFile();
+      } catch (err) {
+         throw new CustomError('°Leopard failed to init:', err);
+      }
+   }
 
    public cheetahInit(): void {
       try {
-         this.transcriptor = new Cheetah(config.PV_KEY, {
-            modelPath: config.CHEETAH,
+         this.transcriptor = new Cheetah(this.config.PV_KEY, {
+            modelPath: this.config.CHEETAH,
             libraryPath: undefined,
             endpointDurationSec: 10,
-            enableAutomaticPunctuation: true,
+            enableAutomaticPunctuation: false,
          });
          this.text = '';
       } catch (err) {
-         throw new CustomError('°Cheetah failed to init: ' + err);
+         throw new CustomError('°Cheetah failed to init: ', err);
       }
    }
 
@@ -31,7 +37,7 @@ export default class CheetahStt {
             this.transcriptor = null;
          }
       } catch (err) {
-         throw new CustomError('°Cheetah failed to release: ' + err);
+         throw new CustomError('°Cheetah failed to release: ', err);
       }
    }
 
@@ -49,10 +55,17 @@ export default class CheetahStt {
                this.text += flush;
             }
          } catch (err) {
-            throw new CustomError('°Cheetah failed to process audio: ' + err);
+            throw new CustomError('°Cheetah failed to process audio: ', err);
          }
       } else {
          console.log('Cheetah not available, please init it');
+      }
+   }
+
+   public turnoff(): void {
+      if (this.transcriptor) {
+         this.transcriptor.release();
+         this.transcriptor = null;
       }
    }
 }

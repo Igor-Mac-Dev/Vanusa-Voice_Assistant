@@ -2,6 +2,7 @@ import OpenAI from 'openai';
 import * as fs from 'fs';
 import * as path from 'path';
 import { readConfigFile } from '../configuration/conf.js';
+import { CustomError } from '../utils/error.js';
 export default async function whisperStt() {
     try {
         const config = readConfigFile();
@@ -15,17 +16,15 @@ export default async function whisperStt() {
         return transcription.text;
     }
     catch (error) {
+        let erro = null;
         if (isOpenAIError(error)) {
-            console.error('Erro na resposta da API:', error.response.status);
-            console.error('Detalhes do erro:', error.response.data);
+            erro = "°OpenAi's API failed:" + error.response.status;
+            erro += `\nError details: ${error.response.data}`;
             if (error.response.status === 402) {
-                console.error('Créditos insuficientes. Verifique seus detalhes de pagamento.');
+                erro += '\nInsufficient credits. Check your payment details.';
             }
         }
-        else {
-            console.error('Erro inesperado:', error);
-        }
-        throw error;
+        throw new CustomError(erro ? erro : "°OpenAi's API failed: " + '°Whisper failed: ' + error);
     }
 }
 function isOpenAIError(error) {

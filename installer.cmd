@@ -2,7 +2,7 @@
 SETLOCAL
 
 SET "INSTALL_DIR=%ProgramFiles%\Vanusa"
-
+SET "SERVICE_NAME=VANUSA_PowerMonitorService"
 SET "REPO_URL=https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant"
 
 node -v >nul 2>&1
@@ -49,11 +49,6 @@ if not exist ".\logs" (
     mkdir .\logs
 ) 
 
-if not exist ".\" (
-    echo Creating dir ./log...
-    mkdir .\logs
-) 
-
 if not exist ".\dist\process-files" (
     echo Creating dir ./dist/process-files...
     mkdir .\dist\process-files
@@ -66,6 +61,13 @@ if not exist "%targetDir%" (
     mkdir "%targetDir%"
     echo Directory created successfully.
 )
+
+copy "PowerMonitorService\bin\Release\netX\win-x64\publish\PowerMonitorService.exe" "%INSTALL_DIR%"
+sc stop %SERVICE_NAME%
+sc delete %SERVICE_NAME%
+sc create %SERVICE_NAME% binPath= "%INSTALL_DIR%\PowerMonitorService.exe"
+sc description %SERVICE_NAME% "Monit suspension and resume events to send to Vanusa"
+sc privs %SERVICE_NAME% SeShutdownPrivilege/SeChangeNotifyPrivilege/SeUndockPrivilege/SeIncreaseWorkingSetPrivilege/SeTimeZonePrivilege
 
 set "startupFolder=%appdata%\Microsoft\Windows\Start Menu\Programs\Startup"
 echo @echo off > "%startupFolder%\pm2_resurrect.bat"

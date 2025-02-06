@@ -33,9 +33,10 @@ const findSelectedDevice: Promise<number | undefined> = (async (): Promise<
          }
       }
    } catch (err) {
-      throw new CustomError('°Mic test failed: ' + err);
+      throw new CustomError('°Mic test failed: ' , err);
    }
    return undefined;
 })();
 
 export { availableDevices, findSelectedDevice };
+

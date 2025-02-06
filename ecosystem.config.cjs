@@ -11,6 +11,7 @@ module.exports = {
          instances: 1,
          max_memory_restart: '400M',
          max_restarts: 2,
+         log_file: './logs/main_log.txt',
          env: {
             NODE_ENV: 'production',
             windowsHide: true,
@@ -25,6 +26,7 @@ module.exports = {
          exec_mode: 'fork',
          watch: false,
          autorestart: true,
+         log_file: './logs/monitor_log.txt',
          env: {
             NODE_ENV: 'production',
             windowsHide: true,
@@ -48,12 +50,14 @@ module.exports = {
          vizion: false,
          windowsHide: true,
          max_memory_restart: '3G',
+         log_file: './logs/red_log.txt',
          env: {
             npm_config_cache: '/tmp/.npm-cache',
             NODE_ENV: 'production',
             windowsHide: true,
             vizion: false,
             silent: true,
+            RED_PORT: '21105',
          },
       },
    ],

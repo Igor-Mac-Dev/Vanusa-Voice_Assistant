@@ -13,7 +13,7 @@ function readConfigFile(): interfaces.config {
       Object.freeze(config);
       return config;
    } catch (err) {
-      throw new CustomError('°Error while reading config file: ' + err);
+      throw new CustomError('°Error while reading config file: ', err, true);
    }
 }
 
@@ -25,12 +25,12 @@ function pathmkr(
    return path.join(path.resolve('./assets/models/'), model + lang + ext);
 }
 
-const createConfigFile = (confJson): void => {
+const createConfigFile = (confJson: object): void => {
    try {
       const filePath = path.resolve('dist/process-files/conf.json');
       fs.writeFileSync(filePath, JSON.stringify(confJson, null, 3), 'utf8');
    } catch (err) {
-      throw new CustomError('°Error while creating config : ' + err);
+      throw new CustomError('°Error while creating config : ', err);
    }
 };
 

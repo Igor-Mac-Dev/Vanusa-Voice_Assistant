@@ -1,0 +1,71 @@
+import * as fs from 'fs';
+import * as path from 'path';
+import WaveFile from 'wavefile';
+import { CustomError } from '../utils/error.js';
+
+export default function makeWav(
+   int16Array: Int16Array,
+   sampleRate: number = 16000,
+   usecase: number = 0,
+): void {
+   try {
+      const wav = new WaveFile.WaveFile();
+      let pathToFile: string;
+      switch (usecase) {
+         case 0:
+            pathToFile = path.join(
+               path.resolve('dist/process-files'),
+               'input.wav',
+            );
+            break;
+         case 1:
+            pathToFile = path.join(
+               path.resolve('dist/process-files'),
+               'output.wav',
+            );
+            const rename = path.join(
+               path.resolve('./dist/process-files'),
+               'output_last.wav',
+            );
+            if (fs.existsSync(rename)) {
+               fs.rmSync(rename);
+            }
+            if (fs.existsSync(pathToFile)) {
+               fs.renameSync(pathToFile, rename);
+            }
+            break;
+         case 2:
+            pathToFile = path.join(
+               path.resolve('dist/process-files'),
+               'input_cmd.wav',
+            );
+            break;
+         default:
+            console.log(
+               "Something called makeWav (the process-files' wav file creator) with an invalid usecase",
+            );
+            throw new CustomError('wav-maker: invalid usecase');
+      }
+
+      wav.fromScratch(1, sampleRate, '16', int16Array);
+
+      fs.writeFileSync(pathToFile, wav.toBuffer());
+   } catch (error) {
+      throw new CustomError('°makeWav failed: ', error);
+   }
+}
+
+export function makeGenericWav(
+   int16Array: Int16Array,
+   sampleRate: number = 16000,
+   pathToFile: string,
+): void {
+   try {
+      const wav = new WaveFile.WaveFile();
+      wav.fromScratch(1, sampleRate, '16', int16Array);
+
+      fs.writeFileSync(pathToFile, wav.toBuffer());
+   } catch (error) {
+      throw new CustomError('°makeGenericWav failed: ', error);
+   }
+}

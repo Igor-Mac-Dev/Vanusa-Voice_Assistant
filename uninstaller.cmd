@@ -37,6 +37,9 @@ set "startupFolder=%appdata%\Microsoft\Windows\Start Menu\Programs\Startup"
 del "%startupFolder%\pm2_resurrect.bat" /f
 echo File pm2_resurrect.bat removed.
 
+sc stop VANUSA_PowerMonitorService
+sc delete VANUSA_PowerMonitorService
+
 IF EXIST "%INSTALL_DIR%" (
     echo Removing the Vanusa installation directory...
     rmdir /s /q "%INSTALL_DIR%"

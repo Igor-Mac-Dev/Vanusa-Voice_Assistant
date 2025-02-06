@@ -1,589 +1,589 @@
 [
-    {
-        "id": "60125a0ab74411c0",
-        "type": "tab",
-        "label": "Voice_Assistant_Flow",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "9dca3b73347bd783",
-        "type": "websocket-listener",
-        "path": "ws://localhost:8000",
-        "wholemsg": "true"
-    },
-    {
-        "id": "897da9b390c11c60",
-        "type": "websocket out",
-        "z": "60125a0ab74411c0",
-        "name": "send to Vanusa",
-        "server": "9dca3b73347bd783",
-        "client": "",
-        "x": 4760,
-        "y": 40,
-        "wires": []
-    },
-    {
-        "id": "222f2b2fb165223a",
-        "type": "switch",
-        "z": "60125a0ab74411c0",
-        "name": "input switch",
-        "property": "payload",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "*ping*",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "cancel",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "",
-                "vt": "str"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 24,
-        "x": 610,
-        "y": 300,
-        "wires": [
-            [
-                "98f6f1cba99481d6"
-            ],
-            [
-                "29eec978bf1da92e"
-            ],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            []
-        ]
-    },
-    {
-        "id": "98f6f1cba99481d6",
-        "type": "change",
-        "z": "60125a0ab74411c0",
-        "name": "Connection confirmation",
-        "rules": [
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "*pong*",
-                "tot": "str"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 842,
-        "y": 60,
-        "wires": [
-            [
-                "05b295cfd5cf648c"
-            ]
-        ]
-    },
-    {
-        "id": "a4c17cc14af6a4be",
-        "type": "function",
-        "z": "60125a0ab74411c0",
-        "name": "Input Formatter",
-        "func": "delete msg._session;\nreturn msg;\n// Necessary to send messages coming from websocket in to\n// websocket out",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 240,
-        "y": 80,
-        "wires": [
-            [
-                "21074d7f7b687076"
-            ]
-        ]
-    },
-    {
-        "id": "ec038a7312b6868d",
-        "type": "catch",
-        "z": "60125a0ab74411c0",
-        "name": "",
-        "scope": null,
-        "uncaught": false,
-        "x": 4460,
-        "y": 40,
-        "wires": [
-            [
-                "897da9b390c11c60"
-            ]
-        ]
-    },
-    {
-        "id": "b8e68b0425a1780e",
-        "type": "websocket in",
-        "z": "60125a0ab74411c0",
-        "name": "Vanusa-input",
-        "server": "9dca3b73347bd783",
-        "client": "",
-        "x": 70,
-        "y": 80,
-        "wires": [
-            [
-                "a4c17cc14af6a4be"
-            ]
-        ],
-        "info": "Vanusa listener\r\n"
-    },
-    {
-        "id": "29eec978bf1da92e",
-        "type": "function",
-        "z": "60125a0ab74411c0",
-        "name": "Cancel Filter",
-        "func": "//  You dont need to change this node, just pipe your chain\n// of nodes here so Vanusa can go back to idle mode\n//  To make yor voice commands also cancelable in node red\n// and not only cancel the voice output in the main app the\n// 'CANCEL' environment var need to be correctly handled,\n// and pipe nodes NOT activated by Vanusa here will mess\n// with both node red and Vanusa!\n// This node is to set the flow's var CANCEL to TRUE, you\n// can use this in your nodes with:\n// const cancel = flow.get(\"CANCEL\")\n// and abort some action. DON'T manualy set it to FALSE,\n// it will be done when your message arrives this node.\n// You can also make Vanusa say something by piping cron\n// activated nodes (and this sort of things) directly to the\n// node 'send to Vanusa' web-socket-out node in the top right\n// of this node (above the 🚫's) or the PIPE bellow\n\nif(msg.payload == 'cancel'){\n    flow.set(\"CANCEL\", true)\n    return [{payload: 'canceled'},null];\n}\nif(flow.get('CANCEL')){\n    flow.set('CANCEL', false)\n    return [null, msg]\n} else {\n    return [ msg , null]\n}\n",
-        "outputs": 2,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 4390,
-        "y": 160,
-        "wires": [
-            [
-                "897da9b390c11c60"
-            ],
-            [
-                "314c9dc8fc01913d"
-            ]
-        ]
-    },
-    {
-        "id": "6fec0ada93180f5c",
-        "type": "inject",
-        "z": "60125a0ab74411c0",
-        "name": "Flow_vars",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": ".",
-        "payloadType": "str",
-        "x": 90,
-        "y": 20,
-        "wires": [
-            [
-                "3ad208dd7ae27c61"
-            ]
-        ]
-    },
-    {
-        "id": "3ad208dd7ae27c61",
-        "type": "function",
-        "z": "60125a0ab74411c0",
-        "name": "ENV_VARS",
-        "func": "//You can set your vars here if u want\nflow.set('CANCEL', false)\nmsg.payload=\"Flow variables set.\"\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 350,
-        "y": 20,
-        "wires": [
-            [
-                "8b6b5da036ce6739"
-            ]
-        ]
-    },
-    {
-        "id": "8b6b5da036ce6739",
-        "type": "debug",
-        "z": "60125a0ab74411c0",
-        "name": "ENV_VARS",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 610,
-        "y": 20,
-        "wires": []
-    },
-    {
-        "id": "1bf5cade4571e108",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "Can't touch this 👀",
-        "info": "Yeah, if you modify the file in the program's\nfolder you're touching this",
-        "x": 90,
-        "y": 100,
-        "wires": []
-    },
-    {
-        "id": "05b295cfd5cf648c",
-        "type": "function",
-        "z": "60125a0ab74411c0",
-        "name": "PIPE",
-        "func": "//  This function does literaly nothing, it's here just to \n// make the appearance of the flow looks better\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 4210,
-        "y": 60,
-        "wires": [
-            [
-                "29eec978bf1da92e"
-            ]
-        ]
-    },
-    {
-        "id": "314c9dc8fc01913d",
-        "type": "debug",
-        "z": "60125a0ab74411c0",
-        "name": "Canceled commands output",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "'Canceled command output: ' & payload",
-        "targetType": "jsonata",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 4800,
-        "y": 80,
-        "wires": []
-    },
-    {
-        "id": "976d0e4f58f172c2",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "🍉",
-        "info": "",
-        "x": 7950,
-        "y": 7980,
-        "wires": []
-    },
-    {
-        "id": "87759a5b101ccb4e",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "◀️◀️◀️",
-        "info": "",
-        "x": 4515,
-        "y": 162,
-        "wires": []
-    },
-    {
-        "id": "4648bdde1fc8b432",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "🔽🔽🔽🔽🔽🔽🔽🔽🔽🔽",
-        "info": "",
-        "x": 4385,
-        "y": 135,
-        "wires": []
-    },
-    {
-        "id": "1c86ddab9acb49a8",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "✅TIPS✅",
-        "info": "From here on your command is an object, it's\npayload is the intent of the command and\nthe slots are in the order you've set. Pipe a\ndebug node here if you still want to check.\nOpen this switch node, set or create an \noutput based on your command intent, then\ncreate his flow. Please don't forget to pipe\nit to the Cancel Filter node or the voice\nassistant will keep wating for a confirmation\nthat the cmd was executed. You can bypass \nthis just speaking 'cancel' and Vanusa \nwill come back to idle mode, but is better\nto avoid this scenario.\nIf the message passed to Cancel Filter\nhas a cmd_response field, Vanusa will speak\nit instad of just playing an sucess beep\n",
-        "x": 480,
-        "y": 300,
-        "wires": []
-    },
-    {
-        "id": "21074d7f7b687076",
-        "type": "function",
-        "z": "60125a0ab74411c0",
-        "name": "CMD formatter",
-        "func": "if(msg.payload == '*ping*' || msg.payload == 'cancel') {\n    return msg;\n} else {\n    return msg;\n}",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 420,
-        "y": 80,
-        "wires": [
-            [
-                "222f2b2fb165223a",
-                "d53ffc699eab6f08"
-            ]
-        ]
-    },
-    {
-        "id": "d53ffc699eab6f08",
-        "type": "debug",
-        "z": "60125a0ab74411c0",
-        "name": "debug 1",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 600,
-        "y": 80,
-        "wires": []
-    },
-    {
-        "id": "81372ebf3725042f",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "🌼🌸Vanusa will tell you if something goes wrong🌸🌼",
-        "info": "or at least beep :|",
-        "x": 4440,
-        "y": 20,
-        "wires": []
-    },
-    {
-        "id": "3ece416aa6d02722",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "🚫",
-        "info": "",
-        "x": 5030,
-        "y": 20,
-        "wires": []
-    },
-    {
-        "id": "5edcdb627f9b81f4",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "🚫",
-        "info": "",
-        "x": 5030,
-        "y": 60,
-        "wires": []
-    },
-    {
-        "id": "d3da3e48b6185fe2",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "🚫",
-        "info": "",
-        "x": 5030,
-        "y": 100,
-        "wires": []
-    },
-    {
-        "id": "90c22d2c2bdd7f64",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "🔽🔽🔽🔽🔽🔽🔽🔽🔽🔽",
-        "info": "",
-        "x": 584,
-        "y": 160,
-        "wires": []
-    },
-    {
-        "id": "23be0bf19e1b025f",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫",
-        "info": "",
-        "x": 710,
-        "y": 120,
-        "wires": []
-    },
-    {
-        "id": "37896b46a432652f",
-        "type": "comment",
-        "z": "60125a0ab74411c0",
-        "name": "Insert the nodes to your custom commands here ",
-        "info": "",
-        "x": 580,
-        "y": 140,
-        "wires": []
-    },
-    {
-        "id": "657e1a6802eb68b1",
-        "type": "function",
-        "z": "60125a0ab74411c0",
-        "name": "PIPE",
-        "func": "//  This function does literaly nothing, it's here just to \n//  make the appearance of the flow looks better\n//  pipe here only messages that are not asnwering an explicit\n//  Vanusa cmd, like a third party API's message listener \n//  activated nodes, cron activated nodes etc.\n//  To make yor voice commands also cancelable in node red\n//  and not only cancel the voice output in the main app the\n//  'CANCEL' environment var need to be correctly handled,\n//  and pipe nodes activated by Vanusa here will mess with\n//  both node red and Vanusa!\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 4430,
-        "y": 380,
-        "wires": [
-            [
-                "a6769e84a1a5e5db"
-            ]
-        ]
-    },
-    {
-        "id": "a6769e84a1a5e5db",
-        "type": "function",
-        "z": "60125a0ab74411c0",
-        "name": "PIPE",
-        "func": "//  This function does literaly nothing, it's here just to \n// make the appearance of the flow looks better\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 4530,
-        "y": 380,
-        "wires": [
-            [
-                "897da9b390c11c60"
-            ]
-        ]
-    }
+  {
+    "id": "60125a0ab74411c0",
+    "type": "tab",
+    "label": "Voice_Assistant_Flow",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "9dca3b73347bd783",
+    "type": "websocket-listener",
+    "path": "ws://localhost:8000",
+    "wholemsg": "true"
+  },
+  {
+    "id": "897da9b390c11c60",
+    "type": "websocket out",
+    "z": "60125a0ab74411c0",
+    "name": "send to Vanusa",
+    "server": "9dca3b73347bd783",
+    "client": "",
+    "x": 4760,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "222f2b2fb165223a",
+    "type": "switch",
+    "z": "60125a0ab74411c0",
+    "name": "input switch",
+    "property": "payload",
+    "propertyType": "msg",
+    "rules": [
+      {
+        "t": "eq",
+        "v": "*ping*",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "cancel",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "",
+        "vt": "str"
+      }
+    ],
+    "checkall": "true",
+    "repair": false,
+    "outputs": 24,
+    "x": 610,
+    "y": 300,
+    "wires": [
+      [
+        "98f6f1cba99481d6"
+      ],
+      [
+        "29eec978bf1da92e"
+      ],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      []
+    ]
+  },
+  {
+    "id": "98f6f1cba99481d6",
+    "type": "change",
+    "z": "60125a0ab74411c0",
+    "name": "Connection confirmation",
+    "rules": [
+      {
+        "t": "set",
+        "p": "payload",
+        "pt": "msg",
+        "to": "*pong*",
+        "tot": "str"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 842,
+    "y": 60,
+    "wires": [
+      [
+        "05b295cfd5cf648c"
+      ]
+    ]
+  },
+  {
+    "id": "a4c17cc14af6a4be",
+    "type": "function",
+    "z": "60125a0ab74411c0",
+    "name": "Input Formatter",
+    "func": "delete msg._session;\nreturn msg;\n// Necessary to send messages coming from websocket in to\n// websocket out",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 240,
+    "y": 80,
+    "wires": [
+      [
+        "21074d7f7b687076"
+      ]
+    ]
+  },
+  {
+    "id": "ec038a7312b6868d",
+    "type": "catch",
+    "z": "60125a0ab74411c0",
+    "name": "",
+    "scope": null,
+    "uncaught": false,
+    "x": 4460,
+    "y": 40,
+    "wires": [
+      [
+        "897da9b390c11c60"
+      ]
+    ]
+  },
+  {
+    "id": "b8e68b0425a1780e",
+    "type": "websocket in",
+    "z": "60125a0ab74411c0",
+    "name": "Vanusa-input",
+    "server": "9dca3b73347bd783",
+    "client": "",
+    "x": 70,
+    "y": 80,
+    "wires": [
+      [
+        "a4c17cc14af6a4be"
+      ]
+    ],
+    "info": "Vanusa listener\r\n"
+  },
+  {
+    "id": "29eec978bf1da92e",
+    "type": "function",
+    "z": "60125a0ab74411c0",
+    "name": "Cancel Filter",
+    "func": "//  You dont need to change this node, just pipe your chain\n// of nodes here so Vanusa can go back to idle mode\n//  To make yor voice commands also cancelable in node red\n// and not only cancel the voice output in the main app the\n// 'CANCEL' environment var need to be correctly handled,\n// and pipe nodes NOT activated by Vanusa here will mess\n// with both node red and Vanusa!\n// This node is to set the flow's var CANCEL to TRUE, you\n// can use this in your nodes with:\n// const cancel = flow.get(\"CANCEL\")\n// and abort some action. DON'T manualy set it to FALSE,\n// it will be done when your message arrives this node.\n// You can also make Vanusa say something by piping cron\n// activated nodes (and this sort of things) directly to the\n// node 'send to Vanusa' web-socket-out node in the top right\n// of this node (above the 🚫's) or the PIPE bellow\n\nif(msg.payload == 'cancel'){\n    flow.set(\"CANCEL\", true)\n    return [{payload: 'canceled'},null];\n}\nif(flow.get('CANCEL')){\n    flow.set('CANCEL', false)\n    return [null, msg]\n} else {\n    return [ msg , null]\n}\n",
+    "outputs": 2,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 4390,
+    "y": 160,
+    "wires": [
+      [
+        "897da9b390c11c60"
+      ],
+      [
+        "314c9dc8fc01913d"
+      ]
+    ]
+  },
+  {
+    "id": "6fec0ada93180f5c",
+    "type": "inject",
+    "z": "60125a0ab74411c0",
+    "name": "Flow_vars",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": true,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": ".",
+    "payloadType": "str",
+    "x": 90,
+    "y": 20,
+    "wires": [
+      [
+        "3ad208dd7ae27c61"
+      ]
+    ]
+  },
+  {
+    "id": "3ad208dd7ae27c61",
+    "type": "function",
+    "z": "60125a0ab74411c0",
+    "name": "ENV_VARS",
+    "func": "flow.set('CANCEL', false)\nflow.set('DOCS', 'C:\\\\Users\\\\whisk\\\\Documents\\\\Vanusa')\nmsg.payload=\"Flow variables set.\"\nreturn msg;\n\n//You can set your vars here if u want",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 350,
+    "y": 20,
+    "wires": [
+      [
+        "8b6b5da036ce6739"
+      ]
+    ]
+  },
+  {
+    "id": "8b6b5da036ce6739",
+    "type": "debug",
+    "z": "60125a0ab74411c0",
+    "name": "ENV_VARS",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 610,
+    "y": 20,
+    "wires": []
+  },
+  {
+    "id": "1bf5cade4571e108",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "Can't touch this 👀",
+    "info": "Yeah, if you modify the file in the program's\nfolder you're touching this",
+    "x": 90,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "05b295cfd5cf648c",
+    "type": "function",
+    "z": "60125a0ab74411c0",
+    "name": "PIPE",
+    "func": "//  This function does literaly nothing, it's here just to \n// make the appearance of the flow looks better\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 4210,
+    "y": 60,
+    "wires": [
+      [
+        "29eec978bf1da92e"
+      ]
+    ]
+  },
+  {
+    "id": "314c9dc8fc01913d",
+    "type": "debug",
+    "z": "60125a0ab74411c0",
+    "name": "Canceled commands output",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "'Canceled command output: ' & payload",
+    "targetType": "jsonata",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 4800,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "976d0e4f58f172c2",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "🍉",
+    "info": "",
+    "x": 7950,
+    "y": 7980,
+    "wires": []
+  },
+  {
+    "id": "87759a5b101ccb4e",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "◀️◀️◀️",
+    "info": "",
+    "x": 4515,
+    "y": 162,
+    "wires": []
+  },
+  {
+    "id": "4648bdde1fc8b432",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "🔽🔽🔽🔽🔽🔽🔽🔽🔽🔽",
+    "info": "",
+    "x": 4385,
+    "y": 135,
+    "wires": []
+  },
+  {
+    "id": "1c86ddab9acb49a8",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "✅TIPS✅",
+    "info": "From here on your command is an object, it's\npayload is the intent of the command and\nthe slots are in the order you've set. Pipe a\ndebug node here if you still want to check.\nOpen this switch node, set or create an \noutput based on your command intent, then\ncreate his flow. Please don't forget to pipe\nit to the Cancel Filter node or the voice\nassistant will keep wating for a confirmation\nthat the cmd was executed. You can bypass \nthis just speaking 'cancel' and Vanusa \nwill come back to idle mode, but is better\nto avoid this scenario.\nIf the message passed to Cancel Filter\nhas a cmd_response field, Vanusa will speak\nit instad of just playing an sucess beep\n",
+    "x": 480,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "21074d7f7b687076",
+    "type": "function",
+    "z": "60125a0ab74411c0",
+    "name": "CMD formatter",
+    "func": "if(msg.payload == '*ping*' || msg.payload == 'cancel') {\n    return msg;\n} else {\n    return msg;\n}",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 420,
+    "y": 80,
+    "wires": [
+      [
+        "222f2b2fb165223a",
+        "d53ffc699eab6f08"
+      ]
+    ]
+  },
+  {
+    "id": "d53ffc699eab6f08",
+    "type": "debug",
+    "z": "60125a0ab74411c0",
+    "name": "debug 1",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 600,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "81372ebf3725042f",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "🌼🌸Vanusa will tell you if something goes wrong🌸🌼",
+    "info": "or at least beep :|",
+    "x": 4440,
+    "y": 20,
+    "wires": []
+  },
+  {
+    "id": "3ece416aa6d02722",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "🚫",
+    "info": "",
+    "x": 5030,
+    "y": 20,
+    "wires": []
+  },
+  {
+    "id": "5edcdb627f9b81f4",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "🚫",
+    "info": "",
+    "x": 5030,
+    "y": 60,
+    "wires": []
+  },
+  {
+    "id": "d3da3e48b6185fe2",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "🚫",
+    "info": "",
+    "x": 5030,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "90c22d2c2bdd7f64",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "🔽🔽🔽🔽🔽🔽🔽🔽🔽🔽",
+    "info": "",
+    "x": 584,
+    "y": 160,
+    "wires": []
+  },
+  {
+    "id": "23be0bf19e1b025f",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫",
+    "info": "",
+    "x": 710,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "37896b46a432652f",
+    "type": "comment",
+    "z": "60125a0ab74411c0",
+    "name": "Insert the nodes to your custom commands here ",
+    "info": "",
+    "x": 580,
+    "y": 140,
+    "wires": []
+  },
+  {
+    "id": "657e1a6802eb68b1",
+    "type": "function",
+    "z": "60125a0ab74411c0",
+    "name": "PIPE",
+    "func": "//  This function does literaly nothing, it's here just to \n//  make the appearance of the flow looks better\n//  pipe here only messages that are not asnwering an explicit\n//  Vanusa cmd, like a third party API's message listener \n//  activated nodes, cron activated nodes etc.\n//  To make yor voice commands also cancelable in node red\n//  and not only cancel the voice output in the main app the\n//  'CANCEL' environment var need to be correctly handled,\n//  and pipe nodes activated by Vanusa here will mess with\n//  both node red and Vanusa!\n\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 4430,
+    "y": 380,
+    "wires": [
+      [
+        "a6769e84a1a5e5db"
+      ]
+    ]
+  },
+  {
+    "id": "a6769e84a1a5e5db",
+    "type": "function",
+    "z": "60125a0ab74411c0",
+    "name": "PIPE",
+    "func": "//  This function does literaly nothing, it's here just to \n// make the appearance of the flow looks better\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 4530,
+    "y": 380,
+    "wires": [
+      [
+        "897da9b390c11c60"
+      ]
+    ]
+  }
 ]

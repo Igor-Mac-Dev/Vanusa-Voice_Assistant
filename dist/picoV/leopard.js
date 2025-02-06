@@ -1,21 +1,26 @@
 import { Leopard } from '@picovoice/leopard-node';
 import { CustomError } from '../utils/error.js';
 import * as conf from '../configuration/conf.js';
-const config = conf.readConfigFile();
 export default class LeopardStt {
     constructor() {
         this.transcriptor = null;
         this.text = '';
+        try {
+            this.config = conf.readConfigFile();
+        }
+        catch (err) {
+            throw new CustomError('°Leopard failed to init:', err);
+        }
     }
     leopardInit() {
         try {
-            this.transcriptor = new Leopard(config.PV_KEY, {
-                modelPath: config.LEOPARD,
+            this.transcriptor = new Leopard(this.config.PV_KEY, {
+                modelPath: this.config.LEOPARD,
             });
             this.text = '';
         }
         catch (err) {
-            throw new CustomError('°Cheetah failed to init:' + err);
+            throw new CustomError('°Cheetah failed to init:', err);
         }
     }
     leopardRelease() {
@@ -25,7 +30,7 @@ export default class LeopardStt {
                 this.transcriptor = null;
             }
             catch (err) {
-                throw new CustomError('°Leopard failed to release:' + err);
+                throw new CustomError('°Leopard failed to release:', err);
             }
         }
     }

@@ -28,7 +28,7 @@ const findSelectedDevice = (async () => {
         }
     }
     catch (err) {
-        throw new CustomError('°Mic test failed: ' + err);
+        throw new CustomError('°Mic test failed: ', err);
     }
     return undefined;
 })();

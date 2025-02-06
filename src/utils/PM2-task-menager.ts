@@ -23,6 +23,16 @@ function executeCommand(command: string): Promise<string> {
    });
 }
 
+async function isProcessRunning(processName: string): Promise<boolean> {
+   try {
+      const output = await executeCommand('pm2 list --no-color');
+      return output.includes(processName) && output.includes('online');
+   } catch (error) {
+      console.error('error:' + error);
+      return false;
+   }
+}
+
 export async function startPm2() {
    try {
       const ecosystemPath = path.resolve('./ecosystem.config.cjs');
@@ -47,13 +57,21 @@ export async function cleanPm2() {
       await executeCommand('pm2 delete Vanusa-monitor');
       await executeCommand('pm2 save --force');
    } catch (error) {
-      console.error(error);
+      console.error('error' + error);
    }
 }
 
 export async function stopPm2() {
    try {
-      await executeCommand('pm2 stop Vanusa-main V-node-red Vanusa-monitor');
+      if (await isProcessRunning('V-node-red')) {
+         await executeCommand('pm2 stop V-node-red');
+      }
+      if (await isProcessRunning('Vanusa-monitor')) {
+         await executeCommand('pm2 stop Vanusa-monitor');
+      }
+      if (await isProcessRunning('Vanusa-main')) {
+         await executeCommand('pm2 stop Vanusa-main');
+      }
    } catch (error) {
       console.error(error);
    }

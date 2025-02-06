@@ -39,7 +39,7 @@ export default class AudioInputReader extends EventEmitter {
          this.calcFramesToRead = this.fixedFramesToRead;
          this.recorder = new PvRecorder(this.frameLength, this.device);
       } catch (err) {
-         throw new CustomError('°Record failed to init:' + err);
+         throw new CustomError('°Record failed to init:' , err);
       }
    }
 
@@ -47,7 +47,7 @@ export default class AudioInputReader extends EventEmitter {
       try {
          await this.recorder.start();
       } catch (err) {
-         throw new CustomError('°Record failed to start:' + err);
+         throw new CustomError('°Record failed to start:' , err);
       }
    }
 
@@ -56,7 +56,7 @@ export default class AudioInputReader extends EventEmitter {
          const frame: Int16Array = await this.recorder.read();
          return frame;
       } catch (err) {
-         throw new CustomError('°Record failed to read frame:' + err);
+         throw new CustomError('°Record failed to read frame:' , err);
       }
    }
 
@@ -64,7 +64,7 @@ export default class AudioInputReader extends EventEmitter {
       try {
          this.recorder.stop();
       } catch (err) {
-         throw new CustomError('°Record failed to stop:' + err);
+         throw new CustomError('°Record failed to stop:' , err);
       }
    }
 
@@ -73,7 +73,8 @@ export default class AudioInputReader extends EventEmitter {
          this.recorder.release();
          this.recorder = {};
       } catch (err) {
-         throw new CustomError('°Recorder failed to release:' + err);
+         throw new CustomError('°Recorder failed to release:' , err);
       }
    }
 }
+

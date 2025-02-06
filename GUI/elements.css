@@ -166,6 +166,7 @@
 }
 
 .neu-button:hover {
+   color: #ffffffc5;
    box-shadow:
       inset 3px 3px 6px #bcbcbc86,
       inset -3px -3px 6px #ffffff6e,

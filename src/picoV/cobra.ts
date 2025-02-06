@@ -40,7 +40,7 @@ export default class CobraDetector extends EventEmitter {
             this.activityDetector = null;
          }
       } catch (err) {
-         throw new CustomError('°COBRA failed to release:' + err);
+         throw new CustomError('°COBRA failed to release:' , err);
       }
    }
 
@@ -78,3 +78,4 @@ export default class CobraDetector extends EventEmitter {
       }
    }
 }
+

@@ -1,13 +1,15 @@
 const socket = new WebSocket('ws://localhost:%%PORT%%');
 const languagePT = document.getElementById('lang_pt');
-const autoStart = document.getElementById('autoStart');
 const recordTime = document.getElementById('recordTime');
 const selectedDevice = document.getElementById('selectedDevice');
-const sensitivity = document.getElementById('sensitivity');
+const sensitivityww = document.getElementById('sensitivityww');
+const sensitivitycmd = document.getElementById('sensitivitycmd');
 const silenceLenght = document.getElementById('cobraLength');
 const sttEngine = document.getElementById('sttEngine');
 const ttsEngine = document.getElementById('ttsEngine');
 const pvKey = document.getElementById('pvKey');
+const autoStart = document.getElementById('autoStart');
+const burstMode = document.getElementById('burstMode');
 const oaiModel = document.getElementById('oaiModel');
 const oaiUserDef = document.getElementById('oaiUserDef');
 const oaiHistoryLength = document.getElementById('oaiHistoryLength');
@@ -19,7 +21,8 @@ let mics;
 const inputs = [
    recordTime,
    selectedDevice,
-   sensitivity,
+   sensitivityww,
+   sensitivitycmd,
    silenceLenght,
    sttEngine,
    ttsEngine,
@@ -36,7 +39,6 @@ function areAllInputsValid() {
    return inputs.every(input => input.checkValidity());
 }
 
-console.log('WS port: %%PORT%%');
 socket.addEventListener('open', () => {
    console.log('Connected to the server');
 });
@@ -48,18 +50,20 @@ socket.addEventListener('message', event => {
          languagePT.checked = true;
       }
       autoStart.checked = confs[1];
-      recordTime.value = confs[2];
-      sensitivity.value = confs[4];
-      silenceLenght.value = confs[5];
-      sttEngine.value = confs[6];
-      ttsEngine.value = confs[7];
-      pvKey.value = confs[8];
-      oaiModel.value = confs[9];
-      oaiUserDef.value = confs[10];
-      oaiHistoryLength.value = confs[11];
-      oaiTemperature.value = confs[12];
-      oaiMaxTokens.value = confs[13];
-      oaiKey.value = confs[14];
+      burstMode.checked = confs[2];
+      recordTime.value = confs[3];
+      sensitivityww.value = confs[5];
+      sensitivitycmd.value = confs[6];
+      silenceLenght.value = confs[7];
+      sttEngine.value = confs[8];
+      ttsEngine.value = confs[9];
+      pvKey.value = confs[10];
+      oaiModel.value = confs[11];
+      oaiUserDef.value = confs[12];
+      oaiHistoryLength.value = confs[13];
+      oaiTemperature.value = confs[14];
+      oaiMaxTokens.value = confs[15];
+      oaiKey.value = confs[16];
    } else {
       mics = confs[0];
       selectedDevice.innerHTML = mics
@@ -77,7 +81,7 @@ socket.addEventListener('close', () => {
 });
 
 socket.addEventListener('error', error => {
-   console.error('WebSocket error:', error);
+   console.error('WebSocket error: ', error);
 });
 
 document.getElementById('save').addEventListener('click', () => {
@@ -91,9 +95,11 @@ document.getElementById('save').addEventListener('click', () => {
       const message = [
          languagePT.checked,
          autoStart.checked,
+         burstMode.checked,
          recordTime.value,
          selectedDevice.value,
-         sensitivity.value,
+         sensitivityww.value,
+         sensitivitycmd.value,
          silenceLenght.value,
          sttEngine.value,
          ttsEngine.value,
@@ -116,9 +122,11 @@ document.getElementById('saveexit').addEventListener('click', () => {
       const message = [
          languagePT.checked,
          autoStart.checked,
+         burstMode.checked,
          recordTime.value,
          selectedDevice.value,
-         sensitivity.value,
+         sensitivityww.value,
+         sensitivitycmd.value,
          silenceLenght.value,
          sttEngine.value,
          ttsEngine.value,
@@ -147,6 +155,15 @@ document.getElementById('cancel').addEventListener('click', () => {
 });
 
 document.getElementById('exit').addEventListener('click', () => {
+   if (socket.readyState === WebSocket.OPEN) {
+      const message = 'exit';
+      socket.send(message);
+   } else {
+      console.log('WebSocket não está conectado.');
+   }
+});
+
+window.addEventListener('beforeunload', () => {
    if (socket.readyState === WebSocket.OPEN) {
       const message = 'exit';
       socket.send(message);

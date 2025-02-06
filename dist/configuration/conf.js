@@ -9,7 +9,7 @@ function readConfigFile() {
         return config;
     }
     catch (err) {
-        throw new CustomError('°Error while reading config file: ' + err);
+        throw new CustomError('°Error while reading config file: ', err, true);
     }
 }
 function pathmkr(model, lang = 'en', ext = '.ppn') {
@@ -21,7 +21,7 @@ const createConfigFile = (confJson) => {
         fs.writeFileSync(filePath, JSON.stringify(confJson, null, 3), 'utf8');
     }
     catch (err) {
-        throw new CustomError('°Error while creating config : ' + err);
+        throw new CustomError('°Error while creating config : ', err);
     }
 };
 export { readConfigFile, createConfigFile, pathmkr };

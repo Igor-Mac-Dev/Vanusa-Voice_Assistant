@@ -50,16 +50,44 @@
                </div>
 
                <div class="ConfInput">
-                  <label>Auto Start:</label>
-                  <div class="switch_container">
-                     <label for="autoStart" class="switch">
-                        <input id="autoStart" class="togglesw" type="checkbox" checked />
-                        <div class="indicator left"></div>
-                        <div class="indicator right"></div>
-                        <div class="switch_button"></div>
-                     </label>
-                  </div>
+                  <label for="selectedDevice">Selected microphone:</label>
+                  <select id="selectedDevice" name="SELECTED_DEVICE"></select>
                </div>
+
+               <div class="ConfInput">
+                  <label for="sensitivityww">Wake-word sensitivity:</label>
+                  <input
+                     type="number"
+                     id="sensitivityww"
+                     class="sensitivityINPUT"
+                     name="SENSITIVITY"
+                     min="0"
+                     max="1"
+                     step="0.1"
+                     required="true"
+                     pattern="[0-9]+(\.[0-9]{1,2})?"
+                     value="0.4"
+                  />
+                  <label for="sensitivitycmd">Commands sensitivity:</label>
+                  <input
+                     type="number"
+                     id="sensitivitycmd"
+                     class="sensitivityINPUT"
+                     name="SENSITIVITY"
+                     min="0"
+                     max="1"
+                     step="0.1"
+                     required="true"
+                     pattern="[0-9]+(\.[0-9]{1,2})?"
+                     value="0.7"
+                  />
+               </div>
+               <aside class="tooltip">
+                  <span class="tooltiptext">
+                     If higher gives lower miss rate of speak detection, </br>
+                     and higher false alarm rate.
+                  </span>
+               </aside>
 
                <div class="ConfInput">
                   <label for="recordTime">Record time:</label>
@@ -76,32 +104,6 @@
                <aside class="tooltip">
                   <span class="tooltiptext">
                      Max. recording duration in seconds.
-                  </span>
-               </aside>
-
-               <div class="ConfInput">
-                  <label for="selectedDevice">Selected microphone:</label>
-                  <select id="selectedDevice" name="SELECTED_DEVICE"></select>
-               </div>
-
-               <div class="ConfInput">
-                  <label for="sensitivity">Sensitivity:</label>
-                  <input
-                     type="number"
-                     id="sensitivity"
-                     name="SENSITIVITY"
-                     min="0"
-                     max="1"
-                     step="0.1"
-                     required="true"
-                     pattern="[0-9]+(\.[0-9]{1,2})?"
-                     value="0.5"
-                  />
-               </div>
-               <aside class="tooltip">
-                  <span class="tooltiptext">
-                     If higher gives lower miss rate of speak detection, </br>
-                     and higher false alarm rate.
                   </span>
                </aside>
 
@@ -165,6 +167,32 @@
             </div>
 
             <div class="coll">
+
+               <div class="ConfInput">
+                  <label>Auto Start:</label>
+                  <div class="switch_container">
+                     <label for="autoStart" class="switch">
+                        <input id="autoStart" class="togglesw" type="checkbox" checked />
+                        <div class="indicator left"></div>
+                        <div class="indicator right"></div>
+                        <div class="switch_button"></div>
+                     </label>
+                  </div>
+               </div>
+
+
+               <div class="ConfInput">
+                  <label>Burst Mode:</label>
+                  <div class="switch_container">
+                     <label for="burstMode" class="switch">
+                        <input id="burstMode" class="togglesw" type="checkbox" unchecked />
+                        <div class="indicator left"></div>
+                        <div class="indicator right"></div>
+                        <div class="switch_button"></div>
+                     </label>
+                  </div>
+               </div>
+
                <div class="ConfInput">
                   <label for="oaiModel">OpenAI Model:</label>
                   <select id="oaiModel" name="OAI_MODEL" required="true">
@@ -232,7 +260,7 @@
                      name="OAI_MAX_TOKENS"
                      min="5"
                      required="true"
-                     value="25"
+                     value="250"
                   />
                </div>
                <aside class="tooltip">

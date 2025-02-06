@@ -1,6 +1,7 @@
 export interface config {
    LANGUAGE: 'en' | 'pt';
    AUTO_START: boolean;
+   BURST_MODE: boolean;
    PPN: string;
    PPN_WW: string[];
    PPN_CANCEL: string[];
@@ -16,7 +17,8 @@ export interface config {
    FRAME_LENGHT: number;
    SAMPLE_RATE: number;
    SELECTED_DEVICE: number | undefined;
-   SENSITIVITY: number;
+   SENSITIVITYWW: number;
+   SENSITIVITYCMD: number;
    COBRA_LENGHT: number;
    OAI_MODEL:
       | 'gpt-4o'

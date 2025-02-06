@@ -4,189 +4,374 @@
 //  *
 //  * https://www.gnu.org/licenses/agpl-3.0.en.html
 
-import RedController from './lib/red-controller.js';
-import { readConfigFile } from './configuration/conf.js';
-import AudioScheduler from './lib/speaker-controller.js';
-import { controlHandler } from './lib/main-controller.js';
-import rhinoHandler from './lib/rhino-controller.js';
+import DependencyContainer from './modules/DependencyContainer.js';
 import successLog from './utils/sucess.js';
-import errorLog, { CustomError } from './utils/error.js';
+import errorLog, { CustomError, getCircularReplacer } from './utils/error.js';
 import { stopPm2 } from './utils/PM2-task-menager.js';
 import process, { abort } from 'node:process';
-import completion from './OpenAI/completion.js';
-import { mainPhases, subPhases } from './interfaces/types.js';
+import { command, record } from './interfaces/types.js';
+import RedController from './modules/red-controller.js';
+import { resolve } from 'node:path';
+import runConfGUI from './lib/run-conf-GUI.js';
 
+const restart = () => {
+   process.exit(666);
+};
 
-const red = new RedController();
+const red = new RedController(restart);
 await red.startServer();
+
+const sendToRED = async (msg: command): Promise<string> => {
+   try {
+      if (red) {
+         const response = await red.sendRedMessage(msg);
+         return response;
+      } else {
+         throw new CustomError(
+            'Tryed to send message with Red unstarted ' + msg,
+         );
+      }
+   } catch (err) {
+      throw new CustomError('Failed to send message to red: ', err);
+   }
+};
+
+const container = new DependencyContainer(restart, sendToRED);
+
+const terminate = async () => {
+   try {
+      if (red.isThereMessages()) {
+         const messages = red.messageFlush();
+         for (const message of messages) {
+            await errorLog(
+               'Program stopped without delivering red message: ' + message,
+            );
+         }
+      }
+      await red.stopServer();
+      await container.stopDependencies();
+      restart();
+   } catch (err) {
+      await errorLog('Error terminating dependencies: ' + err);
+   }
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 async function main(): Promise<void> {
-   mPhase = 'start';
-   const start = await controlHandler.start();
+   try {
+      await container.startDependencies();
+      container.phaseMenager.setPhase('start', 'start');
 
-   red.on('REDmessage', message => {
-      successLog('Receiveid form Red:' + message);
-      if (mPhase === 'idle') {
-         reproduceRedMessages(message);
-      } else {
-         red.saveMessage(message);
-      }
-   });
-
-   process.on('unhandledRejection', (reason, promise) => {
-      errorLog('Promise rejected without catch:' + promise + ' ' + reason);
-      console.log(process.listenerCount('message') + ' listeners');
-      process.abort();
-   });
-
-   if (start === 'started') {
-      play_start();
-      player.once('AudioQueueEnd', () => {
-         goIdle();
+      red.on('REDmessage', message => {
+         successLog('Receiveid form Red:' + message);
+         if (container.phaseMenager.getPhase() === 'idle') {
+            reproduceRedMessages(message);
+         } else {
+            red.saveMessage(message);
+         }
       });
-   } else {
-      throw new Error('Error starting server'); //// TODO: break process here
+
+      process.on('unhandledRejection', async (reason, promise) => {
+         container.player.stopAudio();
+         container.player.play_err();
+         await errorLog(
+            `Promise rejected without catch:
+            Promise: ${JSON.stringify(promise, getCircularReplacer(), 2)}
+            Reason: ${reason instanceof Error ? reason.stack || reason.message : JSON.stringify(reason, null, 2)}`,
+         );
+         container.player.once('Audio_Queue_End', async () => {
+            terminate();
+         });
+      });
+      process.on('uncaughtException', async err => {
+         container.player.stopAudio();
+         container.player.play_err();
+         await errorLog(`Uncaught exception: ${err.stack || err.message}`);
+         container.player.once('Audio_Queue_End', async () => {
+            terminate();
+         });
+      });
+
+      async function pause() {
+         if (container.phaseMenager.getPhase === 'idle') {
+            container.phaseMenager.setPhase('pause', 'power menager');
+            await container.control.abortInfinityRecord();
+         } else {
+            throw new CustomError(
+               "User tryed to suspend in a momment I don't want to program ",
+               'a pause system to',
+               true,
+            );
+         }
+      }
+
+      function resume() {
+         goIdle();
+      }
+      container.setListeners(pause, resume);
+      goIdle();
+   } catch (e) {
+      throw new CustomError('^ Vanusa error: ', e);
    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-let mPhase: mainPhases;
-let sPhase: subPhases;
-let abortCurrentPhase: boolean = false;
-
-const player = new AudioScheduler();
-
-const play_output = async () => {
-   player.addToQueue('play');
-};
-const play_last = async () => {
-   player.addToQueue('play_last');
-};
-const play_start = async () => {
-   player.addToQueue('play_start');
-};
-const play_cmd = async () => {
-   player.addToQueue('play_cmd');
-};
-const play_sucess = async () => {
-   player.addToQueue('play_sucess');
-};
-const play_err = async () => {
-   player.addToQueue('play_err');
-};
-
 const goIdle = async (): Promise<void> => {
    try {
-   if (red.isThereMessages()) {
-      reproduceRedMessages();
+      if (red.isThereMessages()) {
+         reproduceRedMessages();
+      }
+      if (container.phaseMenager.getPhase() === 'wait') {
+         console.log('abortInfinityRecord');
+         const stopWait = await container.control.abortInfinityRecord();
+         if (stopWait !== 'remote-stop') {
+            errorLog('stopWait failed: ' + stopWait);
+         }
+      }
+      console.log('goIdle');
+      container.phaseMenager.setPhase('idle', 'idle');
+      const wakeWord: string = await container.control.idle();
+      setTimeout(() => {
+         wwHandler(wakeWord);
+      }, 10);
+   } catch (error) {
+      throw new CustomError('goIdle failed: ', error);
    }
-   if (mPhase === 'wait') {
-   controlHandler.abortWait();
-   }
-   mPhase = 'idle';
-   const wakeWord: string = await controlHandler.idle();
-   setTimeout(() => {
-      wwHandler(wakeWord);
-   }, 10);
-} catch (error) {
-   throw new CustomError('goIdle failed: ' + error);
-}
 };
 
 const wwHandler = async (ww: string) => {
    try {
-   switch (ww) {
-      case 'record':
-         await play_sucess();
-         player.once('Audio_Queue_End', async () => {
-            mPhase = 'record';
-            const input: { message: string; recC: Int16Array[]; recL: Int16Array }
-            | [{ intent: string; [slot: string]: string }, boolean]
-            | string = await controlHandler.record();
-            console.log('input ', input);
+      console.log('wwHandler', ww);
+      switch (ww) {
+         case 'record':
+            await container.player.play_sucess();
+            container.phaseMenager.setPhase('record', 'wwHandler');
+            const input: record | [command, boolean] | string =
+               await container.control.record();
             if (input === 'cancel') {
-               await play_err();
-               player.once('Audio_Queue_End', () => {
-               goIdle();
+               await container.player.play_err();
+               container.player.once('Audio_Queue_End', () => {
+                  goIdle();
                });
             } else {
-               if (typeof input != 'string') {
+               if (typeof input !== 'string') {
                   goWait();
                   goInputHandle(input);
                }
             }
-         });
-         break;
-      case 'repeat':
-         // mPhase = 'wait';
-         goWait();
-         play_output();
-         player.once('Audio_Queue_End', async () => {
+            break;
+         case 'repeat':
+            goWait();
+            container.player.play_output();
+            container.player.once('Audio_Queue_End', async () => {
+               goIdle();
+            });
+            break;
+         case 'repeat_last':
+            container.player.play_last();
+            container.player.once('Audio_Queue_End', () => {
+               goIdle();
+            });
+            goWait();
+            break;
+         case 'cancel':
             goIdle();
-         });
-         break;
-      case 'repeat_last':
-         play_last();
-         player.once('Audio_Queue_End', () => {
+            break;
+         case 'loop':
             goIdle();
-         });
-         goWait();
-         break;
-      case 'cancel':
-         goIdle();
-         break;
-      case 'loop':
-         goIdle();
-         break;
-      default:
-         console.log('Unknown message from control worker');
-         break;
-   }
+            break;
+         case 'remote-stop':
+            successLog('Vanusa paused, probably due to suspension');
+            return;
+         default:
+            console.log('Unknown wake-word');
+            throw new CustomError('Wake Word Handler failed: ');
+            break;
+      }
    } catch (error) {
-      throw new CustomError('Wake Word Handler failed: ' + error);
+      throw new CustomError('Wake Word Handler failed: ', error);
    }
 };
 
-const goInputHandle = async (input: { message: string; recC: Int16Array[]; recL: Int16Array }
-   | [{ intent: string; [slot: string]: string }, boolean]): Promise<void> => {
-
-   }else if (Array.isArray(input)) {
-      if (input[1]){
-      composite
-      }else {
-      rhinoHandler(input);
+const goWait = async () => {
+   try {
+      console.log('waiting');
+      container.phaseMenager.setPhase('wait', 'wait');
+      const cancel: string = await container.control.wait();
+      switch (cancel) {
+         case 'cancel':
+            container.phaseMenager.setAbortCurrentPhaseTrue();
+            console.log('cancel');
+            goIdle();
+            break;
+         case 'loop':
+            console.log('cancel loop');
+            goWait();
+            break;
+         case 'remote-stop':
+            console.log('canceled' + cancel);
+            break;
+         default:
+            console.log('canceled' + cancel);
+            goIdle();
+            break;
       }
+   } catch (e) {
+      throw new CustomError('goWait failed: ', e);
    }
-   {
-      play_sucess();
-      player.once('Audio_Queue_End', () => {
-      goStt(input);
+};
+
+const goInputHandle = async (
+   input: record | [command, boolean],
+): Promise<void> => {
+   if (Array.isArray(input)) {
+      rhinoRoute(input);
+   } else {
+      container.player.play_sucess();
+      container.player.once('Audio_Queue_End', async () => {
+         const cancel = () => {
+            container.phaseMenager.setSubPhase(null, 'inputHandle');
+            goIdle();
+            return;
+         };
+         let sttInput: string | undefined;
+         if (!Array.isArray(input) && typeof input !== 'string')
+            sttInput = await goStt(input.recC, input.recL);
+         console.log('sttInput ', sttInput);
+         if (sttInput === 'cancel') cancel();
+         let asnwer: string;
+         let tts: string;
+         if (sttInput) asnwer = await goComplet(sttInput);
+         else throw new CustomError('a');
+         if (asnwer === 'cancel') cancel();
+         if (asnwer) tts = await goTts(asnwer);
+         if (tts === 'cancel') cancel();
+         if (tts === 'ok') container.player.play_output();
+         container.player.once('Audio_Queue_End', async () => {
+            container.phaseMenager.setSubPhase(null, 'goInputHandle');
+            goIdle();
+         });
       });
    }
-}
+};
 
-const goWait = async () => {
-   const cancel: string = await controlHandler.wait();
-   if (cancel === 'cancel') {
-      abortCurrentPhase = true;
+const rhinoRoute = async (input: [command, boolean]): Promise<void> => {
+   try {
+      container.phaseMenager.setSubPhase('cmd', 'rhinoRoute');
+      let cmd: command | string = input[0]; // cmd can be a string if rhino handler return a string
+      if (input[1]) {
+         container.player.play_cmd();
+         container.player.once('Audio_Queue_End', async () => {
+            const compositeRecord: record =
+               await container.control.compositeCmd();
+            if (compositeRecord === 'cancel') {
+               container.phaseMenager.setSubPhase(null, 'rhinoRoute');
+               goIdle();
+               return;
+            }
+            if (
+               typeof compositeRecord !== 'string' &&
+               typeof cmd !== 'string' &&
+               compositeRecord.message === 'composite'
+            ) {
+               cmd = await container.rhino.parseTranscript(
+                  cmd,
+                  compositeRecord,
+               );
+               cmd = await container.rhino.jsonizeTranscript(cmd);
+               cmd = await container.rhino.RhinoHandler(cmd);
+            }
+         });
+      } else {
+         cmd = await container.rhino.RhinoHandler(cmd);
+      }
+      console.log(cmd);
+      container.phaseMenager.setSubPhase(null, 'rhinoRoute');
       goIdle();
-   } else if (cancel === 'loop') {
-      goWait();
-   }  else {
-      goIdle();
+   } catch (error) {
+      container.phaseMenager.setSubPhase(null, 'rhinoRoute');
+      throw new CustomError('Rhino Handler failed: ', error);
+   }
+};
+
+const goStt = async (recC: Int16Array[], recL: Int16Array): Promise<string> => {
+   try {
+      if (container.phaseMenager.getAbortCurrentPhase()) {
+         return 'cancel';
+      }
+      container.phaseMenager.setSubPhase('stt', 'goStt');
+      const transcirpt: string = await container.sttCtrl.stt(recL, recC);
+      if (transcirpt === 'Picovoice_STT_limit_reached')
+         throw new CustomError('Picovoice_STT_limit_reached');
+      return transcirpt;
+   } catch (error) {
+      container.phaseMenager.setSubPhase(null, 'goStt');
+      throw new CustomError('Stt Handler failed: ', error);
+   }
+};
+
+const goComplet = async (input: string): Promise<string> => {
+   try {
+      if (container.phaseMenager.getAbortCurrentPhase()) return 'cancel';
+      const asnwer: string | null = await container.OAIComp.completion(input);
+      console.log(asnwer);
+      if (asnwer) return asnwer;
+      throw new CustomError('Completion failed: ', 'no asnwer');
+   } catch (e) {
+      throw new CustomError('Completion failed: ', e);
+   }
+};
+
+const goTts = async (input: string): Promise<string> => {
+   try {
+      if (container.phaseMenager.getAbortCurrentPhase()) return 'cancel';
+      container.phaseMenager.setSubPhase('tts', 'goTts');
+      const synth: string = await container.ttsCtrl.tts(input);
+      if (synth === 'TTS_done') {
+         return 'ok';
+      } else {
+         throw new CustomError('Record Handler failed: ', synth);
+      }
+   } catch (e) {
+      throw new CustomError('TTS failed: ', e);
    }
 };
 
 const reproduceRedMessages = async (message?: string) => {
-   if (message) {
-      console.log('Reproducing RED message:', message);
+   try {
+      if (message) {
+         console.log('Reproducing RED message:', message);
+      }
+      const messages = red.messageFlush();
+      for (const message of messages) {
+         console.log('Reproducing RED message:', message);
+      }
+   } catch (e) {
+      throw new CustomError('Reproducing RED messages failed: ', e);
    }
-   const messages = red.messageFlush();
-   for (const message of messages) {
-      console.log('Reproducing RED message:', message);
+};
+
+const rhinoExecuter = async (
+   intent: string,
+   cmd?: command,
+): Promise<string> => {
+   try {
+      switch (intent) {
+         case 'Transcribe':
+            return 'Transcribe';
+         case 'Create_audio':
+            return 'Create_audio';
+         case 'Red':
+            return 'Red';
+         case 'Turn_off':
+            return 'Turn_off';
+         default:
+            return 'Unknown command';
+      }
+   } catch (error) {
+      throw new CustomError('Rhino executer failed: ', error);
    }
 };
 
@@ -196,9 +381,14 @@ const reproduceRedMessages = async (message?: string) => {
    try {
       await main();
    } catch (e) {
-      errorLog(e);
-      controlHandler.play_err();
+      await errorLog(e);
+      container.player.play_err();
+      container.player.once('Audio_Queue_End', async () => {
+         if (e && typeof e === 'object' && 'fatal' in e) {
+            if ((e as any).fatal) {
+               process.exit(1);
+            }
+         }
+      });
    }
 })();
-
-console.log('end');

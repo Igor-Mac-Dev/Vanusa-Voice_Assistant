@@ -21,7 +21,7 @@ export default class AudioInputReader extends EventEmitter {
             this.recorder = new PvRecorder(this.frameLength, this.device);
         }
         catch (err) {
-            throw new CustomError('°Record failed to init:' + err);
+            throw new CustomError('°Record failed to init:', err);
         }
     }
     async startRecording() {
@@ -29,7 +29,7 @@ export default class AudioInputReader extends EventEmitter {
             await this.recorder.start();
         }
         catch (err) {
-            throw new CustomError('°Record failed to start:' + err);
+            throw new CustomError('°Record failed to start:', err);
         }
     }
     async readAudioFrame() {
@@ -38,7 +38,7 @@ export default class AudioInputReader extends EventEmitter {
             return frame;
         }
         catch (err) {
-            throw new CustomError('°Record failed to read frame:' + err);
+            throw new CustomError('°Record failed to read frame:', err);
         }
     }
     stopRecording() {
@@ -46,7 +46,7 @@ export default class AudioInputReader extends EventEmitter {
             this.recorder.stop();
         }
         catch (err) {
-            throw new CustomError('°Record failed to stop:' + err);
+            throw new CustomError('°Record failed to stop:', err);
         }
     }
     recorderRelease() {
@@ -55,7 +55,7 @@ export default class AudioInputReader extends EventEmitter {
             this.recorder = {};
         }
         catch (err) {
-            throw new CustomError('°Recorder failed to release:' + err);
+            throw new CustomError('°Recorder failed to release:', err);
         }
     }
 }

@@ -4,15 +4,15 @@ import { EventEmitter } from 'events';
 import * as conf from '../configuration/conf.js';
 import * as interfaces from '../interfaces/config-json.js';
 
-const config: interfaces.config = conf.readConfigFile();
-
 export default class PorcupineDetector extends EventEmitter {
    protected useCase: number;
    private kwDetector: Porcupine | null = null;
+   protected config: interfaces.config;
 
-   constructor(useCase) {
+   constructor(useCase: number) {
       super();
       this.useCase = useCase;
+      this.config = conf.readConfigFile();
    }
 
    public porcupineInit(): void {
@@ -20,23 +20,23 @@ export default class PorcupineDetector extends EventEmitter {
       const sensitivity: number[] = [];
       switch (this.useCase) {
          case 1:
-            wakewords = [...config.PPN_WW, ...config.PPN_REPEAT];
+            wakewords = [...this.config.PPN_WW, ...this.config.PPN_REPEAT];
             break;
          case 2:
-            wakewords = [...config.PPN_CANCEL];
+            wakewords = [...this.config.PPN_CANCEL];
             break;
          default:
             throw new CustomError('°PPN invalid use case');
       }
 
       wakewords.forEach(() => {
-         sensitivity.push(config.SENSITIVITY);
+         sensitivity.push(this.config.SENSITIVITYWW);
       });
       this.kwDetector = new Porcupine(
-         config.PV_KEY,
+         this.config.PV_KEY,
          wakewords,
          sensitivity,
-         config.PPN,
+         this.config.PPN,
       );
    }
 

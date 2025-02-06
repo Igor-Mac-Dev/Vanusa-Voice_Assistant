@@ -1,7 +1,7 @@
 import { Rhino } from '@picovoice/rhino-node';
-import { CustomError } from '../../utils/error.js';
-import { readConfigFile } from '../../configuration/conf.js';
-import * as interfaces from '../../interfaces/config-json.js';
+import { CustomError } from '../utils/error.js';
+import { readConfigFile } from '../configuration/conf.js';
+import * as interfaces from '../interfaces/config-json.js';
 import { EventEmitter } from 'events';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -50,7 +50,7 @@ export default class RhinoSti extends EventEmitter {
                this.intentDetector[`!${i}rhin`] = new Rhino(
                   this.config.PV_KEY,
                   this.rhinos[i],
-                  this.config.SENSITIVITY,
+                  this.config.SENSITIVITYCMD,
                   0.9,
                   true,
                   this.modelPath,
@@ -59,7 +59,7 @@ export default class RhinoSti extends EventEmitter {
                this.intentDetector[`${i}rhin`] = new Rhino(
                   this.config.PV_KEY,
                   this.rhinos[i],
-                  this.config.SENSITIVITY,
+                  this.config.SENSITIVITYCMD,
                   0.9,
                   true,
                   this.modelPath,
@@ -67,7 +67,7 @@ export default class RhinoSti extends EventEmitter {
             }
          }
       } catch (err) {
-         throw new CustomError('°Rhino failed to init:' + err);
+         throw new CustomError('°Rhino failed to init:', err);
       }
    }
 
@@ -92,7 +92,7 @@ export default class RhinoSti extends EventEmitter {
             }
          }
       } catch (err) {
-         throw new CustomError('°Rhino failed to process audio:' + err);
+         throw new CustomError('°Rhino failed to process audio:', err);
       }
    }
 
@@ -116,7 +116,7 @@ export default class RhinoSti extends EventEmitter {
          }
          this.intentDetector = {};
       } catch (err) {
-         throw new CustomError('°Rhino failed to release:' + err);
+         throw new CustomError('°Rhino failed to release:', err);
       }
    }
 }

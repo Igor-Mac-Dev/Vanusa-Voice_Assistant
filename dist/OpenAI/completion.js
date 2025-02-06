@@ -1,78 +1,82 @@
-import OpenAI from 'openai';
-import { readConfigFile } from '../configuration/conf.js';
-import * as path from 'path';
-import * as fs from 'fs';
 import { CustomError } from '../utils/error.js';
-const historyPath = path.join(path.resolve('./dist/process-files/'), 'history.txt');
-const config = readConfigFile();
-function getHistory(input) {
-    try {
-        const history = fs.readFileSync(historyPath, 'utf8');
-        const result = [];
-        if (history.length > 0) {
-            const lines = history.split(/\r?\n/);
-            lines.forEach(line => {
-                if (line.trim()) {
-                    try {
-                        result.push(JSON.parse(line));
-                    }
-                    catch (err) {
-                        throw new CustomError('°OAI failed to parse history:' + err);
-                    }
-                }
+import OpenAICompletion from '../OpenAI/OAI-API-AUX.js';
+export default class OAIcompletion extends OpenAICompletion {
+    constructor() {
+        super();
+    }
+    async completion(input) {
+        try {
+            const response = await this.openai?.chat.completions.create({
+                messages: [
+                    JSON.parse(`{"role": "system", "content": "${this.config.OAI_ASSIST_DEFINITION} ${this.config.OAI_ASSIST_USER_DEFINITION}"}`),
+                    ...this.getHistory(input),
+                ],
+                model: this.config.OAI_MODEL,
+                max_completion_tokens: this.config.OAI_MAX_TOKENS,
+                temperature: this.config.OAI_TEMPERATURE,
             });
-        }
-        result.push({ role: 'user', content: input });
-        fs.writeFileSync(historyPath, '', 'utf8');
-        let i = 1;
-        result.forEach(line => {
-            if (i > result.length - config.OAI_HISTORY_LENGTH) {
-                fs.appendFileSync(historyPath, JSON.stringify(line) + '\n', 'utf8');
+            const message = response.choices[0].message;
+            if ('refusal' in message) {
+                delete message.refusal;
             }
-            i++;
-        });
-        return result;
-    }
-    catch (err) {
-        throw new CustomError('°OAI failed while reading history: ' + err);
-    }
-}
-export default async function completion(input) {
-    try {
-        const openai = new OpenAI({ apiKey: config.OAI_KEY });
-        const response = await openai.chat.completions.create({
-            messages: [
-                JSON.parse(`{"role": "system", "content": "${config.OAI_ASSIST_DEFINITION}${config.OAI_ASSIST_USER_DEFINITION}"}`),
-                ...getHistory(input),
-            ],
-            model: config.OAI_MODEL,
-            max_completion_tokens: config.OAI_MAX_TOKENS,
-            temperature: config.OAI_TEMPERATURE,
-        });
-        const message = response.choices[0].message;
-        if ('refusal' in message) {
-            delete message.refusal;
-        }
-        let messageContent = response.choices[0].message.content;
-        messageContent = messageContent.replace(/[{}]/g, '');
-        fs.appendFileSync(historyPath, JSON.stringify(messageContent), 'utf8');
-        return response.choices[0].message.content;
-    }
-    catch (error) {
-        if (isOpenAIError(error)) {
-            console.error('Erro na resposta da API:', error.response.status);
-            console.error('Detalhes do erro:', error.response.data);
-            if (error.response.status === 402) {
-                console.error('Créditos insuficientes. Verifique seus detalhes de pagamento.');
+            if (!message || !message.content) {
+                throw new Error("OpenAi's API invalid response");
             }
+            let messageContent = response.choices[0].message.content;
+            messageContent = messageContent.replace(/[{}]/g, '').trim();
+            this.appendHistory(messageContent);
+            return response.choices[0].message.content;
         }
-        else {
-            console.error('Erro inesperado:', error);
+        catch (error) {
+            let erro = null;
+            if (this.isOpenAIError(error)) {
+                erro = "°OpenAi's API failed:" + error.response.status;
+                erro += `\nError details: ${error.response.data}`;
+                if (error.response.status === 402) {
+                    erro += '\nInsufficient credits. Check your payment details.';
+                }
+            }
+            throw new CustomError(erro ? erro : "°OpenAi's API Completion failed: ", error);
         }
-        throw error;
     }
-}
-function isOpenAIError(error) {
-    return typeof error === 'object' && error !== null && 'response' in error;
+    async compositeCompletion(input, intent) {
+        try {
+            const response = await this.openai?.chat.completions.create({
+                messages: [
+                    JSON.parse(`{"role": "system", "content": "${this.config.OAI_ASSIST_DEFINITION} ${this.config.OAI_ASSIST_USER_DEFINITION}"}`),
+                    this.config.LANGUAGE === 'en'
+                        ? {
+                            role: 'system',
+                            content: `You MUST TO asnwer this in js readable json format, based on user's input and following this template:\n${this.getTemplate(intent)}\nIf you don't know how to answer, just and only say "ABORT".`,
+                        }
+                        : {
+                            role: 'system',
+                            content: `Você DEVE responder isso em um formato JSON legível para JavaScript, baseado na entrada do usuário e seguindo este modelo:\n${this.getTemplate(intent)}\nSe você não souber como responder, apenas e somente diga "ABORT".`,
+                        },
+                    { role: 'user', content: input },
+                ],
+                model: this.config.OAI_MODEL,
+                max_completion_tokens: this.config.OAI_MAX_TOKENS,
+                temperature: this.config.OAI_TEMPERATURE,
+            });
+            const message = response.choices[0].message;
+            if (!message || !message.content) {
+                throw new Error("OpenAi's API invalid response");
+            }
+            const messageContent = JSON.parse(message.content);
+            return messageContent;
+        }
+        catch (error) {
+            let erro = null;
+            if (this.isOpenAIError(error)) {
+                erro = "°OpenAi's API failed:" + error.response.status;
+                erro += `\nError details: ${error.response.data}`;
+                if (error.response.status === 402) {
+                    erro += '\nInsufficient credits. Check your payment details.';
+                }
+            }
+            throw new CustomError(erro ? erro : "°OpenAi's API Completion failed: ", error);
+        }
+    }
 }
 //# sourceMappingURL=completion.js.map

@@ -1,0 +1,4 @@
+C:\Users\whisk\Documents\Projetos\VANUSAR\PowerMonitorService\bin\Release\net8.0\win-x64\publish\appsettings.Development.json
+C:\Users\whisk\Documents\Projetos\VANUSAR\PowerMonitorService\bin\Release\net8.0\win-x64\publish\appsettings.json
+C:\Users\whisk\Documents\Projetos\VANUSAR\PowerMonitorService\bin\Release\net8.0\win-x64\publish\PowerMonitorService.pdb
+C:\Users\whisk\Documents\Projetos\VANUSAR\PowerMonitorService\bin\Release\net8.0\win-x64\publish\PowerMonitorService.exe

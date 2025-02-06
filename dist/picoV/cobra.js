@@ -33,7 +33,7 @@ export default class CobraDetector extends EventEmitter {
             }
         }
         catch (err) {
-            throw new CustomError('°COBRA failed to release:' + err);
+            throw new CustomError('°COBRA failed to release:', err);
         }
     }
     processFrame(frame) {

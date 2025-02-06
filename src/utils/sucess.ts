@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-export default async function successLog(success: string): Promise<void> {
-   let date = new Date(Date.now());
-   let now = date.toUTCString();
+export default async function sucessLog(success: string): Promise<void> {
+   const date = new Date(Date.now());
+   const now = date.toLocaleString();
    fs.appendFile(
-      path.resolve('log/log.txt'),
+      path.resolve('logs/log.txt'),
       `\n${now} - Sucess: ${success}`,
       errr => {
          console.error(errr);

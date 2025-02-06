@@ -1,5 +1,0 @@
-{
-    código1: código solicitado, crie mais itens se necessário (código2 etc.)
-    ...
-    msg: mensagem que será reproduzida para o usuário
-}

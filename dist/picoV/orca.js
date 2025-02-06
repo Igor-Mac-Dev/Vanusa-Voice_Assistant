@@ -1,7 +1,7 @@
 import { Orca } from '@picovoice/orca-node';
 import { CustomError } from '../utils/error.js';
 import * as conf from '../configuration/conf.js';
-import makeWav from '../utils/wav-maker.js';
+import makeWav, { makeGenericWav } from '../lib/wav-maker.js';
 export default class OrcaTts {
     constructor() {
         this.config = conf.readConfigFile();
@@ -13,7 +13,7 @@ export default class OrcaTts {
             this.orca = new Orca(this.config.PV_KEY);
         }
         catch (err) {
-            throw new CustomError('°Orca failed to init:' + err);
+            throw new CustomError('°Orca failed to init:', err);
         }
     }
     async generateAudio(text, usecase) {
@@ -28,7 +28,22 @@ export default class OrcaTts {
         }
         catch (err) {
             this.orcaRelease();
-            throw new CustomError('°Orca failed to generate audio:' + err);
+            throw new CustomError('°Orca failed to generate audio:', err);
+        }
+    }
+    async generateRhinoAudio(text, path) {
+        try {
+            this.orcaInit();
+            if (this.orca) {
+                const pcmHolder = this.orca.synthesize(text);
+                this.wavBuffer = pcmHolder.pcm;
+                await makeGenericWav(this.wavBuffer, 22000, path);
+                this.orcaRelease();
+            }
+        }
+        catch (err) {
+            this.orcaRelease();
+            throw new CustomError('°Orca failed to generate audio:', err);
         }
     }
     orcaRelease() {
@@ -40,7 +55,7 @@ export default class OrcaTts {
             }
         }
         catch (err) {
-            throw new CustomError('°Orca failed to release:' + err);
+            throw new CustomError('°Orca failed to release:', err);
         }
     }
 }
