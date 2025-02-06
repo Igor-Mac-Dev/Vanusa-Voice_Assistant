@@ -19,12 +19,6 @@ IF %ERRORLEVEL% NEQ 0 (
     msiexec /i git.msi /quiet
 )
 
-pnpm -v >nul 2>&1
-if %ERRORLEVEL% neq 0 (
-    echo pnpm is not installed. Installing pnpm...
-    npm install -g pnpm
-)
-
 IF NOT EXIST "%INSTALL_DIR%" (
     mkdir "%INSTALL_DIR%"
     echo Created installation directory: %INSTALL_DIR%
@@ -42,7 +36,7 @@ IF NOT EXIST "%INSTALL_DIR%\.git" (
     git stash apply
     )
 
-npm install --production
+npm install --omit=dev --yes
 
 if not exist ".\logs" (
     echo Creating dir ./log...

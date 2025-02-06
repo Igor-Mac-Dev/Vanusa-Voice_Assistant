@@ -1,5 +1,5 @@
 node_modules
 dist/process-files/*
-logs/*
+logs
 colinha.txt
 .VoiceAssist.json.backup

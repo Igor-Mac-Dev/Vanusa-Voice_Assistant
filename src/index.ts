@@ -94,13 +94,13 @@ async function main(): Promise<void> {
       });
 
       async function pause() {
-         if (container.phaseMenager.getPhase === 'idle') {
+         if (container.phaseMenager.getPhase() === 'idle') {
             container.phaseMenager.setPhase('pause', 'power menager');
             await container.control.abortInfinityRecord();
          } else {
             throw new CustomError(
                "User tryed to suspend in a momment I don't want to program ",
-               'a pause system to',
+               'a pause system to: ',
                true,
             );
          }
