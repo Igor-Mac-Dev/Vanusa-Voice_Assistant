@@ -47,7 +47,6 @@ export default class FramesEmitter extends AudioInputReader {
             }
          }
       } catch (err) {
-         console.log(5);
          this.emit(
             'REC_failed',
             new CustomError('°Record emission failed: ' + err),

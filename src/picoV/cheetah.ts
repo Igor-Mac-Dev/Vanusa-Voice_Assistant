@@ -57,8 +57,6 @@ export default class CheetahStt {
          } catch (err) {
             throw new CustomError('°Cheetah failed to process audio: ', err);
          }
-      } else {
-         console.log('Cheetah not available, please init it');
       }
    }
 

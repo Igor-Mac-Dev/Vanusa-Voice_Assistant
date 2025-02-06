@@ -46,7 +46,6 @@ export class CustomError extends Error {
          this.logMsg += error.stack + '\n ' + error.message;
       }
       if (error instanceof CustomError) {
-         console.log('saco' + JSON.stringify(error, getCircularReplacer(), 2));
          this.logMsg += JSON.stringify(error, getCircularReplacer(), 2);
       }
       if (error && typeof error === 'object') {

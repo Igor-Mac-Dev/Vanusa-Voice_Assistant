@@ -33,7 +33,6 @@ export default class OpenAICompletion {
    protected getHistory(input: string): { role: string; content: string }[] {
       try {
          const history = fs.readFileSync(this.historyPath, 'utf8');
-         console.log(1);
          const result: { role: string; content: string }[] = [];
          if (history.length > 0) {
             const lines = history.split(/\r?\n/);
