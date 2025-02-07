@@ -13,12 +13,12 @@ cmd /c pm2 delete Vanusa-main >nul 2>&1
 cmd /c pm2 delete Vanusa-safe >nul 2>&1
 cmd /c pm2 delete V-node-red >nul 2>&1
 
+cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/pvrecorder-node
 cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/cheetah-node
 cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/cobra-node
 cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/leopard-node
 cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/orca-node
 cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/porcupine-node
-cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/pvrecorder-node
 cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/rhino-node
 cmd /c pnpm rm --dir "%INSTALL_DIR%" fluent-ffmpeg
 cmd /c pnpm rm --dir "%INSTALL_DIR%" gtts
