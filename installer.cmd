@@ -36,8 +36,6 @@ IF NOT EXIST "%INSTALL_DIR%\.git" (
     git stash apply
     )
 
-npm install --omit=dev --yes
-
 if not exist ".\logs" (
     echo Creating dir ./log...
     mkdir .\logs
@@ -48,7 +46,7 @@ if not exist ".\dist\process-files" (
     mkdir .\dist\process-files
 ) 
 
-set "targetDir=%USERPROFILE%\Documents\process-files"
+set "targetDir=%USERPROFILE%\Documents\Vanusa-files"
 
 if not exist "%targetDir%" (
     echo Creating directory: %targetDir%...
@@ -56,12 +54,18 @@ if not exist "%targetDir%" (
     echo Directory created successfully.
 )
 
-copy "PowerMonitorService\bin\Release\netX\win-x64\publish\PowerMonitorService.exe" "%INSTALL_DIR%"
-sc stop %SERVICE_NAME%
-sc delete %SERVICE_NAME%
-sc create %SERVICE_NAME% binPath= "%INSTALL_DIR%\PowerMonitorService.exe"
-sc description %SERVICE_NAME% "Monit suspension and resume events to send to Vanusa"
-sc privs %SERVICE_NAME% SeShutdownPrivilege/SeChangeNotifyPrivilege/SeUndockPrivilege/SeIncreaseWorkingSetPrivilege/SeTimeZonePrivilege
+del pnpm-lock.yaml
+rd /s /q tests
+npm cache clean --force
+cmd /c npm install --no-bin-links --force --omit=dev --yes || (echo "There was an problem installing dependencies: " & cmd /c npm install)
+
+copy "PowerMonitorService\bin\Release\net8.0\win-x64\publish\PowerMonitorService.exe" "%INSTALL_DIR%"
+cmd /c sc stop %SERVICE_NAME%
+cmd /c sc delete %SERVICE_NAME%
+cmd /c sc create %SERVICE_NAME% binPath= "\"%INSTALL_DIR%\PowerMonitorService.exe\"" start= auto
+cmd /c sc description %SERVICE_NAME% "Monit suspension and resume events to send to Vanusa"
+cmd /c sc privs %SERVICE_NAME% SeShutdownPrivilege/SeChangeNotifyPrivilege/SeUndockPrivilege/SeIncreaseWorkingSetPrivilege/SeTimeZonePrivilege
+rd /s /q PowerMonitorService
 
 set "startupFolder=%appdata%\Microsoft\Windows\Start Menu\Programs\Startup"
 echo @echo off > "%startupFolder%\pm2_resurrect.bat"
@@ -71,7 +75,7 @@ echo File pm2_resurrect.bat created.
 
 echo Installation complete!
 echo Starting the app...
-npm safe-start
+npm run safe-start
 
 pause
 ENDLOCAL
