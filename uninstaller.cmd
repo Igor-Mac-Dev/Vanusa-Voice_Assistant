@@ -13,24 +13,24 @@ cmd /c pm2 delete Vanusa-main >nul 2>&1
 cmd /c pm2 delete Vanusa-safe >nul 2>&1
 cmd /c pm2 delete V-node-red >nul 2>&1
 
-cmd /c pnpm rm @picovoice/cheetah-node
-cmd /c pnpm rm @picovoice/cobra-node
-cmd /c pnpm rm @picovoice/leopard-node
-cmd /c pnpm rm @picovoice/orca-node
-cmd /c pnpm rm @picovoice/porcupine-node
-cmd /c pnpm rm @picovoice/pvrecorder-node
-cmd /c pnpm rm @picovoice/rhino-node
-cmd /c pnpm rm fluent-ffmpeg
-cmd /c pnpm rm gtts
-cmd /c pnpm rm gtts.js
-cmd /c pnpm rm node-red
-cmd /c pnpm rm node-wav-player-optimized
-cmd /c pnpm rm open
-cmd /c pnpm rm openai
-cmd /c pnpm rm pm2
-cmd /c pnpm rm portfinder
-cmd /c pnpm rm wavefile
-cmd /c pnpm rm ws
+cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/cheetah-node
+cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/cobra-node
+cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/leopard-node
+cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/orca-node
+cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/porcupine-node
+cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/pvrecorder-node
+cmd /c pnpm rm --dir "%INSTALL_DIR%" @picovoice/rhino-node
+cmd /c pnpm rm --dir "%INSTALL_DIR%" fluent-ffmpeg
+cmd /c pnpm rm --dir "%INSTALL_DIR%" gtts
+cmd /c pnpm rm --dir "%INSTALL_DIR%" translate-google
+cmd /c pnpm rm --dir "%INSTALL_DIR%" node-red
+cmd /c pnpm rm --dir "%INSTALL_DIR%" node-wav-player-optimized
+cmd /c pnpm rm --dir "%INSTALL_DIR%" open
+cmd /c pnpm rm --dir "%INSTALL_DIR%" openai
+cmd /c pnpm rm --dir "%INSTALL_DIR%" pm2
+cmd /c pnpm rm --dir "%INSTALL_DIR%" portfinder
+cmd /c pnpm rm --dir "%INSTALL_DIR%" wavefile
+cmd /c pnpm rm --dir "%INSTALL_DIR%" ws
 
 set "startupFolder=%appdata%\Microsoft\Windows\Start Menu\Programs\Startup"
 cmd /c del "%startupFolder%\pm2_resurrect.bat" /f

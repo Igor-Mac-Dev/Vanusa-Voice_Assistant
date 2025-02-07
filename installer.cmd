@@ -30,6 +30,19 @@ IF %ERRORLEVEL% NEQ 0 (
 IF NOT EXIST "%INSTALL_DIR%" (
     mkdir "%INSTALL_DIR%"
     echo Created installation directory: %INSTALL_DIR%
+) ELSE (
+    echo The installation directory already exists. Cleaning up...
+    rmdir /s /q "%INSTALL_DIR%" >nul 2>&1
+
+    IF EXIST "%INSTALL_DIR%" (
+        echo Failed to clean the installation directory.
+        echo Please manually delete the folder "%INSTALL_DIR%" and restart the installation.
+        pause
+        exit /b
+    ) ELSE (
+        echo Installation directory cleaned successfully.
+        mkdir "%INSTALL_DIR%"
+    )
 )
 
 cd /d "%INSTALL_DIR%"
