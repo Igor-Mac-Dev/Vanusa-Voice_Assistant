@@ -57,7 +57,7 @@ if not exist "%targetDir%" (
 del pnpm-lock.yaml
 rd /s /q tests
 npm cache clean --force
-cmd /c npm install --no-bin-links --force --omit=dev --yes || (echo "There was an problem installing dependencies: " & cmd /c npm install)
+cmd /c npm install --no-bin-links --omit=dev --yes || (echo "There was an problem installing dependencies: " & cmd /c npm install)
 
 copy "PowerMonitorService\bin\Release\net8.0\win-x64\publish\PowerMonitorService.exe" "%INSTALL_DIR%"
 cmd /c sc stop %SERVICE_NAME%

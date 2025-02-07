@@ -18,7 +18,6 @@ export default class RedController extends EventEmitter {
         this.redPort = 21105;
         this.failed = false;
         try {
-            console.log('corno');
             this.setRedPort();
             this.config = readConfigFile();
             this.restart = restart;

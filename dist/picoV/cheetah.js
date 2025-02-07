@@ -55,9 +55,6 @@ export default class CheetahStt {
                 throw new CustomError('°Cheetah failed to process audio: ', err);
             }
         }
-        else {
-            console.log('Cheetah not available, please init it');
-        }
     }
     turnoff() {
         if (this.transcriptor) {
