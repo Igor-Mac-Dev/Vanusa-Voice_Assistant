@@ -1,11 +1,11 @@
 import { readConfigFile } from './configuration/conf.js';
 import * as pm2 from './utils/PM2-task-menager.js';
-import ConfServer from './lib/config-server.js';
+import ConfServer from './modules/config-server.js';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 const confPath = path.resolve('./dist/process-files/conf.json');
 let shouldClean;
-import errorLog from './utils/error.js';
+import errorLog, { CustomError } from './utils/error.js';
 main();
 async function main() {
     try {
@@ -17,7 +17,11 @@ async function main() {
         }
         const GUI = await confGUI.startConfServer();
         confGUI.stopConfServer();
-        const configs = readConfigFile();
+        let configs;
+        if (GUI !== 'exit')
+            configs = readConfigFile();
+        else
+            configs = { AUTO_START: false };
         console.log(GUI);
         switch (GUI) {
             case 'ok_conf':
@@ -54,7 +58,7 @@ async function main() {
     }
     catch (err) {
         console.log('Error starting the conf server: ' + err);
-        await errorLog('Error starting the conf server: ' + err);
+        await errorLog(new CustomError('Error starting the conf server: ' + err));
     }
     finally {
         process.exit(0);

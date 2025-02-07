@@ -8,8 +8,7 @@ parentPort?.on('message', async (message) => {
         sendSig(sig);
     }
     catch (err) {
-        errorLog('Trying to send message with VoiceController error: ' +
-            new CustomError('*Recorder Worker error: ', err));
+        errorLog(new CustomError('Trying to send message with VoiceController error: ' + err));
         parentPort?.postMessage({
             message: 'error',
             error: new CustomError('*Recorder Worker error: ', err),

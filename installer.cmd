@@ -19,6 +19,14 @@ IF %ERRORLEVEL% NEQ 0 (
     msiexec /i git.msi /quiet
 )
 
+pnpm -v >nul 2>&1
+IF %ERRORLEVEL% NEQ 0 (
+    echo pnpm is not installed. Installing pnpm...
+    powershell -Command "& { iwr -useb https://get.pnpm.io/install.ps1 | iex }"
+    SET "PNPM_DIR=%LOCALAPPDATA%\pnpm"
+    SET "PATH=%PNPM_DIR%;%PATH%"
+)
+
 IF NOT EXIST "%INSTALL_DIR%" (
     mkdir "%INSTALL_DIR%"
     echo Created installation directory: %INSTALL_DIR%
@@ -34,7 +42,7 @@ IF NOT EXIST "%INSTALL_DIR%\.git" (
     git stash
     git pull
     git stash apply
-    )
+)
 
 if not exist ".\logs" (
     echo Creating dir ./log...
@@ -54,17 +62,16 @@ if not exist "%targetDir%" (
     echo Directory created successfully.
 )
 
-del pnpm-lock.yaml
 rd /s /q tests
-npm cache clean --force
-cmd /c npm install --no-bin-links --omit=dev --yes || (echo "There was an problem installing dependencies: " & cmd /c npm install)
+cmd /c pnpm install || echo "There was a problem installing dependencies"
 
 copy "PowerMonitorService\bin\Release\net8.0\win-x64\publish\PowerMonitorService.exe" "%INSTALL_DIR%"
 cmd /c sc stop %SERVICE_NAME%
 cmd /c sc delete %SERVICE_NAME%
 cmd /c sc create %SERVICE_NAME% binPath= "\"%INSTALL_DIR%\PowerMonitorService.exe\"" start= auto
-cmd /c sc description %SERVICE_NAME% "Monit suspension and resume events to send to Vanusa"
+cmd /c sc description %SERVICE_NAME% "Monitor suspension and resume events to send to Vanusa"
 cmd /c sc privs %SERVICE_NAME% SeShutdownPrivilege/SeChangeNotifyPrivilege/SeUndockPrivilege/SeIncreaseWorkingSetPrivilege/SeTimeZonePrivilege
+cmd /c sc start %SERVICE_NAME%
 rd /s /q PowerMonitorService
 
 set "startupFolder=%appdata%\Microsoft\Windows\Start Menu\Programs\Startup"
@@ -75,7 +82,7 @@ echo File pm2_resurrect.bat created.
 
 echo Installation complete!
 echo Starting the app...
-npm run safe-start
+pnpm run safe-start
 
 pause
 ENDLOCAL

@@ -1,15 +1,15 @@
 import pm2 from 'pm2';
 import { resolve } from 'path';
-import errorLog from './error.js';
+import errorLog, { CustomError } from './error.js';
 import AudioScheduler from '../modules/speaker-controller.js';
 
 const player = new AudioScheduler();
 
 const play_err = async () => {
    try {
-      player.addToQueue('play_cursed');
+      player.play_cursed();
    } catch (e) {
-      errorLog('play_output failed: ' + e);
+      errorLog(new CustomError('play_output failed: ' + e));
    }
 };
 
@@ -35,7 +35,9 @@ async function monitorProcess() {
             packet.process.exit_code !== 0
          ) {
             play_err();
-            await errorLog(`^App-main crashed. Restarting in safe mode!`);
+            await errorLog(
+               new CustomError(`^App-main crashed. Restarting in safe mode!`),
+            );
             player.once('Audio_Queue_End', () => {
                pm2.start(
                   {
@@ -48,8 +50,10 @@ async function monitorProcess() {
                   err => {
                      if (err) {
                         errorLog(
-                           '*Error starting safe.js with monitorProcess: ' +
-                              err,
+                           new CustomError(
+                              '*Error starting safe.js with monitorProcess: ' +
+                                 err,
+                           ),
                         );
                      }
                   },
@@ -58,7 +62,7 @@ async function monitorProcess() {
          }
       });
    } catch (err) {
-      errorLog('Error launching PM2 bus: ' + err);
+      errorLog(new CustomError('Error launching PM2 bus: ' + err));
    }
 }
 

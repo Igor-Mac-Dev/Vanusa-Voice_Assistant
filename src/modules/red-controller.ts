@@ -115,8 +115,10 @@ export default class RedController extends EventEmitter {
                   this.processingCMD = false;
                   if (parsedResponse?.error) {
                      errorLog(
-                        '*Red response msg obj reported an error: ' +
-                           parsedResponse.error,
+                        new CustomError(
+                           '*Red response msg obj reported an error: ' +
+                              parsedResponse.error,
+                        ),
                      );
                   }
                   if (parsedResponse?.cmd_response) {
