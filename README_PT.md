@@ -45,6 +45,8 @@ enviados para o Node-RED:
 -  **Codigo**: Comando composto > Escuta sua solicitação e gera um arquivo com
    código correspondente.
 
+(os arquivos gerados serão salvos na pasta "docummentos\Vanusa-files")
+
 ## 🔧 Instalação
 
 Para instalar e rodar a Vanusa:

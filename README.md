@@ -1,4 +1,4 @@
-### [Versão BR 🇧🇷](https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/blob/main/README_PT.md)
+### [Versão BR](https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/blob/main/README_PT.md)
 
 # Vanusa - Voice Assistant
 
@@ -41,6 +41,8 @@ sent to Node-RED:
    containing what you said in text.
 -  **Code**: Composed command > Listens to your request and generates a file
    with the corresponding code.
+
+(generated files will be saved in the "documments\Vanusa-files" folder)
 
 ## 🔧 Installation
 

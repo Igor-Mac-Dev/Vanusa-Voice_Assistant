@@ -1,7 +1,7 @@
 @echo off
 SETLOCAL
 
-SET "INSTALL_DIR=%ProgramFiles%\Vanusa"
+SET "INSTALL_DIR=C:\Vanusa"
 SET "SERVICE_NAME=VANUSA_PowerMonitorService"
 SET "REPO_URL=https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant"
 

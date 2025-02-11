@@ -1,11 +1,14 @@
 @echo off
 
-SET "INSTALL_DIR=%ProgramFiles%\Vanusa"
+SET "INSTALL_DIR=C:\Vanusa"
+SET "SERVICE_NAME=VANUSA_PowerMonitorService"
 
 echo Trying to stop Vanusa...
 cmd /c pm2 stop Vanusa-main 
 cmd /c pm2 stop V-node-red 
 cmd /c pm2 stop Vanusa-monitor
+cmd /c sc stop %SERVICE_NAME%
+cmd /c sc delete %SERVICE_NAME%
 
 cd /d "%INSTALL_DIR%"
 
@@ -26,6 +29,12 @@ git pull origin main
 git stash pop
 
 echo restarting Vanusa...
+copy "PowerMonitorService\bin\Release\net8.0\win-x64\publish\PowerMonitorService.exe" "%INSTALL_DIR%"
+cmd /c sc create %SERVICE_NAME% binPath= "\"%INSTALL_DIR%\PowerMonitorService.exe\"" start= auto
+cmd /c sc description %SERVICE_NAME% "Monitor suspension and resume events to send to Vanusa"
+cmd /c sc privs %SERVICE_NAME% SeShutdownPrivilege/SeChangeNotifyPrivilege/SeUndockPrivilege/SeIncreaseWorkingSetPrivilege/SeTimeZonePrivilege
+cmd /c sc start %SERVICE_NAME%
+rd /s /q PowerMonitorService
 cmd /c pm2 start Vanusa-main
 cmd /c pm2 start V-node-red
 cmd /c pm2 start Vanusa-monitor
