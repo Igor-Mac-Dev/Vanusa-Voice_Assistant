@@ -1,7 +1,7 @@
 @echo off
 SETLOCAL
 
-SET "INSTALL_DIR=%ProgramFiles%\Vanusa"
+SET "INSTALL_DIR=C:\Vanusa"
 
 echo Stopping the Vanusa application...
 cmd /c pm2 stop Vanusa-main >nul 2>&1
