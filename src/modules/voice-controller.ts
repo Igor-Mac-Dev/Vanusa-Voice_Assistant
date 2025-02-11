@@ -8,6 +8,7 @@ import * as interfaces from '../interfaces/config-json.js';
 import { CustomError } from '../utils/error.js';
 import makeWav from '../lib/wav-maker.js';
 import { error } from 'console';
+import { command } from '../interfaces/types.js';
 
 export default class VoiceController {
    protected config: interfaces.config = readConfigFile();
@@ -32,7 +33,7 @@ export default class VoiceController {
    protected rhino = new RhinoSti();
    protected phase: 'idle' | 'record' | 'wait' | 'compositeRecord' | undefined;
 
-   public getIntent(): [{ intent: string; [slot: string]: string }, boolean] {
+   public getIntent(): [command, boolean] {
       return this.rhino.getIntent();
    }
 

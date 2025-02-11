@@ -5,6 +5,7 @@ import * as interfaces from '../interfaces/config-json.js';
 import { EventEmitter } from 'events';
 import * as path from 'path';
 import * as fs from 'fs';
+import { command } from '../interfaces/types.js';
 
 export default class RhinoSti extends EventEmitter {
    protected rhinos: string[];
@@ -12,9 +13,9 @@ export default class RhinoSti extends EventEmitter {
    protected intentDetector: { [name: string]: Rhino } = {};
    protected config: interfaces.config = readConfigFile();
    protected modelPath: string | undefined = undefined;
-   protected intent: { intent: string; [slots: string]: string } = {
+   protected intent: command = {
       intent: '',
-      slots: '',
+      slots: {},
    };
    protected isComposite: boolean = false;
    constructor() {
@@ -85,7 +86,7 @@ export default class RhinoSti extends EventEmitter {
                      this.isComposite = false;
                   }
                   if (inference.slots) {
-                     this.intent.slots = JSON.stringify(inference.slots);
+                     this.intent.slots = inference.slots;
                   }
                   this.emit('RHINO_cmd', this.intent);
                }
@@ -96,15 +97,12 @@ export default class RhinoSti extends EventEmitter {
       }
    }
 
-   public getIntent(): [{ intent: string; [slot: string]: string }, boolean] {
-      const result: [{ intent: string; [slot: string]: string }, boolean] = [
-         this.intent,
-         this.isComposite,
-      ];
+   public getIntent(): [command, boolean] {
+      const result: [command, boolean] = [this.intent, this.isComposite];
       this.isComposite = false;
       this.intent = {
          intent: '',
-         slots: '',
+         slots: {},
       };
       return result;
    }

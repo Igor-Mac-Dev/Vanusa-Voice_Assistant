@@ -22150,3 +22150,67 @@ file using your chosen key the next time you deploy a change.
 7 Feb 17:28:20 - [info] Server now running at http://127.0.0.1:21105/
 7 Feb 17:28:20 - [info] Starting flows
 7 Feb 17:28:20 - [info] Started flows
+9 Feb 10:37:06 - [info] 
+
+Welcome to Node-RED
+===================
+
+9 Feb 10:37:06 - [info] Node-RED version: v4.0.8
+9 Feb 10:37:06 - [info] Node.js  version: v20.18.0
+9 Feb 10:37:06 - [info] Windows_NT 10.0.19045 x64 LE
+9 Feb 10:37:07 - [info] Loading palette nodes
+9 Feb 10:37:10 - [info] Settings file  : C:\Users\whisk\Documents\Projetos\VANUSAR\.node-red\settings.cjs
+9 Feb 10:37:10 - [info] Context store  : 'default' [module=memory]
+9 Feb 10:37:10 - [info] User directory : ./.node-red/user/
+9 Feb 10:37:10 - [warn] Projects disabled : editorTheme.projects.enabled=false
+9 Feb 10:37:10 - [info] Flows file     : C:\Users\whisk\Documents\Projetos\VANUSAR\.node-red\VoiceAssist.json
+9 Feb 10:37:10 - [warn] 
+
+---------------------------------------------------------------------
+Your flow credentials file is encrypted using a system-generated key.
+
+If the system-generated key is lost for any reason, your credentials
+file will not be recoverable, you will have to delete it and re-enter
+your credentials.
+
+You should set your own key using the 'credentialSecret' option in
+your settings file. Node-RED will then re-encrypt your credentials
+file using your chosen key the next time you deploy a change.
+---------------------------------------------------------------------
+
+9 Feb 10:37:10 - [warn] Encrypted credentials not found
+9 Feb 10:37:10 - [info] Starting flows
+9 Feb 10:37:10 - [info] Started flows
+9 Feb 10:37:10 - [info] Server now running at http://127.0.0.1:21105/
+9 Feb 10:46:58 - [info] 
+
+Welcome to Node-RED
+===================
+
+9 Feb 10:46:58 - [info] Node-RED version: v4.0.8
+9 Feb 10:46:58 - [info] Node.js  version: v20.18.0
+9 Feb 10:46:58 - [info] Windows_NT 10.0.19045 x64 LE
+9 Feb 10:46:58 - [info] Loading palette nodes
+9 Feb 10:47:01 - [info] Settings file  : C:\Users\whisk\Documents\Projetos\VANUSAR\.node-red\settings.cjs
+9 Feb 10:47:01 - [info] Context store  : 'default' [module=memory]
+9 Feb 10:47:01 - [info] User directory : ./.node-red/user/
+9 Feb 10:47:01 - [warn] Projects disabled : editorTheme.projects.enabled=false
+9 Feb 10:47:01 - [info] Flows file     : C:\Users\whisk\Documents\Projetos\VANUSAR\.node-red\VoiceAssist.json
+9 Feb 10:47:02 - [warn] 
+
+---------------------------------------------------------------------
+Your flow credentials file is encrypted using a system-generated key.
+
+If the system-generated key is lost for any reason, your credentials
+file will not be recoverable, you will have to delete it and re-enter
+your credentials.
+
+You should set your own key using the 'credentialSecret' option in
+your settings file. Node-RED will then re-encrypt your credentials
+file using your chosen key the next time you deploy a change.
+---------------------------------------------------------------------
+
+9 Feb 10:47:02 - [warn] Encrypted credentials not found
+9 Feb 10:47:02 - [info] Starting flows
+9 Feb 10:47:02 - [info] Started flows
+9 Feb 10:47:02 - [info] Server now running at http://127.0.0.1:21105/

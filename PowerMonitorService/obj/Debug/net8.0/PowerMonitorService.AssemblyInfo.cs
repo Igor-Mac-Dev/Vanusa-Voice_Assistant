@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PowerMonitorService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+24410faa24ac75a9ec54d9bf80c48c2426d518f6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1187b15b73f0730c973c6d5b0425fca699ce9491")]
 [assembly: System.Reflection.AssemblyProductAttribute("PowerMonitorService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PowerMonitorService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

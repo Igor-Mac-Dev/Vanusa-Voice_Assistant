@@ -25,10 +25,10 @@ export default class rhinoHandler {
     async parseTranscript(cmd, rec) {
         try {
             if (typeof rec !== 'string') {
-                const transcirpt = await stt(rec.recL, rec.recC);
-                if (!cmd.slot)
-                    cmd.slot = {};
-                cmd.slot.transcript = transcirpt;
+                const transcript = await stt(rec.recL, rec.recC);
+                if (!cmd.slots)
+                    cmd.slots = {};
+                cmd.slots.transcript = transcript;
             }
             return cmd;
         }
@@ -38,15 +38,15 @@ export default class rhinoHandler {
     }
     async jsonizeTranscript(cmd) {
         try {
-            if (!cmd.slot)
-                cmd.slot = {};
+            if (!cmd.slots)
+                cmd.slots = {};
             if (fs.existsSync(path.resolve('./assets/templates/' +
                 cmd.intent +
                 `_${this.config.LANGUAGE}.txt`))) {
-                const jsonTranscript = await compositeCompletion(cmd.slot.transcirpt, cmd.intent);
+                const jsonTranscript = await compositeCompletion(cmd.slots.transcirpt, cmd.intent);
                 if (jsonTranscript) {
-                    delete cmd.slot.transcript;
-                    Object.assign(cmd.slot, jsonTranscript);
+                    delete cmd.slots.transcript;
+                    Object.assign(cmd.slots, jsonTranscript);
                 }
             }
             return cmd;
@@ -124,7 +124,7 @@ class rhinoExecuter {
 //     dose: "duplo"
 //   }
 // }
-//[ { intent: 'Explica', slot: '{}' }, false ]
+//[ { intent: 'Explica', slots: '{}' }, false ]
 // Função para gerar o timestamp atual
 // Função para processar a resposta e salvar os arquivos
 // function processResponse(response: string) {
@@ -169,4 +169,12 @@ class rhinoExecuter {
 // const userMessage = processResponse(response);
 // console.log(`Message for user: ${userMessage}`);
 // }
+// {
+//    intent: "orderBeverage",
+//    slots: {
+//      numberOfShots: "double shot"
+//      size: "small"
+//      beverage: "espresso"
+//    }
+//  }
 //# sourceMappingURL=rhino-controller.js.map

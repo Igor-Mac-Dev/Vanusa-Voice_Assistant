@@ -1,6 +1,7 @@
 import { parentPort } from 'worker_threads';
 import VoiceController from './voice-controller.js';
 import errorLog, { CustomError } from '../utils/error.js';
+import { command } from '../interfaces/types.js';
 
 const voiceControl: VoiceController = new VoiceController();
 
@@ -53,15 +54,7 @@ async function switchController(
 
 function sendSig(sig: string) {
    try {
-      let intent:
-         | [
-              {
-                 intent: string;
-                 [slot: string]: string;
-              },
-              boolean,
-           ]
-         | null = null;
+      let intent: [command, boolean] | null = null;
       switch (sig) {
          case 'stt':
             parentPort?.postMessage({

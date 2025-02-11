@@ -12,7 +12,7 @@ export default class RhinoSti extends EventEmitter {
         this.modelPath = undefined;
         this.intent = {
             intent: '',
-            slots: '',
+            slots: {},
         };
         this.isComposite = false;
         const rhinosArray = fs.readdirSync(path.resolve('assets/models/Rhino/' + this.config.LANGUAGE));
@@ -59,7 +59,7 @@ export default class RhinoSti extends EventEmitter {
                             this.isComposite = false;
                         }
                         if (inference.slots) {
-                            this.intent.slots = JSON.stringify(inference.slots);
+                            this.intent.slots = inference.slots;
                         }
                         this.emit('RHINO_cmd', this.intent);
                     }
@@ -71,14 +71,11 @@ export default class RhinoSti extends EventEmitter {
         }
     }
     getIntent() {
-        const result = [
-            this.intent,
-            this.isComposite,
-        ];
+        const result = [this.intent, this.isComposite];
         this.isComposite = false;
         this.intent = {
             intent: '',
-            slots: '',
+            slots: {},
         };
         return result;
     }

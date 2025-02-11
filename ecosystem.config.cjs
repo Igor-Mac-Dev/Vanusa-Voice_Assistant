@@ -1,8 +1,10 @@
+const path = require('path');
+
 module.exports = {
    apps: [
       {
          name: 'Vanusa-main',
-         script: './dist/index.js',
+         script: path.resolve(__dirname, './dist/index.js'),
          interpreter: 'node',
          exec_mode: 'fork',
          watch: false,
@@ -11,7 +13,7 @@ module.exports = {
          instances: 1,
          max_memory_restart: '400M',
          max_restarts: 2,
-         log_file: './logs/main_log.txt',
+         log_file: path.resolve(__dirname, './logs/main_log.txt'),
          env: {
             NODE_ENV: 'production',
             windowsHide: true,
@@ -21,12 +23,12 @@ module.exports = {
       },
       {
          name: 'Vanusa-monitor',
-         script: './dist/utils/PM2-monitor.js',
+         script: path.resolve(__dirname, './dist/utils/PM2-monitor.js'),
          interpreter: 'node',
          exec_mode: 'fork',
          watch: false,
          autorestart: true,
-         log_file: './logs/monitor_log.txt',
+         log_file: path.resolve(__dirname, './logs/monitor_log.txt'),
          env: {
             NODE_ENV: 'production',
             windowsHide: true,
@@ -40,17 +42,17 @@ module.exports = {
       },
       {
          name: 'V-node-red',
-         script: './node_modules/node-red/red.js',
+         script: path.resolve(__dirname, './node_modules/node-red/red.js'),
          exec_mode: 'fork',
          args: ' ./VoiceAssist.json -p 21105 --settings ./settings.cjs',
-         cwd: './.node-red',
+         cwd: path.resolve(__dirname, './.node-red'),
          instances: 1,
          watch: true,
          max_restarts: 3,
          vizion: false,
          windowsHide: true,
          max_memory_restart: '3G',
-         log_file: './logs/red_log.txt',
+         log_file: path.resolve(__dirname, './logs/red_log.txt'),
          env: {
             npm_config_cache: '/tmp/.npm-cache',
             NODE_ENV: 'production',

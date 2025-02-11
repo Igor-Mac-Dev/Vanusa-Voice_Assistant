@@ -35,9 +35,9 @@ export default class rhinoHandler {
    public async parseTranscript(cmd: command, rec: record): Promise<command> {
       try {
          if (typeof rec !== 'string') {
-            const transcirpt: string = await stt(rec.recL, rec.recC);
-            if (!cmd.slot) cmd.slot = {};
-            cmd.slot.transcript = transcirpt;
+            const transcript: string = await stt(rec.recL, rec.recC);
+            if (!cmd.slots) cmd.slots = {};
+            cmd.slots.transcript = transcript;
          }
          return cmd;
       } catch (error) {
@@ -50,7 +50,7 @@ export default class rhinoHandler {
 
    public async jsonizeTranscript(cmd: command): Promise<command> {
       try {
-         if (!cmd.slot) cmd.slot = {};
+         if (!cmd.slots) cmd.slots = {};
          if (
             fs.existsSync(
                path.resolve(
@@ -61,10 +61,10 @@ export default class rhinoHandler {
             )
          ) {
             const jsonTranscript: { [key: string]: any } | null =
-               await compositeCompletion(cmd.slot.transcirpt, cmd.intent);
+               await compositeCompletion(cmd.slots.transcirpt, cmd.intent);
             if (jsonTranscript) {
-               delete cmd.slot.transcript;
-               Object.assign(cmd.slot, jsonTranscript);
+               delete cmd.slots.transcript;
+               Object.assign(cmd.slots, jsonTranscript);
             }
          }
          return cmd;
@@ -155,7 +155,7 @@ class rhinoExecuter {
 //   }
 // }
 
-//[ { intent: 'Explica', slot: '{}' }, false ]
+//[ { intent: 'Explica', slots: '{}' }, false ]
 
 // Função para gerar o timestamp atual
 
@@ -212,3 +212,12 @@ class rhinoExecuter {
 // console.log(`Message for user: ${userMessage}`);
 
 // }
+
+// {
+//    intent: "orderBeverage",
+//    slots: {
+//      numberOfShots: "double shot"
+//      size: "small"
+//      beverage: "espresso"
+//    }
+//  }

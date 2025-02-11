@@ -88,7 +88,7 @@ document.getElementById('save').addEventListener('click', () => {
    if (socket.readyState === WebSocket.OPEN && areAllInputsValid()) {
       if (languagePT.checked && ttsEngine.value === 'Picovoice') {
          alert(
-            'Desculpe, o motor de conversão de texto em voz do Picovoice não suporta português até o momento do lançamento dessa versão.',
+            'Desculpe, o motor de conversão de texto em voz do Picovoice não suporta português até o momento do lançamento dessa versão. \n Tente alterar a opção TTS para o Whisper ou Google caso queira uma opção grátis e tente novamente.',
          );
          return;
       }

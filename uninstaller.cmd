@@ -41,7 +41,7 @@ cmd /c sc delete VANUSA_PowerMonitorService >nul 2>&1
 
 IF EXIST "%INSTALL_DIR%" (
     echo Removing the Vanusa installation directory...
-    cmd /c rmdir /s /q /f "%INSTALL_DIR%"
+    cmd /c rmdir /s /q  "%INSTALL_DIR%"
     echo Vanusa directory removed successfully.
 ) ELSE (
     echo Vanusa is not installed in %INSTALL_DIR%.

@@ -2,129 +2,187 @@
 
 ### Versão 0.0.1
 
-Vanusa é uma assistente de voz poderosa e personalizável que se integra ao
-Node-RED para possibilitar automações avançadas. Seja para controlar
-dispositivos, processar comandos ou interagir com sistemas complexos, Vanusa
-oferece uma interface natural, baseada em voz, para facilitar suas automações
-pessoais ou profissionais. O programa possui comandos de voz nativos e
-personalizáveis, além de permitir a adição de novos comandos ou a personalização
-dos já existentes. Tudo isso enquanto roda discretamente em segundo plano no seu
-computador, com uma interface gráfica para personalizar parâmetros como idioma,
-sensibilidade de fala, motor de conversão de texto para voz (TTS) e
-reconhecimento de fala (STT). Disponível em inglês e português, Vanusa é ativada
-por palavras-chave, simplificando o seu dia a dia com comandos e automações
-poderosas.
+Vanusa é uma assistente de voz personalizável, projetada para atuar como uma
+secretária 24/7. Para isso, ele se integra ao Node-RED, permitindo automações.
+Seja para controlar dispositivos, processar comandos ou interagir com sistemas
+complexos, Vanusa oferece uma interface de voz natural para gerenciar suas
+necessidades de automação pessoal ou profissional.
+
+O programa conta com comandos de voz nativos e personalizáveis, permitindo
+adicionar novos comandos ou modificar os existentes. Tudo isso rodando em
+segundo plano no seu computador, com uma interface gráfica para personalizar
+configurações como idioma, sensibilidade de fala, motores de texto-para-fala
+(TTS) e reconhecimento de fala (STT). Disponível em Português e Inglês, Vanusa
+simplifica suas tarefas diárias.
 
 ## 📌 Principais Funcionalidades
 
--  Conversão de fala em texto usando APIs poderosas (OpenAI, Picovoice,
-   Whisper).
--  Resposta por voz com conversão de texto para áudio.
--  Interface gráfica para personalização completa.
--  Suporte a comandos de voz, com ações imediatas ou integração com Node-RED.
+-  Conversão de fala para texto usando APIs poderosas (Picovoice, Whisper).
+-  Respostas de voz com conversão de texto para áudio.
+-  Totalmente personalizável por meio da interface gráfica.
+-  Suporte a comandos de voz integrados ao Node-RED.
 -  Suporte a idiomas: Português (PT-BR) e Inglês (EN).
--  Ativação por palavra-chave: "Vanusa" em PT-BR, "Lilian" em EN.
-
-## 🔧 Instalação
-
-Para instalar e rodar Vanusa:
-
-1. [Clique aqui](https://github.com/Igor-Mac-Dev/teste/blob/main/installer.cmd)
-   para baixar o instalador.
-2. Abra o aplicativo e personalize as configurações através da interface
-   gráfica. Quando estiver satisfeito, aperte "Salvar e Iniciar".
-
-## 🚀 Rodando o Assistente
-
-Uma vez instalado e configurado, Vanusa será executada em segundo plano,
-aguardando sua palavra-chave para ativação e pronta para responder às suas
-perguntas ou processar comandos.
-
-### ♻️ Fluxo de uso
-
-O programa roda em segundo plano, então é importante seguir o fluxo correto de
-comandos de voz:
-
-#### Modo Ocioso
-
-Vanusa espera pela palavra de ativação; nesta etapa, ela também responde ao
-comando "Repeat".
-
-#### Modo Input
-
-Vanusa grava o que é dito até que o usuário pare de falar, atinja o tempo limite
-definido ou reconheça um comando específico (o comando só é reconhecido se mais
-nada for dito; por exemplo, "Explain" só será reconhecido isoladamente).
-
-#### Modo de Espera
-
-Vanusa está gerando e reproduzindo a resposta ou executando o comando. Nessa
-etapa, o programa não aceita novos inputs até a resposta terminar de ser
-reproduzida, mas reconhece o comando "Cancel". Depois disso, volta ao Modo
-Ocioso e o ciclo recomeça.
 
 ## 🗣 Comandos de Voz
 
-Vanusa reconhece uma série de comandos que podem ser processados diretamente ou
+Vanusa reconhece os seguintes comandos que podem ser processados internamente ou
 enviados para o Node-RED:
 
-### Comandos processados pelo assistente:
-
--  **Turn off**: Desliga o assistente de voz.
--  **Red**: Abre o Node-RED.
--  **Cancel**: Cancela a solicitação atual.
--  **Repeat**: Repete a última resposta.
--  **Repeat last**: Repete a penúltima resposta.
--  **Config**: Abre a interface gráfica para configurações.
-
-### Comandos enviados ao Node-RED:
-
--  **Explain**: Abre um bloco de notas onde o usuário pode colar texto para
-   explicação por voz.
--  **Translate**: Abre um bloco de notas para colar texto que será traduzido e
+-  **Dorme**: Desliga o assistente.
+-  **Vermelho**: Abre o Node-RED.
+-  **Cancela**: Cancela a solicitação atual.
+-  **Repete**: Repeate a última resposta.
+-  **Repete Último**: Repeate a penúltima resposta.
+-  **Configuração**: Abre a interface gráfica para configurações.
+-  **Explica**: Abre um bloco de notas onde o usuário pode colar texto para ser
+   explicado via voz.
+-  **Traduz**: Abre um bloco de notas para colar texto que será traduzido e
    falado.
--  **Code**: Solicita um código específico para ser processado.
+-  **Criar Áudio**: Abre um bloco de notas para receber texto e sintetizar como
+   áudio.
+-  **Transcrever**: Comando composto > Grava sua fala e gera um arquivo contendo
+   o que foi dito em texto.
+-  **Codigo**: Comando composto > Escuta sua solicitação e gera um arquivo com
+   código correspondente.
 
-## 🎛 Configurações Personalizáveis
+## 🔧 Instalação
 
-Acesse a interface gráfica para configurar o assistente conforme preferir:
+Para instalar e rodar a Vanusa:
 
--  Idioma do assistente
--  Iniciar com o PC
+1. [Clique aqui](https://raw.githubusercontent.com/Igor-Mac-Dev/teste/main/installer.cmd)
+   para baixar o instalador e execute-o como administrador.
+2. Abra o aplicativo e personalize as configurações pela interface gráfica.
+   Quando estiver satisfeito, clique em "Salvar e Iniciar".
+3. Os scripts de atualização e desinstalação estarão disponíveis na pasta
+   'C:\\Program Files\\Vanusa'.
+
+## 🛠️ Configurações Personalizáveis
+
+Acesse a interface gráfica para configurar o assistente conforme suas
+preferências:
+
+-  Idioma da assistenta
+-  Iniciar com o PC: escolha se o programa deve iniciar automaticamente ao ligar
+   o computador.
 -  Tempo de gravação
 -  Seleção do microfone
 -  Sensibilidade do reconhecimento de fala
 -  Tempo de silêncio para encerrar a gravação
 -  Motores de reconhecimento de fala (STT): Whisper ou Picovoice
--  Motores de texto para fala (TTS): Google, Picovoice ou OpenAI
--  Chave de API do Picovoice
+-  Motores de síntese de fala (TTS): Google, Picovoice ou OpenAI
+-  Chave da API Picovoice
 -  Modelo de chat GPT
--  Especificações do assistente virtual
--  Histórico de mensagens
--  Temperatura do GPT
--  Máximo de tokens
--  Chave de API da OpenAI
+-  Especificações do assistente: ajuste o comportamento virtual do assistente
+-  Histórico de mensagens: defina o tamanho do histórico de conversação
+-  Temperatura do GPT: ajuste a criatividade do modelo
+-  Máximo de tokens: defina o limite de tokens da resposta do GPT
+-  Chave da API OpenAI
 
 > "Para quem não sabe onde quer ir, qualquer caminho serve." Sinta-se à vontade
-> para usar as configurações padrão oferecidas pelo programa, mas não se esqueça
-> de adicionar suas chaves de API.
+> para usar as configurações padrão do programa, mas não se esqueça de adicionar
+> suas chaves de API.
 
-### Customização:
+## 🚀 Executando o Assistente
 
-No console da Picovoice, você pode criar suas próprias palavras-chave, comandos
-de voz e vocabulários personalizados para os motores de STT. Substitua os
-arquivos na pasta "Assets" pelos que você criou, mantendo os mesmos nomes dos
-arquivos. No caso dos comandos (Rhino), você não precisa substituir os arquivos
-existentes; basta adicionar os arquivos na pasta referente ao seu idioma. Vanusa
-reconhece os comandos e envia objetos contendo instruções
-(`{intent: ~, [slot: ~, ...]}`) para o Node-RED, onde as ações desencadeadas
-podem ser automatizadas manualmente.
+Após instalado e configurado, a Vanusa roda em segundo plano, aguardando a
+palavra-chave e pronto para responder suas perguntas ou processar comandos.
 
-## 💻 Suporte e Contribuições
+### Fluxo de Uso
 
-Este projeto está em sua versão inicial (0.0.1). Feedbacks e contribuições são
-bem-vindos! Se encontrar algum problema ou tiver sugestões, sinta-se à vontade
-para abrir uma _issue_ ou enviar um _pull request_.
+#### 🎙️ Modo Ocioso
 
-**Licença**: Este projeto é licenciado sob a AGPL-3.0. **Termos de uso**:
-[Aqui](https://github.com/Igor-Mac-Dev/teste/blob/main/TERMS_PT.md)
+Vanusa aguarda a palavra-chave de ativação; neste estágio, também responde aos
+comandos "Repetir" e "repetir último".
+
+-  Palavra-chave padrão: "Vanusa" em PT-BR, "Scarlett" em EN.
+
+#### 🎙️ Modo Gravação
+
+Vanusa grava o que é dito até que o usuário pare de falar, o tempo limite seja
+atingido ou um comando seja reconhecido.
+
+#### 🎙️ Modo Espera
+
+Vanusa gera e reproduz a resposta ou executa o comando. Durante esta fase, o
+programa não aceita novas entradas até a resposta ser concluída, mas reconhece o
+comando "Cancelar". Em seguida, retorna ao Modo Ocioso e o ciclo se repete.
+
+## 🦏 Personalização de Comandos
+
+No console do Picovoice, você pode criar suas próprias palavras-chave, comandos
+de voz e vocabulários personalizados para os motores STT. Basta substituir os
+arquivos de palavra chave (.ppn) na pasta "vanusa\assets\models" pelos criados
+por você, mantendo os mesmos nomes. Para comandos (.rhn), basta adicionar os
+arquivos na pasta "vanusa\assets\models\Rhino" do seu idioma. Vanusa reconhece
+os comandos e envia
+[objetos com instruções](https://www.youtube.com/watch?v=IPC_pCT9r1o&t=157s)
+(`{intent: ..., slots: {...}}`) para o Node-RED, onde você pode automatizar
+manualmente as ações ativadas pelos seus comandos personalizados.
+
+### Flows do Node-RED
+
+Implementar um flow existente no Node-RED é tão simples quanto arrasta-los Para
+o flow da Vanusa, ou usar web-sockets para conecta-los. Se você fez um fluxo
+para ser usado com a Vanusa, você pode compartilhar com a comunidade. Eu sugiro
+a
+[comunidade do Node-RED](https://nodered.org/community/voice-assistant-community/)
+para encontrar e compartilhar seus fluxos. Por favor, informe também o formato
+do commando experado pelo fluxo e informe que ele foi criado para ser usado com
+a Vanusa.
+
+### Porta do Node Red
+
+Se você quiser definir uma porta diferente para o Node-RED, você pode editandar
+o arquivo ecosystem.config.cjs e alterando o valor do argumento: "... -p _nova
+porta_ " no objeto 'V-node-red'.
+
+### Comandos Compostos
+
+O detector de intenção do Picovoice não entende nada que não tenha sido
+explicitamente programado, então foi adicionada uma funcionalidade para criar
+comandos compostos, ou seja, comandos que podem conter palavras/números não
+programados previamente no console do Picovoice. Para usá-los, siga um dos
+caminhos:
+
+1. Adicione o prefixo "C\_" ao seu arquivo .rhn (como em
+   `./assets/models/Rhino/en/C_Code_en_windows_v3_0_0.rhn`). Assim, quando você
+   chamar o comando, o Vanusa tocará o
+   [bipe de comando](https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/blob/main/assets/beeps/cmd.wav)
+   e ouvirá normalmente. Ao parar de falar, será adicionada uma propriedade
+   `transcription` ao objeto `cmd.slots`, contendo a transcrição do que foi
+   dito.
+2. Adicione um arquivo na pasta "vanusa/assets/templates", nomeado com o mesmo
+   nome da intenção (intent) do comando, seguido de um underscore e do código do
+   idioma, como em "vanusa\assets\templates\código_pt.txt". Esse arquivo deve
+   conter um template JSON, que será enviado para a API de completação, onde a
+   resposta será formatada como um objeto pela IA e mesclada ao objeto
+   `cmd.slots`.
+
+## 🧠 LLM Local
+
+Não implementei um LLM local porque a maioria das pessoas assim como eu não pode
+pagar por isso, mas se você quiser, sinta-se à vontade para alterar o arquivo
+.\src\OpenAI\completion.ts para fazer isso. Contanto que o módulo mantenha a
+_não explicita mas presente_ interface atual, receba uma string e retorne a
+conclusão, deve funcionar perfeitamente.
+
+## 🐧 Versão Linux
+
+Tentei fazer a Vanusa rodar com PM2 para melhorar compatibilidade, mas não
+funcionou bem como eu esperava, o pm2 abre janelas do shell constantemente no
+windows. Na versão final pretendo programar a Vanusa para rodar como um processo
+no Windows, mas enquanto não faço issa, estou lançando com o PM2, para
+posteriormente poder usar as configurações já existentes para lançar a versão de
+Linux. Por enquanto, a programa não deve rodar diretamente no Linux,
+principalmente por alguns códigos específicos do Windows, como a funcionalidade
+de monitoramento de energia e os arquivos Picovoice, que são específicos para
+cada sistema operacional e possuem limites de download.
+
+## 💪 Suporte e Contribuições
+
+Este projeto está em sua versão inicial (0.0.1). Feedback e contribuições são
+bem-vindos! Caso encontre problemas ou tenha sugestões, fique à vontade para
+abrir uma issue ou enviar um pull request.
+
+**Licença**: Este projeto está licenciado sob AGPL-3.0. **Termos de uso**:
+[Aqui](https://github.com/Igor-Mac-Dev/teste/blob/main/TERMS.md).

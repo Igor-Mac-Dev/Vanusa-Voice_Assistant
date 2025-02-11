@@ -10,7 +10,7 @@ export type mainPhases =
 
 export type subPhases = 'stt' | 'tts' | 'cmd' | 'speaking' | null;
 
-export type command = { intent: string; slot?: { [key: string]: string } };
+export type command = { intent: string; slots?: { [key: string]: string } };
 
 export type record =
    | { message: string; recC: Int16Array[]; recL: Int16Array }
