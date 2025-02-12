@@ -14,7 +14,7 @@ export default async function errorLog(err) {
                 fs.writeFileSync(logFilePath, fileContent.slice(100).join('\n'), 'utf-8');
             }
         }
-        fs.appendFileSync(logFilePath, `\n${now} - ERROR: ${formatError(err)}`, 'utf-8');
+        fs.appendFileSync(logFilePath, `\n${now} - ERROR: ${JSON.stringify(err, getCircularReplacer(), 2)}`, 'utf-8');
     }
     catch (e) {
         console.error('Error logging error:', e);
@@ -22,21 +22,12 @@ export default async function errorLog(err) {
 }
 export class CustomError extends Error {
     constructor(logMsg, error, fatal = false) {
-        super(logMsg);
+        super();
         this.fatal = fatal;
-        let errorDetails = '';
-        if (error instanceof Error) {
-            errorDetails = `\nSTACK: ${error.stack || error.message}`;
+        this.message = logMsg;
+        if (error) {
+            this.message += `${error.message}`;
         }
-        else {
-            try {
-                errorDetails = `\nRAW ERROR: ${JSON.stringify(error, getCircularReplacer(), 2)}`;
-            }
-            catch {
-                errorDetails = ' [Error serializing error object]';
-            }
-        }
-        this.logMsg = `${logMsg}${errorDetails}`;
     }
 }
 export function getCircularReplacer() {
@@ -49,17 +40,5 @@ export function getCircularReplacer() {
         }
         return value;
     };
-}
-function formatError(err) {
-    try {
-        if (err instanceof CustomError)
-            return `LOG: ${err.logMsg}\nSTACK: ${err.stack || err.message}`;
-        if (err instanceof Error)
-            return `STACK: ${err.stack || err.message}`;
-        return `RAW ERROR: ${JSON.stringify(err, getCircularReplacer(), 2)}`;
-    }
-    catch (e) {
-        return `Erro ao formatar erro: ${e}`;
-    }
 }
 //# sourceMappingURL=error.js.map

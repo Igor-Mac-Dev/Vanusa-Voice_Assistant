@@ -35,6 +35,7 @@ export default class VoiceController {
             return 'started';
         }
         catch (error) {
+            console.log(error);
             throw new CustomError('*Voice Controller start failed: ', error);
         }
     }

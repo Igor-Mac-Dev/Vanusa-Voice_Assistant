@@ -11,6 +11,6 @@
       "strict": true,
       "sourceMap": true
    },
-   "include": ["src/**/*"],
+   "include": ["src/**/*", "dist/teste.js"],
    "exclude": ["node_modules", "dist"]
 }

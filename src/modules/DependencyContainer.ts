@@ -24,7 +24,6 @@ export default class DependencyContainer {
    public phaseMenager!: PhaseMenager;
    public powerEvents!: PowerEvents;
 
-
    constructor(
       restart: () => void,
       sendToRED: (msg: command) => Promise<string>,
@@ -51,12 +50,16 @@ export default class DependencyContainer {
             this.restart();
          }
          this.controlStarted = await this.control.start();
-         
-      if (this.controlStarted === 'started') {
-         this.player.play_start();
-      } else {
-         throw new CustomError('Error starting Vanusa voice controller', '', true);
-      }
+
+         if (this.controlStarted === 'started') {
+            this.player.play_start();
+         } else {
+            throw new CustomError(
+               'Error starting Vanusa voice controller',
+               '',
+               true,
+            );
+         }
          await this.powerEvents.startPowerMonitor();
       } catch (err) {
          console.log(err);

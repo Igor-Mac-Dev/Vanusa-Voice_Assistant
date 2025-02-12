@@ -3,3 +3,4 @@ dist/process-files/*
 logs/*
 colinha.txt
 .VoiceAssist.json.backup
+./dist/test.js

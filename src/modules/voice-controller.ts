@@ -51,6 +51,7 @@ export default class VoiceController {
          await this.rhino.rhinoInit();
          return 'started';
       } catch (error) {
+         console.log(error);
          throw new CustomError('*Voice Controller start failed: ', error);
       }
    }

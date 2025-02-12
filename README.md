@@ -1,4 +1,4 @@
-### [Versão BR](https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/blob/main/README_PT.md)
+### [🟡🟢Versão BR🟢🟡](https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/blob/main/README_PT.md)
 
 # Vanusa - Voice Assistant
 
@@ -48,8 +48,8 @@ sent to Node-RED:
 
 To install and run Vanusa:
 
-1. [Click here](https://raw.githubusercontent.com/Igor-Mac-Dev/teste/main/installer.cmd)
-   to download the installer, then run it as admin.
+1. <a href="https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/blob/main/installer.cmd)" download>Click
+   here</a> to download the installer, then run it as admin.
 2. Open the application and customize the settings via the graphical interface.
    When satisfied, press "Save and Start."
 3. The update and the uninstaller scripts will be available in 'C:\Program
@@ -180,4 +180,4 @@ welcome! If you encounter any issues or have suggestions, feel free to open an
 issue or submit a pull request.
 
 **License**: This project is licensed under the AGPL-3.0. **Terms of use**:
-[Here](https://github.com/Igor-Mac-Dev/teste/blob/main/TERMS.md).
+[Here](https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/blob/main/TERMS.md).
