@@ -7,31 +7,49 @@ import { readConfigFile } from '../configuration/conf.js';
 import * as interfaces from '../interfaces/config-json.js';
 import { CustomError } from '../utils/error.js';
 import makeWav from '../lib/wav-maker.js';
-import { error } from 'console';
 import { command } from '../interfaces/types.js';
 
 export default class VoiceController {
-   protected config: interfaces.config = readConfigFile();
-   protected idleRec = new FramesEmitter(
-      this.config.FRAME_LENGHT,
-      this.config.SAMPLE_RATE,
-      true,
-      0,
-      this.config.SELECTED_DEVICE,
-   );
-   protected sttRec = new FramesEmitter(
-      this.config.FRAME_LENGHT,
-      this.config.SAMPLE_RATE,
-      false,
-      this.config.RECORD_TIME,
-      this.config.SELECTED_DEVICE,
-   );
-   protected kwDetector = new PorcupineDetector(1);
-   protected cancelDetector = new PorcupineDetector(2);
-   protected cobra = new CobraDetector();
-   public rec = new RecordHolder();
-   protected rhino = new RhinoSti();
+   protected config: interfaces.config;
+   protected idleRec: FramesEmitter;
+   protected sttRec: FramesEmitter;
+   protected kwDetector: PorcupineDetector;
+   protected cancelDetector: PorcupineDetector;
+   protected cobra: CobraDetector;
+   public rec: RecordHolder;
+   protected rhino: RhinoSti;
    protected phase: 'idle' | 'record' | 'wait' | 'compositeRecord' | undefined;
+
+   constructor() {
+      try {
+         this.config = readConfigFile();
+         this.idleRec = new FramesEmitter(
+            this.config.FRAME_LENGHT,
+            this.config.SAMPLE_RATE,
+            true,
+            0,
+            this.config.SELECTED_DEVICE,
+         );
+         this.sttRec = new FramesEmitter(
+            this.config.FRAME_LENGHT,
+            this.config.SAMPLE_RATE,
+            false,
+            this.config.RECORD_TIME,
+            this.config.SELECTED_DEVICE,
+         );
+         this.kwDetector = new PorcupineDetector(1);
+         this.cancelDetector = new PorcupineDetector(2);
+         this.cobra = new CobraDetector();
+         this.rec = new RecordHolder();
+         this.rhino = new RhinoSti();
+      } catch (err) {
+         throw new CustomError(
+            'Problem starting voice controller: ',
+            err,
+            true,
+         );
+      }
+   }
 
    public getIntent(): [command, boolean] {
       return this.rhino.getIntent();

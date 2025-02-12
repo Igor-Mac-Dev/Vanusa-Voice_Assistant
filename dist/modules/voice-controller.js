@@ -6,17 +6,21 @@ import RhinoSti from '../picoV/rhino.js';
 import { readConfigFile } from '../configuration/conf.js';
 import { CustomError } from '../utils/error.js';
 import makeWav from '../lib/wav-maker.js';
-import { error } from 'console';
 export default class VoiceController {
     constructor() {
-        this.config = readConfigFile();
-        this.idleRec = new FramesEmitter(this.config.FRAME_LENGHT, this.config.SAMPLE_RATE, true, 0, this.config.SELECTED_DEVICE);
-        this.sttRec = new FramesEmitter(this.config.FRAME_LENGHT, this.config.SAMPLE_RATE, false, this.config.RECORD_TIME, this.config.SELECTED_DEVICE);
-        this.kwDetector = new PorcupineDetector(1);
-        this.cancelDetector = new PorcupineDetector(2);
-        this.cobra = new CobraDetector();
-        this.rec = new RecordHolder();
-        this.rhino = new RhinoSti();
+        try {
+            this.config = readConfigFile();
+            this.idleRec = new FramesEmitter(this.config.FRAME_LENGHT, this.config.SAMPLE_RATE, true, 0, this.config.SELECTED_DEVICE);
+            this.sttRec = new FramesEmitter(this.config.FRAME_LENGHT, this.config.SAMPLE_RATE, false, this.config.RECORD_TIME, this.config.SELECTED_DEVICE);
+            this.kwDetector = new PorcupineDetector(1);
+            this.cancelDetector = new PorcupineDetector(2);
+            this.cobra = new CobraDetector();
+            this.rec = new RecordHolder();
+            this.rhino = new RhinoSti();
+        }
+        catch (err) {
+            throw new CustomError('Problem starting voice controller: ', err, true);
+        }
     }
     getIntent() {
         return this.rhino.getIntent();

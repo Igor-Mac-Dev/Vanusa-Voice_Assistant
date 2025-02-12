@@ -4,27 +4,26 @@ import * as path from 'path';
 export default async function errorLog(err: unknown): Promise<void> {
    try {
       const logFilePath = path.resolve('logs/log.txt');
-      const logDir = path.dirname(logFilePath);
-      const now = new Date().toLocaleString();
+      const date = new Date(Date.now());
+      const now = date.toLocaleString();
 
-      if (!fs.existsSync(logDir)) {
-         fs.mkdirSync(logDir, { recursive: true });
+      if (!fs.existsSync(path.dirname(logFilePath))) {
+         fs.mkdirSync(path.dirname(logFilePath), { recursive: true });
       }
 
       if (fs.existsSync(logFilePath)) {
-         const fileContent = fs.readFileSync(logFilePath, 'utf-8').split('\n');
-         if (fileContent.length > 1000) {
-            fs.writeFileSync(
-               logFilePath,
-               fileContent.slice(100).join('\n'),
-               'utf-8',
-            );
+         const fileContent = fs.readFileSync(logFilePath, 'utf-8');
+         const lines = fileContent.split('\n');
+
+         if (lines.length > 1000) {
+            const newContent = lines.slice(100).join('\n');
+            fs.writeFileSync(logFilePath, newContent, 'utf-8');
          }
       }
 
       fs.appendFileSync(
-         logFilePath,
-         `\n${now} - ERROR: ${JSON.stringify(err, getCircularReplacer(), 2)}`,
+         path.resolve(logFilePath),
+         `\n ${now} - ERROR: ${formatError(err)}`,
          'utf-8',
       );
    } catch (e) {
@@ -33,24 +32,69 @@ export default async function errorLog(err: unknown): Promise<void> {
 }
 
 export class CustomError extends Error {
+   public readonly logMsg: string;
    public fatal: boolean;
-   constructor(logMsg: string, error?: unknown, fatal: boolean = false) {
-      super();
-      this.fatal = fatal;
-      this.message = logMsg;
-      if (error) {
-         this.message += `${error.message}`;
+
+   constructor(logMsg: string, error?: unknown, fatal?: boolean) {
+      super(logMsg);
+      this.fatal = fatal ?? false;
+      if (error && typeof error === 'object' && 'fatal' in error) {
+         this.fatal = (error as { fatal: boolean }).fatal;
+      }
+      this.logMsg = logMsg;
+      if (error instanceof Error) {
+         this.logMsg += error.stack + '\n ' + error.message;
+      }
+      if (error instanceof CustomError) {
+         this.logMsg += JSON.stringify(error, getCircularReplacer(), 2);
+      }
+      if (error && typeof error === 'object') {
+         try {
+            const stringError = JSON.stringify(
+               error,
+               Object.getOwnPropertyNames(error),
+            );
+            this.logMsg += stringError;
+         } catch {
+            this.logMsg += ' [Error serializing error object]';
+         }
+      } else {
+         this.logMsg += error;
       }
    }
 }
 
-export function getCircularReplacer() {
+function getCircularReplacer() {
    const seen = new WeakSet();
-   return (_key: string, value: any) => {
+   return (key: string, value: any) => {
       if (typeof value === 'object' && value !== null) {
-         if (seen.has(value)) return '[Circular]';
+         if (seen.has(value)) {
+            return '[Circular]';
+         }
          seen.add(value);
       }
       return value;
    };
+}
+
+function formatError(err: unknown): string {
+   if (err instanceof CustomError) {
+      return `LOG: ${err.logMsg}\nSTACK: ${err.stack || err.message}`.replace(
+         /\\n/g,
+         '\n',
+      );
+   }
+
+   if (err instanceof Error) {
+      return `STACK: ${err.stack || err.message}`.replace(/\\n/g, '\n');
+   }
+
+   try {
+      return `RAW ERROR: ${JSON.stringify(err, getCircularReplacer(), 2)}`.replace(
+         /\\n/g,
+         '\n',
+      );
+   } catch (e) {
+      return `Erro ao formatar erro: ${e}`;
+   }
 }

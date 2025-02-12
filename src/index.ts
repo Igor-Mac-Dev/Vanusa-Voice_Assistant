@@ -6,7 +6,7 @@
 
 import DependencyContainer from './modules/DependencyContainer.js';
 import successLog from './utils/sucess.js';
-import errorLog, { CustomError, getCircularReplacer } from './utils/error.js';
+import errorLog, { CustomError } from './utils/error.js';
 import { stopPm2 } from './utils/PM2-task-menager.js';
 import process, { abort } from 'node:process';
 import { command, record } from './interfaces/types.js';
@@ -77,13 +77,13 @@ async function main(): Promise<void> {
          container.player.play_err();
          await errorLog(
             `Promise rejected without catch:
-            Promise: ${JSON.stringify(promise, getCircularReplacer(), 2)}
-            Reason: ${reason instanceof Error ? reason.stack || reason.message : JSON.stringify(reason, null, 2)}`,
+             ${reason instanceof Error ? reason.stack || reason.message : JSON.stringify(reason, null, 2)}`,
          );
          container.player.once('Audio_Queue_End', async () => {
             terminate();
          });
       });
+
       process.on('uncaughtException', async err => {
          container.player.stopAudio();
          container.player.play_err();

@@ -5,7 +5,7 @@
 //  * https://www.gnu.org/licenses/agpl-3.0.en.html
 import DependencyContainer from './modules/DependencyContainer.js';
 import successLog from './utils/sucess.js';
-import errorLog, { CustomError, getCircularReplacer } from './utils/error.js';
+import errorLog, { CustomError } from './utils/error.js';
 import process from 'node:process';
 import RedController from './modules/red-controller.js';
 const restart = () => {
@@ -62,8 +62,7 @@ async function main() {
             container.player.stopAudio();
             container.player.play_err();
             await errorLog(`Promise rejected without catch:
-            Promise: ${JSON.stringify(promise, getCircularReplacer(), 2)}
-            Reason: ${reason instanceof Error ? reason.stack || reason.message : JSON.stringify(reason, null, 2)}`);
+             ${reason instanceof Error ? reason.stack || reason.message : JSON.stringify(reason, null, 2)}`);
             container.player.once('Audio_Queue_End', async () => {
                 terminate();
             });

@@ -15,8 +15,7 @@ function test(fodase) {
    process.on('unhandledRejection', async (reason, promise) => {
       await errorLog(
          `Promise rejected without catch:
-         Promise: ${JSON.stringify(promise, getCircularReplacer(), 2)}
-         Reason: ${reason instanceof Error ? reason.stack || reason.message : JSON.stringify(reason, null, 2)}`,
+${reason instanceof Error ? reason.stack || reason.message : reason}`,
       );
    });
 
@@ -31,4 +30,4 @@ function test(fodase) {
    puta();
 }
 
-test(new CustomError('Teste ', 'Teste', true));
+test(new CustomError('Teste ', new Error('Teste'), true));
