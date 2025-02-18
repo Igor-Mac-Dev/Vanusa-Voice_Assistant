@@ -22,8 +22,8 @@ export default class OAIcompletion extends OpenAICompletion {
             if (!message || !message.content) {
                 throw new Error("OpenAi's API invalid response");
             }
-            let messageContent = response.choices[0].message.content;
-            messageContent = messageContent.replace(/[{}]/g, '').trim();
+            let messageContent = response?.choices[0].message.content;
+            messageContent = messageContent.replace(/[{}"'`]/g, '').trim();
             this.appendHistory(messageContent);
             return response.choices[0].message.content;
         }
@@ -47,11 +47,11 @@ export default class OAIcompletion extends OpenAICompletion {
                     this.config.LANGUAGE === 'en'
                         ? {
                             role: 'system',
-                            content: `You MUST TO asnwer this in js readable json format, based on user's input and following this template:\n${this.getTemplate(intent)}\nIf you don't know how to answer, just and only say "ABORT".`,
+                            content: `You MUST TO asnwer this in js readable JSON format, based on user's input and following this template:\n${this.getTemplate(intent)}\n If you don't know how to answer, just and only say "ABORT".`,
                         }
                         : {
                             role: 'system',
-                            content: `Você DEVE responder isso em um formato JSON legível para JavaScript, baseado na entrada do usuário e seguindo este modelo:\n${this.getTemplate(intent)}\nSe você não souber como responder, apenas e somente diga "ABORT".`,
+                            content: `Você DEVE responder isso em um formato JSON legível para JavaScript, baseado na entrada do usuário e seguindo este modelo:\n${this.getTemplate(intent)}\n Se você não souber como responder, apenas e somente diga "ABORT".`,
                         },
                     { role: 'user', content: input },
                 ],

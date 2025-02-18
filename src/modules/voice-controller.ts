@@ -6,19 +6,22 @@ import RhinoSti from '../picoV/rhino.js';
 import { readConfigFile } from '../configuration/conf.js';
 import * as interfaces from '../interfaces/config-json.js';
 import { CustomError } from '../utils/error.js';
-import makeWav from '../lib/wav-maker.js';
 import { command } from '../interfaces/types.js';
+import { error } from 'node:console';
+import SttControll from './stt-controller.js';
 
 export default class VoiceController {
-   protected config: interfaces.config;
-   protected idleRec: FramesEmitter;
-   protected sttRec: FramesEmitter;
-   protected kwDetector: PorcupineDetector;
-   protected cancelDetector: PorcupineDetector;
-   protected cobra: CobraDetector;
-   public rec: RecordHolder;
-   protected rhino: RhinoSti;
-   protected phase: 'idle' | 'record' | 'wait' | 'compositeRecord' | undefined;
+   private config: interfaces.config;
+   private idleRec: FramesEmitter;
+   private sttRec: FramesEmitter;
+   private kwDetector: PorcupineDetector;
+   private cancelDetector: PorcupineDetector;
+   private cobra: CobraDetector;
+   private rec: RecordHolder;
+   private rhino: RhinoSti;
+   private phase: 'idle' | 'record' | 'wait' | 'compositeRecord' | undefined;
+   private sttCtrl!: SttControll;
+   private transcription: string | undefined;
 
    constructor() {
       try {
@@ -42,6 +45,7 @@ export default class VoiceController {
          this.cobra = new CobraDetector();
          this.rec = new RecordHolder();
          this.rhino = new RhinoSti();
+         this.sttCtrl = new SttControll();
       } catch (err) {
          throw new CustomError(
             'Problem starting voice controller: ',
@@ -53,6 +57,12 @@ export default class VoiceController {
 
    public getIntent(): [command, boolean] {
       return this.rhino.getIntent();
+   }
+
+   public getTranscription(): string | undefined {
+      const trnscrpt = this.transcription;
+      this.transcription = undefined;
+      return trnscrpt;
    }
 
    private removeAllListenners() {
@@ -82,7 +92,7 @@ export default class VoiceController {
          this.idleRec.once('REC_stop', () => {
             console.log('REC_stop');
             this.idleRec.removeAllListeners('error');
-            resolve('stop');
+            resolve('remote-stop');
          });
          this.idleRec.once('error', error => {
             this.idleRec.removeAllListeners('REC_stop');
@@ -99,21 +109,21 @@ export default class VoiceController {
    //////////////////////////////////////////////////////////////////////////////
 
    public async idlePhase(): Promise<string> {
-      this.removeAllListenners();
       return new Promise<string>((resolve, reject) => {
          try {
             let memoryMercy: NodeJS.Timeout | null = null;
             this.phase = 'idle';
             this.idleRec.setInfinityOn();
-            const release = () => {
-               this.idleRec.setInfinityOff();
-               this.kwDetector.porcupineRelease();
+            const release = async () => {
                if (memoryMercy) clearTimeout(memoryMercy);
+               await this.idleRec.setInfinityOff();
+               await this.kwDetector.porcupineRelease();
+               await this.removeAllListenners();
             };
             this.idleRec.startFramesEmittion();
 
-            this.idleRec.once('REC_failed', error => {
-               release();
+            this.idleRec.once('REC_failed', async error => {
+               await release();
                reject(
                   new CustomError(
                      '*Voice Controller idlePhase failed: ',
@@ -122,8 +132,8 @@ export default class VoiceController {
                );
             });
 
-            this.idleRec.once('REC_cant_read', () => {
-               release();
+            this.idleRec.once('REC_cant_read', async error => {
+               await release();
                reject(
                   new CustomError(
                      '*Voice Controller idlePhase failed: ',
@@ -132,8 +142,8 @@ export default class VoiceController {
                );
             });
 
-            this.idleRec.once('REC_start', () => {
-               this.kwDetector.porcupineInit();
+            this.idleRec.once('REC_start', async () => {
+               await this.kwDetector.porcupineInit();
             });
 
             this.idleRec.on('frame', frame => {
@@ -183,19 +193,20 @@ export default class VoiceController {
 
    //////////////////////////////////////////////////////////////////////////////
    public async recordPhase(): Promise<string> {
-      this.removeAllListenners();
-
       return new Promise<string>((resolve, reject) => {
          try {
             this.phase = 'record';
-            const release = () => {
-               this.sttRec.stopTimedRecording();
-               this.cobra.cobraRelease();
-               this.cancelDetector.porcupineRelease();
+            const release = async () => {
+               await this.sttCtrl.stop();
+               await this.sttRec.stopTimedRecording();
+               await this.cobra.cobraRelease();
+               await this.cancelDetector.porcupineRelease();
+               await this.rec.clearRecord();
+               await this.removeAllListenners();
             };
 
-            this.sttRec.once('REC_failed', error => {
-               release();
+            this.sttRec.once('REC_failed', async error => {
+               await release();
                reject(
                   new CustomError(
                      '*Voice Controller recordPhase failed: ',
@@ -204,8 +215,8 @@ export default class VoiceController {
                );
             });
 
-            this.sttRec.once('REC_cant_read', () => {
-               release();
+            this.sttRec.once('REC_cant_read', async () => {
+               await release();
                reject(
                   new CustomError(
                      '*Voice Controller recordPhase failed: ',
@@ -214,19 +225,20 @@ export default class VoiceController {
                );
             });
 
+            this.sttCtrl.start();
             this.sttRec.startFramesEmittion();
 
-            this.sttRec.once('REC_start', () => {
-               this.cobra.cobraInit();
-               this.cancelDetector.porcupineInit();
+            this.sttRec.once('REC_start', async () => {
+               await this.cobra.cobraInit();
+               await this.cancelDetector.porcupineInit();
             });
 
-            this.sttRec.on('frame', frame => {
+            this.sttRec.on('frame', async frame => {
                try {
-                  this.rec.addRecord(frame);
-                  this.rhino.processAudio(frame);
-                  this.cobra.processFrame(frame);
-                  this.cancelDetector.processFrame(frame);
+                  await this.rec.addRecord(frame);
+                  await this.rhino.processAudio(frame);
+                  await this.cobra.processFrame(frame);
+                  await this.cancelDetector.processFrame(frame);
                } catch (error) {
                   this.sttRec.emit(
                      'REC_failed',
@@ -235,21 +247,21 @@ export default class VoiceController {
                }
             });
 
-            this.cancelDetector.once('PPN_keyword', () => {
-               release();
+            this.cancelDetector.once('PPN_keyword', async () => {
+               await release();
                resolve('cancel');
             });
 
             this.cobra.once('COBRA_stoped_talk', async () => {
-               release();
-               this.rec.setRecordL();
-               if (this.config.STT_ENGINE === 'Whisper')
-                  await makeWav(this.rec.getRecordL());
+               this.transcription = this.cobra.talked
+                  ? await this.sttCtrl.stt(this.rec.getRecordC())
+                  : '';
+               await release();
                resolve('stt');
             });
 
-            this.rhino.once('RHINO_cmd', () => {
-               release();
+            this.rhino.once('RHINO_cmd', async () => {
+               await release();
                resolve('cmd');
             });
          } catch (error) {
@@ -263,46 +275,47 @@ export default class VoiceController {
    //////////////////////////////////////////////////////////////////////////////
 
    public async waitPhase(): Promise<string> {
-      this.removeAllListenners();
       return new Promise<string>((resolve, reject) => {
          try {
             let memoryMercy: NodeJS.Timeout | null = null;
             this.phase = 'wait';
-
-            this.idleRec.once('REC_failed', error => {
-               release();
-               reject(
-                  new CustomError(
-                     '*Voice Controller idlePhase failed: ',
-                     error,
-                  ),
-               );
-            });
-
-            this.idleRec.once('REC_cant_read', () => {
-               release();
-               reject(
-                  new CustomError(
-                     '*Voice Controller idlePhase failed: ',
-                     error,
-                  ),
-               );
-            });
-
-            const release = () => {
-               this.cancelDetector.porcupineRelease();
-               this.idleRec.setInfinityOff();
+            const release = async () => {
                if (memoryMercy) clearTimeout(memoryMercy);
+               await this.cancelDetector.porcupineRelease();
+               await this.idleRec.setInfinityOff();
+               await this.removeAllListenners();
             };
+
+            this.idleRec.once('REC_failed', async error => {
+               await release();
+               reject(
+                  new CustomError(
+                     '*Voice Controller idlePhase failed: ',
+                     error,
+                  ),
+               );
+            });
+
+            this.idleRec.once('REC_cant_read', async error => {
+               await release();
+               reject(
+                  new CustomError(
+                     '*Voice Controller idlePhase failed: ',
+                     error,
+                  ),
+               );
+            });
+
             this.idleRec.startFramesEmittion();
 
-            this.idleRec.once('REC_start', () => {
-               this.cancelDetector.porcupineInit();
+            this.idleRec.once('REC_start', async () => {
+               await this.cancelDetector.porcupineInit();
             });
 
             this.idleRec.on('frame', frame => {
                try {
                   this.cancelDetector.processFrame(frame);
+                  console.log('cancel?');
                } catch (error) {
                   this.idleRec.emit(
                      'REC_failed',
@@ -312,12 +325,13 @@ export default class VoiceController {
             });
 
             this.cancelDetector.once('PPN_keyword', async () => {
-               release();
+               await release();
+               console.log('cancel!');
                resolve('cancel');
             });
 
-            this.idleRec.once('InfinityOff', () => {
-               release();
+            this.idleRec.once('InfinityOff', async () => {
+               await release();
                resolve('remote-stop');
             });
 
@@ -337,18 +351,20 @@ export default class VoiceController {
    //////////////////////////////////////////////////////////////////////////////
 
    public async compositeRecordPhase(): Promise<string> {
-      this.removeAllListenners();
       return new Promise<string>((resolve, reject) => {
          try {
             this.phase = 'compositeRecord';
-            const release = () => {
-               this.sttRec.stopTimedRecording();
-               this.cobra.cobraRelease();
-               this.cancelDetector.porcupineRelease();
+            const release = async () => {
+               await this.sttRec.stopTimedRecording();
+               await this.cobra.cobraRelease();
+               await this.cancelDetector.porcupineRelease();
+               await this.rec.clearRecord();
+               await this.sttCtrl.stop();
+               await this.removeAllListenners();
             };
 
-            this.sttRec.once('REC_failed', error => {
-               release();
+            this.sttRec.once('REC_failed', async error => {
+               await release();
                reject(
                   new CustomError(
                      '*Voice Controller compositeRecordPhase failed: ',
@@ -357,8 +373,8 @@ export default class VoiceController {
                );
             });
 
-            this.sttRec.once('REC_cant_read', () => {
-               release();
+            this.sttRec.once('REC_cant_read', async error => {
+               await release();
                reject(
                   new CustomError(
                      '*Voice Controller compositeRecordPhase failed: ',
@@ -367,18 +383,19 @@ export default class VoiceController {
                );
             });
 
+            this.sttCtrl.start();
             this.sttRec.startFramesEmittion();
 
-            this.sttRec.once('REC_start', () => {
-               this.cobra.cobraInit();
-               this.cancelDetector.porcupineInit();
+            this.sttRec.once('REC_start', async () => {
+               await this.cobra.cobraInit();
+               await this.cancelDetector.porcupineInit();
             });
 
-            this.sttRec.on('frame', frame => {
+            this.sttRec.on('frame', async frame => {
                try {
-                  this.rec.addRecord(frame);
-                  this.cobra.processFrame(frame);
-                  this.cancelDetector.processFrame(frame);
+                  await this.rec.addRecord(frame);
+                  await this.cancelDetector.processFrame(frame);
+                  await this.cobra.processFrame(frame);
                } catch (error) {
                   this.sttRec.emit(
                      'REC_failed',
@@ -387,14 +404,16 @@ export default class VoiceController {
                }
             });
 
-            this.cancelDetector.once('PPN_keyword', () => {
-               release();
+            this.cancelDetector.once('PPN_keyword', async () => {
+               await release();
                resolve('cancel');
             });
 
             this.cobra.once('COBRA_stoped_talk', async () => {
-               release();
-               this.rec.setRecordL();
+               this.transcription = this.cobra.talked
+                  ? await this.sttCtrl.stt(this.rec.getRecordC())
+                  : '';
+               await release();
                resolve('composite');
             });
          } catch (error) {
@@ -411,7 +430,8 @@ export default class VoiceController {
       this.removeAllListenners();
       try {
          return new Promise<string>(resolve => {
-            // this.idleRec.emit('InfinityOff'); // Quando essa etapa chega o programa está em wait
+            // Quando essa etapa chega o programa está em wait
+            this.stopInfinityRecord();
             this.cancelDetector.porcupineRelease();
             this.rhino.rhinoRelease();
             this.removeAllListenners();

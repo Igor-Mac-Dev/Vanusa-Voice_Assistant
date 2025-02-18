@@ -60,15 +60,12 @@ export default class FramesEmitter extends AudioInputReader {
    public setInfinityOn(): void {
       this.infinity = true;
    }
+
    public setInfinityOff(): void {
       this.infinity = false;
    }
 
    public stopTimedRecording(): void {
-      const holder = this.calcFramesToRead;
       this.calcFramesToRead = 0;
-      setTimeout(() => {
-         this.calcFramesToRead = holder;
-      }, 100);
    }
 }

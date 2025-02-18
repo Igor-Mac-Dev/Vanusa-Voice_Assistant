@@ -4,8 +4,8 @@ import errorLog, { CustomError } from '../utils/error.js';
 const voiceControl = new VoiceController();
 parentPort?.on('message', async (message) => {
     try {
-        const sig = await switchController(message);
-        sendSig(sig);
+        const sig = await switchController(message.request);
+        sendSig(sig, message.caller);
     }
     catch (err) {
         errorLog(new CustomError('Trying to send message with VoiceController error: ' + err));
@@ -35,33 +35,31 @@ async function switchController(input) {
             return 'ºController Message Receiver failed';
     }
 }
-function sendSig(sig) {
+function sendSig(sig, caller) {
     try {
-        let intent = null;
         switch (sig) {
             case 'stt':
                 parentPort?.postMessage({
-                    message: 'stt',
-                    recC: voiceControl.rec.getRecordC(),
-                    recL: voiceControl.rec.getRecordL(),
+                    message: voiceControl.getTranscription()?.trim(),
+                    caller: caller,
                 });
                 break;
             case 'cmd':
-                intent = voiceControl.getIntent();
-                parentPort?.postMessage(intent);
+                parentPort?.postMessage({
+                    message: voiceControl.getIntent(),
+                    caller: caller,
+                });
                 break;
             case 'composite':
                 parentPort?.postMessage({
-                    message: 'composite',
-                    recC: voiceControl.rec.getRecordC(),
-                    recL: voiceControl.rec.getRecordL(),
+                    message: voiceControl.getTranscription()?.trim(),
+                    caller: caller,
                 });
                 break;
             default:
-                parentPort?.postMessage(sig);
+                parentPort?.postMessage({ message: sig, caller: caller });
                 break;
         }
-        voiceControl.rec.clearRecord();
     }
     catch (err) {
         throw new CustomError('*Recorder Worker sendSig failed: ', err);

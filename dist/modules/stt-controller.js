@@ -4,6 +4,7 @@ import whisperStt from '../OpenAI/whisper.js';
 import { CustomError } from '../utils/error.js';
 import makeWav from '../lib/wav-maker.js';
 import { readConfigFile, createConfigFile } from '../configuration/conf.js';
+import { convertRecordL } from '../picoV/record/record-holder.js';
 export default class SttControll {
     constructor() {
         try {
@@ -15,26 +16,46 @@ export default class SttControll {
             throw new CustomError('°SttControll failed to init:', err, true);
         }
     }
-    async stt(recL, recC) {
+    start() {
+        try {
+            this.leopardStt.leopardInit();
+            this.cheetahStt.cheetahInit();
+        }
+        catch (err) {
+            throw new CustomError('°Stt failed to start:', err, true);
+        }
+    }
+    stop() {
+        try {
+            this.leopardStt.leopardRelease();
+            this.cheetahStt.cheetahRelease();
+        }
+        catch (err) {
+            throw new CustomError('°Stt failed to stop:', err, true);
+        }
+    }
+    async stt(recC) {
         try {
             switch (this.config.STT_ENGINE) {
                 case 'Picovoice':
                     if (this.config.LEOPARD_AVAILABLE) {
-                        this.leopardStt.leopardInit();
+                        const recL = convertRecordL(recC);
+                        if (!recL)
+                            return 'Leopard failed to convert';
                         await this.leopardStt.processAudio(recL);
-                        this.leopardStt.leopardRelease();
                         return this.leopardStt.text;
                     }
                     else if (this.config.CHEETAH_AVAILABLE) {
-                        this.cheetahStt.cheetahInit();
                         await this.cheetahStt.processAudio(recC);
-                        this.cheetahStt.cheetahRelease();
                         return this.cheetahStt.text;
                     }
                     else {
                         return 'Picovoice_STT_limit_reached';
                     }
                 case 'Whisper': {
+                    const recL = convertRecordL(recC);
+                    if (!recL)
+                        return 'Whisper failed to convert';
                     await makeWav(recL);
                     const transcription = await whisperStt();
                     return transcription;

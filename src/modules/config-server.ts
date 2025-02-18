@@ -53,7 +53,7 @@ export default class ConfServer {
          });
 
          return new Promise<string>((resolve, reject) => {
-            this.confServer?.on('connection', async ws => {
+            this.confServer?.once('connection', async ws => {
                this.connectedClient = ws;
                if (confInit) {
                   this.connectedClient.send(JSON.stringify(confInit));
@@ -252,8 +252,8 @@ export default class ConfServer {
             conf.pathmkr('repeat_', lang),
             conf.pathmkr('repeat_last_', lang),
          ],
-         OAI_KEY: base[16] ?? 'invalid',
-         PV_KEY: base[10] ?? 'invalid',
+         OAI_KEY: base[16].trim() ?? 'invalid',
+         PV_KEY: base[10].trim() ?? 'invalid',
          CHEETAH: path.resolve('assets/models/cheetah_params.pv'),
          CHEETAH_AVAILABLE: this.config ? this.config.CHEETAH_AVAILABLE : true,
          LEOPARD: conf.pathmkr('leopard_params_', lang, '.pv'),

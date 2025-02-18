@@ -32,21 +32,21 @@ export default class rhinoHandler {
       this.completion = new OAIcompletion();
    }
 
-   public async parseTranscript(cmd: command, rec: record): Promise<command> {
-      try {
-         if (typeof rec !== 'string') {
-            const transcript: string = await stt(rec.recL, rec.recC);
-            if (!cmd.slots) cmd.slots = {};
-            cmd.slots.transcript = transcript;
-         }
-         return cmd;
-      } catch (error) {
-         throw new CustomError(
-            '*Rhino Handler parseTranscript failed: ',
-            error,
-         );
-      }
-   }
+   // public async parseTranscript(cmd: command, rec: record): Promise<command> {
+   //    try {
+   //       if (typeof rec !== 'string') {
+   //          const transcript: string = await stt(rec.recL, rec.recC);
+   //          if (!cmd.slots) cmd.slots = {};
+   //          cmd.slots.transcript = transcript;
+   //       }
+   //       return cmd;
+   //    } catch (error) {
+   //       throw new CustomError(
+   //          '*Rhino Handler parseTranscript failed: ',
+   //          error,
+   //       );
+   //    }
+   // }
 
    public async jsonizeTranscript(cmd: command): Promise<command> {
       try {
@@ -61,7 +61,10 @@ export default class rhinoHandler {
             )
          ) {
             const jsonTranscript: { [key: string]: any } | null =
-               await compositeCompletion(cmd.slots.transcirpt, cmd.intent);
+               await this.completion.compositeCompletion(
+                  cmd.slots.transcirpt,
+                  cmd.intent,
+               );
             if (jsonTranscript) {
                delete cmd.slots.transcript;
                Object.assign(cmd.slots, jsonTranscript);

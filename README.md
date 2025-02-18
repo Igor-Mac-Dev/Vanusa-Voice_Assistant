@@ -48,12 +48,12 @@ sent to Node-RED:
 
 To install and run Vanusa:
 
-1. <a href="https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/blob/main/installer.cmd" download>Click
+1. <a href="https://raw.githubusercontent.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/refs/heads/main/installer.cmd" download>Click
    here</a> to download the installer, then run it as admin.
 2. Open the application and customize the settings via the graphical interface.
    When satisfied, press "Save and Start."
-3. The update and the uninstaller scripts will be available in 'C:\Program
-   Files\Vanusa' folder.
+3. The update and the uninstaller scripts will be available in 'C:\Vanusa'
+   folder.
 
 ## 🛠️ Customizable Settings
 

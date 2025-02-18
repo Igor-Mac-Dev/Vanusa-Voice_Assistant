@@ -51,12 +51,12 @@ enviados para o Node-RED:
 
 Para instalar e rodar a Vanusa:
 
-1. [Clique aqui](https://raw.githubusercontent.com/Igor-Mac-Dev/teste/main/installer.cmd)
-   para baixar o instalador e execute-o como administrador.
+1. <a href="https://raw.githubusercontent.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/refs/heads/main/installer.cmd" download>Clique
+   aqui</a> para baixar o instalador e execute-o como administrador.
 2. Abra o aplicativo e personalize as configurações pela interface gráfica.
    Quando estiver satisfeito, clique em "Salvar e Iniciar".
 3. Os scripts de atualização e desinstalação estarão disponíveis na pasta
-   'C:\\Program Files\\Vanusa'.
+   'C:\Vanusa'.
 
 ## 🛠️ Configurações Personalizáveis
 
@@ -187,4 +187,4 @@ bem-vindos! Caso encontre problemas ou tenha sugestões, fique à vontade para
 abrir uma issue ou enviar um pull request.
 
 **Licença**: Este projeto está licenciado sob AGPL-3.0. **Termos de uso**:
-[Aqui](https://github.com/Igor-Mac-Dev/teste/blob/main/TERMS.md).
+[Aqui](https://github.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/blob/main/TERMS_PT.md).

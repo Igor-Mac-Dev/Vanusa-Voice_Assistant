@@ -4,7 +4,7 @@ import { EventEmitter } from 'events';
 export default class AudioInputReader extends EventEmitter {
     constructor(frameLength = 512, sampleRate = 16000, infinity = false, durationInSeconds = 300, device = 0) {
         super();
-        this.recorder = null;
+        this.recorder = {};
         this.frameLength = frameLength;
         this.sampleRate = sampleRate;
         this.infinity = infinity;
@@ -26,7 +26,8 @@ export default class AudioInputReader extends EventEmitter {
     }
     async startRecording() {
         try {
-            await this.recorder.start();
+            if (this.recorder instanceof PvRecorder)
+                await this.recorder.start();
         }
         catch (err) {
             throw new CustomError('°Record failed to start:', err);
@@ -34,8 +35,11 @@ export default class AudioInputReader extends EventEmitter {
     }
     async readAudioFrame() {
         try {
-            const frame = await this.recorder.read();
-            return frame;
+            if (this.recorder instanceof PvRecorder) {
+                const frame = await this.recorder.read();
+                return frame;
+            }
+            return null;
         }
         catch (err) {
             throw new CustomError('°Record failed to read frame:', err);
@@ -43,7 +47,8 @@ export default class AudioInputReader extends EventEmitter {
     }
     stopRecording() {
         try {
-            this.recorder.stop();
+            if (this.recorder instanceof PvRecorder)
+                this.recorder.stop();
         }
         catch (err) {
             throw new CustomError('°Record failed to stop:', err);
@@ -51,7 +56,8 @@ export default class AudioInputReader extends EventEmitter {
     }
     recorderRelease() {
         try {
-            this.recorder.release();
+            if (this.recorder instanceof PvRecorder)
+                this.recorder.release();
             this.recorder = {};
         }
         catch (err) {

@@ -56,11 +56,7 @@ export default class FramesEmitter extends AudioInputReader {
         this.infinity = false;
     }
     stopTimedRecording() {
-        const holder = this.calcFramesToRead;
         this.calcFramesToRead = 0;
-        setTimeout(() => {
-            this.calcFramesToRead = holder;
-        }, 100);
     }
 }
 //# sourceMappingURL=frames-emitter.js.map

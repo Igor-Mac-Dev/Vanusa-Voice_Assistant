@@ -10,118 +10,101 @@ export default class controlHandler {
             throw new CustomError('°Control Handler failed to init:', err, true);
         }
     }
+    workerRequest(input, callback) {
+        this.control.postMessage(input);
+        return new Promise((resolve, reject) => {
+            const onMessage = (message, wTransferable) => {
+                if (message.caller === input.caller) {
+                    const response = wTransferable
+                        ? callback(message.wMessage, wTransferable)
+                        : callback(message.wMessage);
+                    this.control.removeListener('error', onError);
+                    resolve(response);
+                }
+            };
+            const onError = (error) => {
+                if (error.caller === input.caller) {
+                    this.control.removeListener('message', onMessage);
+                    reject(`${error.caller} failed: ${error.error}`);
+                }
+            };
+            this.control.once('message', onMessage);
+            this.control.once('error', onError);
+        });
+    }
     async start() {
+        const callback = (message) => {
+            return message;
+        };
         try {
-            this.control.postMessage('start');
-            return new Promise((resolve, reject) => {
-                this.control.once('message', () => {
-                    this.control.removeAllListeners('error');
-                    resolve('started');
-                });
-                this.control.once('error', error => {
-                    this.control.removeAllListeners('message');
-                    reject('Control init failed.' + error);
-                });
-            });
+            return this.workerRequest({ request: 'start', caller: 'Start' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler starter failed: ', error);
         }
     }
     async idle() {
-        this.control.postMessage('idle');
-        return new Promise((resolve, reject) => {
-            this.control.once('message', message => {
-                this.control.removeAllListeners('error');
-                resolve(message);
-            });
-            this.control.once('error', error => {
-                console.error('Communication error with voice controller: ', error);
-                this.control.removeAllListeners('message');
-                reject(error);
-            });
-        });
+        const callback = (message) => {
+            return message;
+        };
+        try {
+            return this.workerRequest({ request: 'idle', caller: 'Idle' }, callback);
+        }
+        catch (error) {
+            throw new CustomError('*Control Handler starter failed: ', error);
+        }
     }
     async record() {
-        this.control.postMessage('record');
-        return new Promise((resolve, reject) => {
-            this.control.once('message', async (message) => {
-                setTimeout(() => {
-                    this.control.removeAllListeners('error');
-                }, 500);
-                resolve(message);
-            });
-            this.control.once('error', error => {
-                console.error('Communication error with voice controller: ', error);
-                this.control.removeAllListeners('message');
-                reject(error);
-            });
-        });
+        const callback = (message) => {
+            return message;
+        };
+        try {
+            return this.workerRequest({ request: 'record', caller: 'Record' }, callback);
+        }
+        catch (error) {
+            throw new CustomError('*Control Handler starter failed: ', error);
+        }
     }
     async compositeCmd() {
+        const callback = (message) => {
+            return message;
+        };
         try {
-            this.control.postMessage('cmdrecord');
-            return new Promise((resolve, reject) => {
-                this.control.once('message', message => {
-                    this.control.removeAllListeners('message');
-                    this.control.removeAllListeners('error');
-                    if (message === 'cancel') {
-                        resolve('cancel');
-                    }
-                    resolve(message);
-                });
-                this.control.once('error', error => {
-                    console.error('Communication error with voice controller: ', error);
-                    this.control.removeAllListeners('message');
-                    this.control.removeAllListeners('error');
-                    reject(error);
-                });
-            });
+            return this.workerRequest({ request: 'cmdrecord', caller: 'CmdRecord' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler compositeCmd failed: ', error);
         }
     }
     async wait() {
+        const callback = (message) => {
+            return message;
+        };
         try {
-            this.control.postMessage('wait');
-            this.control.removeAllListeners('message');
-            return new Promise((resolve, reject) => {
-                this.control.once('message', message => {
-                    this.control.removeAllListeners('message');
-                    this.control.removeAllListeners('error');
-                    resolve(message);
-                });
-                this.control.once('error', error => {
-                    console.error('Communication error with voice controller: ', error);
-                    this.control.removeAllListeners('message');
-                    this.control.removeAllListeners('error');
-                    reject(error);
-                });
-            });
+            return this.workerRequest({ request: 'wait', caller: 'Wait' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler wait failed: ', error);
         }
     }
     async abortInfinityRecord() {
-        this.control.postMessage('abortInfinityRecord');
-        return new Promise((resolve, reject) => {
-            this.control.once('message', message => {
-                this.control.removeAllListeners('error');
-                resolve(message);
-            });
-            this.control.once('error', error => {
-                this.control.removeAllListeners('message');
-                reject(error);
-            });
-        });
+        const callback = (message) => {
+            return message;
+        };
+        try {
+            return this.workerRequest({ request: 'abortInfinityRecord', caller: 'AbortInfinityRecord' }, callback);
+        }
+        catch (error) {
+            throw new CustomError('*Control Handler wait failed: ', error);
+        }
     }
     async abort() { }
     async turnoff() {
+        const callback = (message) => {
+            return message;
+        };
         try {
-            await this.control.postMessage('turnoff');
-            this.control.terminate();
+            return this.workerRequest({ request: 'abortInfinityRecord', caller: 'AbortInfinityRecord' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler turnoff failed: ', error);

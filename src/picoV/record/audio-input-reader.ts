@@ -3,7 +3,7 @@ import { CustomError } from '../../utils/error.js';
 import { EventEmitter } from 'events';
 
 export default class AudioInputReader extends EventEmitter {
-   protected recorder: PvRecorder | null = null;
+   protected recorder: PvRecorder | object = {};
    protected infinity: boolean;
    private frameLength: number;
    private sampleRate: number;
@@ -39,42 +39,44 @@ export default class AudioInputReader extends EventEmitter {
          this.calcFramesToRead = this.fixedFramesToRead;
          this.recorder = new PvRecorder(this.frameLength, this.device);
       } catch (err) {
-         throw new CustomError('°Record failed to init:' , err);
+         throw new CustomError('°Record failed to init:', err);
       }
    }
 
    protected async startRecording(): Promise<void> {
       try {
-         await this.recorder.start();
+         if (this.recorder instanceof PvRecorder) await this.recorder.start();
       } catch (err) {
-         throw new CustomError('°Record failed to start:' , err);
+         throw new CustomError('°Record failed to start:', err);
       }
    }
 
    protected async readAudioFrame(): Promise<Int16Array | null> {
       try {
-         const frame: Int16Array = await this.recorder.read();
-         return frame;
+         if (this.recorder instanceof PvRecorder) {
+            const frame: Int16Array = await this.recorder.read();
+            return frame;
+         }
+         return null;
       } catch (err) {
-         throw new CustomError('°Record failed to read frame:' , err);
+         throw new CustomError('°Record failed to read frame:', err);
       }
    }
 
    protected stopRecording(): void {
       try {
-         this.recorder.stop();
+         if (this.recorder instanceof PvRecorder) this.recorder.stop();
       } catch (err) {
-         throw new CustomError('°Record failed to stop:' , err);
+         throw new CustomError('°Record failed to stop:', err);
       }
    }
 
    protected recorderRelease(): void {
       try {
-         this.recorder.release();
+         if (this.recorder instanceof PvRecorder) this.recorder.release();
          this.recorder = {};
       } catch (err) {
-         throw new CustomError('°Recorder failed to release:' , err);
+         throw new CustomError('°Recorder failed to release:', err);
       }
    }
 }
-

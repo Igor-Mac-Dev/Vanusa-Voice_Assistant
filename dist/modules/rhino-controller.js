@@ -22,20 +22,21 @@ export default class rhinoHandler {
         this.rhinoExecuter = new rhinoExecuter(sendToRED);
         this.completion = new OAIcompletion();
     }
-    async parseTranscript(cmd, rec) {
-        try {
-            if (typeof rec !== 'string') {
-                const transcript = await stt(rec.recL, rec.recC);
-                if (!cmd.slots)
-                    cmd.slots = {};
-                cmd.slots.transcript = transcript;
-            }
-            return cmd;
-        }
-        catch (error) {
-            throw new CustomError('*Rhino Handler parseTranscript failed: ', error);
-        }
-    }
+    // public async parseTranscript(cmd: command, rec: record): Promise<command> {
+    //    try {
+    //       if (typeof rec !== 'string') {
+    //          const transcript: string = await stt(rec.recL, rec.recC);
+    //          if (!cmd.slots) cmd.slots = {};
+    //          cmd.slots.transcript = transcript;
+    //       }
+    //       return cmd;
+    //    } catch (error) {
+    //       throw new CustomError(
+    //          '*Rhino Handler parseTranscript failed: ',
+    //          error,
+    //       );
+    //    }
+    // }
     async jsonizeTranscript(cmd) {
         try {
             if (!cmd.slots)
@@ -43,7 +44,7 @@ export default class rhinoHandler {
             if (fs.existsSync(path.resolve('./assets/templates/' +
                 cmd.intent +
                 `_${this.config.LANGUAGE}.txt`))) {
-                const jsonTranscript = await compositeCompletion(cmd.slots.transcirpt, cmd.intent);
+                const jsonTranscript = await this.completion.compositeCompletion(cmd.slots.transcirpt, cmd.intent);
                 if (jsonTranscript) {
                     delete cmd.slots.transcript;
                     Object.assign(cmd.slots, jsonTranscript);

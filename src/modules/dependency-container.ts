@@ -1,10 +1,9 @@
-import SttControll from '../modules/stt-controller.js';
 import { command } from '../interfaces/types.js';
-import AudioScheduler from '../modules/speaker-controller.js';
+import AudioScheduler from './speaker-controller.js';
 import errorLog, { CustomError } from '../utils/error.js';
-import rhinoHandler from '../modules/rhino-controller.js';
+import rhinoHandler from './rhino-controller.js';
 import OAIcompletion from '../OpenAI/completion.js';
-import TtsControll from '../modules/tts-controller.js';
+import TtsControll from './tts-controller.js';
 import PhaseMenager from '../lib/phase-menager.js';
 import controlHandler from './main-controller.js';
 import PowerEvents from '../lib/power-events-listenner.js';
@@ -19,7 +18,6 @@ export default class DependencyContainer {
    public rhino!: rhinoHandler;
    public player!: AudioScheduler;
    public OAIComp!: OAIcompletion;
-   public sttCtrl!: SttControll;
    public ttsCtrl!: TtsControll;
    public phaseMenager!: PhaseMenager;
    public powerEvents!: PowerEvents;
@@ -33,7 +31,6 @@ export default class DependencyContainer {
          this.rhino = new rhinoHandler(sendToRED);
          this.player = new AudioScheduler();
          this.OAIComp = new OAIcompletion();
-         this.sttCtrl = new SttControll();
          this.ttsCtrl = new TtsControll();
          this.phaseMenager = new PhaseMenager();
          this.powerEvents = new PowerEvents();

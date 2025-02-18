@@ -35,7 +35,7 @@ export default class RedController extends EventEmitter {
                         .then(fport => {
                         this.setFlow(fport);
                         this.redServer = new WebSocketServer({ port: fport });
-                        this.redServer.on('connection', ws => {
+                        this.redServer.once('connection', ws => {
                             this.connectedClient = ws;
                             const messageHandler = (message) => {
                                 if (!this.processingCMD) {
@@ -50,7 +50,7 @@ export default class RedController extends EventEmitter {
                                 this.redPort = this.setRedPort();
                                 resolve('started');
                             });
-                            ws.on('close', () => {
+                            ws.once('close', () => {
                                 ws.off('message', messageHandler);
                                 this.connectedClient = null;
                                 console.log('Voice assistant Client disconnected');
@@ -75,7 +75,7 @@ export default class RedController extends EventEmitter {
         try {
             if (this.redServer) {
                 this.redServer.close(() => {
-                    console.log('Server closed.');
+                    console.log('Red server closed.');
                     this.redServer = null;
                     this.removeAllListeners('REDmessage');
                 });

@@ -9,12 +9,11 @@ export default class CobraDetector extends EventEmitter {
         this.activityDetector = null;
         this.average = [];
         this.stillTalking = [];
-        for (let i = 0; i < config.COBRA_LENGHT; i++) {
-            this.stillTalking.push(1);
-        }
+        this.talked = false;
     }
     cobraInit() {
         try {
+            this.talked = false;
             this.stillTalking = [];
             for (let i = 0; i < config.COBRA_LENGHT; i++) {
                 this.stillTalking.push(1);
@@ -46,16 +45,13 @@ export default class CobraDetector extends EventEmitter {
                     if (average > 0.6) {
                         this.stillTalking.splice(0, 1);
                         this.stillTalking.push(1);
+                        this.talked = true;
                     }
                     else {
                         this.stillTalking.splice(0, 1);
                         this.stillTalking.push(0);
                         if (this.stillTalking.every(num => num === 0)) {
                             this.emit('COBRA_stoped_talk');
-                            this.stillTalking = [];
-                            for (let i = 0; i < config.COBRA_LENGHT; i++) {
-                                this.stillTalking.push(1);
-                            }
                         }
                     }
                     this.average = [];

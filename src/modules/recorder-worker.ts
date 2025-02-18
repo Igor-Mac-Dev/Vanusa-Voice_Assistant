@@ -1,26 +1,38 @@
 import { parentPort } from 'worker_threads';
 import VoiceController from './voice-controller.js';
 import errorLog, { CustomError } from '../utils/error.js';
-import { command } from '../interfaces/types.js';
 
 const voiceControl: VoiceController = new VoiceController();
 
-parentPort?.on('message', async message => {
-   try {
-      const sig = await switchController(message);
-      sendSig(sig);
-   } catch (err) {
-      errorLog(
-         new CustomError(
-            'Trying to send message with VoiceController error: ' + err,
-         ),
-      );
-      parentPort?.postMessage({
-         message: 'error',
-         error: new CustomError('*Recorder Worker error: ', err),
-      });
-   }
-});
+parentPort?.on(
+   'message',
+   async (message: {
+      request:
+         | 'start'
+         | 'idle'
+         | 'record'
+         | 'wait'
+         | 'cmdrecord'
+         | 'abortInfinityRecord'
+         | 'turnoff';
+      caller: string;
+   }) => {
+      try {
+         const sig = await switchController(message.request);
+         sendSig(sig, message.caller);
+      } catch (err) {
+         errorLog(
+            new CustomError(
+               'Trying to send message with VoiceController error: ' + err,
+            ),
+         );
+         parentPort?.postMessage({
+            message: 'error',
+            error: new CustomError('*Recorder Worker error: ', err),
+         });
+      }
+   },
+);
 
 async function switchController(
    input:
@@ -52,33 +64,31 @@ async function switchController(
    }
 }
 
-function sendSig(sig: string) {
+function sendSig(sig: string, caller: string) {
    try {
-      let intent: [command, boolean] | null = null;
       switch (sig) {
          case 'stt':
             parentPort?.postMessage({
-               message: 'stt',
-               recC: voiceControl.rec.getRecordC(),
-               recL: voiceControl.rec.getRecordL(),
+               message: voiceControl.getTranscription()?.trim(),
+               caller: caller,
             });
             break;
          case 'cmd':
-            intent = voiceControl.getIntent();
-            parentPort?.postMessage(intent);
+            parentPort?.postMessage({
+               message: voiceControl.getIntent(),
+               caller: caller,
+            });
             break;
          case 'composite':
             parentPort?.postMessage({
-               message: 'composite',
-               recC: voiceControl.rec.getRecordC(),
-               recL: voiceControl.rec.getRecordL(),
+               message: voiceControl.getTranscription()?.trim(),
+               caller: caller,
             });
             break;
          default:
-            parentPort?.postMessage(sig);
+            parentPort?.postMessage({ message: sig, caller: caller });
             break;
       }
-      voiceControl.rec.clearRecord();
    } catch (err) {
       throw new CustomError('*Recorder Worker sendSig failed: ', err);
    }

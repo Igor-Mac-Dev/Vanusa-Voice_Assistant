@@ -1,4 +1,10 @@
 @echo off
+net session >nul 2>&1
+if %errorLevel% neq 0 (
+    echo Asking permissions...
+    powershell -Command "Start-Process cmd -ArgumentList '/c %~s0' -Verb RunAs"
+    exit /b
+)
 
 SET "INSTALL_DIR=C:\Vanusa"
 SET "SERVICE_NAME=VANUSA_PowerMonitorService"
@@ -35,9 +41,8 @@ cmd /c sc description %SERVICE_NAME% "Monitor suspension and resume events to se
 cmd /c sc privs %SERVICE_NAME% SeShutdownPrivilege/SeChangeNotifyPrivilege/SeUndockPrivilege/SeIncreaseWorkingSetPrivilege/SeTimeZonePrivilege
 cmd /c sc start %SERVICE_NAME%
 rd /s /q PowerMonitorService
-cmd /c pm2 start Vanusa-main
-cmd /c pm2 start V-node-red
-cmd /c pm2 start Vanusa-monitor
+
+node ./dist/safe-index.js
 
 echo Update completed successfully!
 pause
