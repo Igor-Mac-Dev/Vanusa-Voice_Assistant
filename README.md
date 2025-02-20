@@ -48,7 +48,7 @@ sent to Node-RED:
 
 To install and run Vanusa:
 
-1. <a href="https://raw.githubusercontent.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/refs/heads/main/Vanusa_installer.cmd" download>Click
+1. <Click id="raw-url" href="https://raw.githubusercontent.com/Igor-Mac-Dev/Vanusa-Voice_Assistant/main/Vanusa_installer.cmd">Click
    here</a> to download the installer, then run it as admin. (The installer
    needs to restart your PC to finish the installation. To avoid this you can
    install git manually.)
