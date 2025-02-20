@@ -188,7 +188,7 @@ echo File pm2_resurrect.bat created.
 
 echo Installation complete!
 echo Starting the app...
-npx run safe-start
+node ./dist/safe-index.js
 
 :END
 
