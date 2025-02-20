@@ -2,13 +2,18 @@ import { parentPort } from 'worker_threads';
 import VoiceController from './voice-controller.js';
 import errorLog, { CustomError } from '../utils/error.js';
 const voiceControl = new VoiceController();
+parentPort?.postMessage('ready');
+console.log('testa');
 parentPort?.on('message', async (message) => {
     try {
+        console.log('msg received by worker: ' + JSON.stringify(message));
         const sig = await switchController(message.request);
+        console.log('worker sending to ' + message.caller + ' sig: ' + sig);
         sendSig(sig, message.caller);
     }
     catch (err) {
         errorLog(new CustomError('Trying to send message with VoiceController error: ' + err));
+        console.log('error');
         parentPort?.postMessage({
             message: 'error',
             error: new CustomError('*Recorder Worker error: ', err),
@@ -37,27 +42,28 @@ async function switchController(input) {
 }
 function sendSig(sig, caller) {
     try {
+        console.log('sending sig');
         switch (sig) {
             case 'stt':
                 parentPort?.postMessage({
-                    message: voiceControl.getTranscription()?.trim(),
+                    wMessage: voiceControl.getTranscription()?.trim(),
                     caller: caller,
                 });
                 break;
             case 'cmd':
                 parentPort?.postMessage({
-                    message: voiceControl.getIntent(),
+                    wMessage: voiceControl.getIntent(),
                     caller: caller,
                 });
                 break;
             case 'composite':
                 parentPort?.postMessage({
-                    message: voiceControl.getTranscription()?.trim(),
+                    wMessage: voiceControl.getTranscription()?.trim(),
                     caller: caller,
                 });
                 break;
             default:
-                parentPort?.postMessage({ message: sig, caller: caller });
+                parentPort?.postMessage({ wMessage: sig, caller: caller });
                 break;
         }
     }

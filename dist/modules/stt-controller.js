@@ -16,10 +16,10 @@ export default class SttControll {
             throw new CustomError('°SttControll failed to init:', err, true);
         }
     }
-    start() {
+    async start() {
         try {
-            this.leopardStt.leopardInit();
-            this.cheetahStt.cheetahInit();
+            await this.leopardStt.leopardInit();
+            await this.cheetahStt.cheetahInit();
         }
         catch (err) {
             throw new CustomError('°Stt failed to start:', err, true);

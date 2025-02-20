@@ -5,12 +5,30 @@ import { command } from '../interfaces/types.js';
 
 export default class controlHandler {
    private control: Worker;
+   private ready: boolean = false;
 
    constructor() {
       try {
          this.control = new Worker(
             path.resolve('./dist/modules/recorder-worker.js'),
          );
+         this.control.once('message', message => {
+            if (message === 'ready') {
+               setTimeout(() => {
+                  this.ready = true;
+               }, 100);
+            } else {
+               throw new CustomError(
+                  'Control Handler failed to init: ',
+                  message,
+                  true,
+               );
+            }
+         });
+         this.control.on('message', message => {
+            console.log('control global listenner: ' + JSON.stringify(message));
+            console.log('listns ' + this.control.listenerCount('message'));
+         });
       } catch (err) {
          throw new CustomError('°Control Handler failed to init:', err, true);
       }
@@ -30,17 +48,23 @@ export default class controlHandler {
       },
       callback: (message: string, transferable?: any) => any,
    ): Promise<string> {
-      this.control.postMessage(input);
       return new Promise<string>((resolve, reject) => {
          const onMessage = (
             message: { wMessage: string; caller: string },
             wTransferable?: any,
          ): void => {
+            console.log(`control message: ${JSON.stringify(message)}`);
+
             if (message.caller === input.caller) {
+               this.control.removeListener('error', onError);
+               this.control.removeListener('message', onMessage);
+
                const response = wTransferable
                   ? callback(message.wMessage, wTransferable)
                   : callback(message.wMessage);
-               this.control.removeListener('error', onError);
+
+               console.log(`resolving: ${response}`);
+
                resolve(response);
             }
          };
@@ -52,17 +76,42 @@ export default class controlHandler {
             }
          };
 
-         this.control.once('message', onMessage);
-         this.control.once('error', onError);
+         this.control.on('message', onMessage);
+         console.log(
+            'setin listns ' +
+               input.caller +
+               this.control.listenerCount('message'),
+         );
+         this.control.on('error', onError);
+
+         console.log('msg sent:', JSON.stringify(input));
+         this.control.postMessage(input);
+      });
+   }
+
+   private async waitForReady(): Promise<void> {
+      if (this.ready) return;
+
+      return new Promise(resolve => {
+         const checkReady = () => {
+            if (this.ready) {
+               resolve();
+            } else {
+               setTimeout(checkReady, 50);
+            }
+         };
+         checkReady();
       });
    }
 
    public async start(): Promise<string> {
       const callback = (message: string): string => {
+         console.log('callback fds ' + JSON.stringify(message));
          return message;
       };
       try {
-         return this.workerRequest(
+         await this.waitForReady();
+         return await this.workerRequest(
             { request: 'start', caller: 'Start' },
             callback,
          );
@@ -76,7 +125,7 @@ export default class controlHandler {
          return message;
       };
       try {
-         return this.workerRequest(
+         return await this.workerRequest(
             { request: 'idle', caller: 'Idle' },
             callback,
          );
@@ -92,7 +141,7 @@ export default class controlHandler {
          return message;
       };
       try {
-         return this.workerRequest(
+         return await this.workerRequest(
             { request: 'record', caller: 'Record' },
             callback,
          );
@@ -106,7 +155,7 @@ export default class controlHandler {
          return message;
       };
       try {
-         return this.workerRequest(
+         return await this.workerRequest(
             { request: 'cmdrecord', caller: 'CmdRecord' },
             callback,
          );
@@ -120,7 +169,7 @@ export default class controlHandler {
          return message;
       };
       try {
-         return this.workerRequest(
+         return await this.workerRequest(
             { request: 'wait', caller: 'Wait' },
             callback,
          );
@@ -134,7 +183,7 @@ export default class controlHandler {
          return message;
       };
       try {
-         return this.workerRequest(
+         return await this.workerRequest(
             { request: 'abortInfinityRecord', caller: 'AbortInfinityRecord' },
             callback,
          );
@@ -150,7 +199,7 @@ export default class controlHandler {
          return message;
       };
       try {
-         return this.workerRequest(
+         return await this.workerRequest(
             { request: 'abortInfinityRecord', caller: 'AbortInfinityRecord' },
             callback,
          );

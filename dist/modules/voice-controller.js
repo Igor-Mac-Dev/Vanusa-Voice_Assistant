@@ -53,17 +53,7 @@ export default class VoiceController {
     //////////////////////////////////////////////////////////////////////////////
     stopInfinityRecord() {
         this.idleRec.emit('InfinityOff');
-        return new Promise((resolve, reject) => {
-            this.idleRec.once('REC_stop', () => {
-                console.log('REC_stop');
-                this.idleRec.removeAllListeners('error');
-                resolve('remote-stop');
-            });
-            this.idleRec.once('error', error => {
-                this.idleRec.removeAllListeners('REC_stop');
-                reject(new CustomError('*Voice Controller stopInfinityRecord failed: ', error));
-            });
-        });
+        return 'remote-stop';
     }
     //////////////////////////////////////////////////////////////////////////////
     async idlePhase() {
@@ -93,6 +83,7 @@ export default class VoiceController {
                 });
                 this.idleRec.on('frame', frame => {
                     try {
+                        console.log('I');
                         this.kwDetector.processFrame(frame);
                     }
                     catch (error) {
@@ -110,6 +101,7 @@ export default class VoiceController {
                             resolve('repeat_last');
                             break;
                         default:
+                            this.sttCtrl.start();
                             resolve('record');
                             break;
                     }
@@ -134,8 +126,9 @@ export default class VoiceController {
         return new Promise((resolve, reject) => {
             try {
                 this.phase = 'record';
+                console.log('record');
                 const release = async () => {
-                    await this.sttCtrl.stop();
+                    this.sttCtrl.stop();
                     await this.sttRec.stopTimedRecording();
                     await this.cobra.cobraRelease();
                     await this.cancelDetector.porcupineRelease();
@@ -150,14 +143,16 @@ export default class VoiceController {
                     await release();
                     reject(new CustomError('*Voice Controller recordPhase failed: ', error));
                 });
-                this.sttCtrl.start();
                 this.sttRec.startFramesEmittion();
+                this.sttCtrl.start();
                 this.sttRec.once('REC_start', async () => {
+                    console.log('cobra');
                     await this.cobra.cobraInit();
                     await this.cancelDetector.porcupineInit();
                 });
                 this.sttRec.on('frame', async (frame) => {
                     try {
+                        console.log('stt rec frame');
                         await this.rec.addRecord(frame);
                         await this.rhino.processAudio(frame);
                         await this.cobra.processFrame(frame);
@@ -184,6 +179,7 @@ export default class VoiceController {
                 });
             }
             catch (error) {
+                console.log(error);
                 reject(new CustomError('*Voice Controller recordPhase failed: ', error));
             }
         });
@@ -215,6 +211,7 @@ export default class VoiceController {
                 });
                 this.idleRec.on('frame', frame => {
                     try {
+                        console.log('W');
                         this.cancelDetector.processFrame(frame);
                         console.log('cancel?');
                     }

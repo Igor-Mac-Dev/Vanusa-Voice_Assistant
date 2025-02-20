@@ -3,6 +3,8 @@ import VoiceController from './voice-controller.js';
 import errorLog, { CustomError } from '../utils/error.js';
 
 const voiceControl: VoiceController = new VoiceController();
+parentPort?.postMessage('ready');
+console.log('testa');
 
 parentPort?.on(
    'message',
@@ -18,7 +20,9 @@ parentPort?.on(
       caller: string;
    }) => {
       try {
+         console.log('msg received by worker: ' + JSON.stringify(message));
          const sig = await switchController(message.request);
+         console.log('worker sending to ' + message.caller + ' sig: ' + sig);
          sendSig(sig, message.caller);
       } catch (err) {
          errorLog(
@@ -26,6 +30,7 @@ parentPort?.on(
                'Trying to send message with VoiceController error: ' + err,
             ),
          );
+         console.log('error');
          parentPort?.postMessage({
             message: 'error',
             error: new CustomError('*Recorder Worker error: ', err),
@@ -66,27 +71,28 @@ async function switchController(
 
 function sendSig(sig: string, caller: string) {
    try {
+      console.log('sending sig');
       switch (sig) {
          case 'stt':
             parentPort?.postMessage({
-               message: voiceControl.getTranscription()?.trim(),
+               wMessage: voiceControl.getTranscription()?.trim(),
                caller: caller,
             });
             break;
          case 'cmd':
             parentPort?.postMessage({
-               message: voiceControl.getIntent(),
+               wMessage: voiceControl.getIntent(),
                caller: caller,
             });
             break;
          case 'composite':
             parentPort?.postMessage({
-               message: voiceControl.getTranscription()?.trim(),
+               wMessage: voiceControl.getTranscription()?.trim(),
                caller: caller,
             });
             break;
          default:
-            parentPort?.postMessage({ message: sig, caller: caller });
+            parentPort?.postMessage({ wMessage: sig, caller: caller });
             break;
       }
    } catch (err) {

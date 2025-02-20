@@ -3,22 +3,39 @@ import * as path from 'path';
 import { CustomError } from '../utils/error.js';
 export default class controlHandler {
     constructor() {
+        this.ready = false;
         try {
             this.control = new Worker(path.resolve('./dist/modules/recorder-worker.js'));
+            this.control.once('message', message => {
+                if (message === 'ready') {
+                    setTimeout(() => {
+                        this.ready = true;
+                    }, 100);
+                }
+                else {
+                    throw new CustomError('Control Handler failed to init: ', message, true);
+                }
+            });
+            this.control.on('message', message => {
+                console.log('control global listenner: ' + JSON.stringify(message));
+                console.log('listns ' + this.control.listenerCount('message'));
+            });
         }
         catch (err) {
             throw new CustomError('°Control Handler failed to init:', err, true);
         }
     }
     workerRequest(input, callback) {
-        this.control.postMessage(input);
         return new Promise((resolve, reject) => {
             const onMessage = (message, wTransferable) => {
+                console.log(`control message: ${JSON.stringify(message)}`);
                 if (message.caller === input.caller) {
+                    this.control.removeListener('error', onError);
+                    this.control.removeListener('message', onMessage);
                     const response = wTransferable
                         ? callback(message.wMessage, wTransferable)
                         : callback(message.wMessage);
-                    this.control.removeListener('error', onError);
+                    console.log(`resolving: ${response}`);
                     resolve(response);
                 }
             };
@@ -28,16 +45,38 @@ export default class controlHandler {
                     reject(`${error.caller} failed: ${error.error}`);
                 }
             };
-            this.control.once('message', onMessage);
-            this.control.once('error', onError);
+            this.control.on('message', onMessage);
+            console.log('setin listns ' +
+                input.caller +
+                this.control.listenerCount('message'));
+            this.control.on('error', onError);
+            console.log('msg sent:', JSON.stringify(input));
+            this.control.postMessage(input);
+        });
+    }
+    async waitForReady() {
+        if (this.ready)
+            return;
+        return new Promise(resolve => {
+            const checkReady = () => {
+                if (this.ready) {
+                    resolve();
+                }
+                else {
+                    setTimeout(checkReady, 50);
+                }
+            };
+            checkReady();
         });
     }
     async start() {
         const callback = (message) => {
+            console.log('callback fds ' + JSON.stringify(message));
             return message;
         };
         try {
-            return this.workerRequest({ request: 'start', caller: 'Start' }, callback);
+            await this.waitForReady();
+            return await this.workerRequest({ request: 'start', caller: 'Start' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler starter failed: ', error);
@@ -48,7 +87,7 @@ export default class controlHandler {
             return message;
         };
         try {
-            return this.workerRequest({ request: 'idle', caller: 'Idle' }, callback);
+            return await this.workerRequest({ request: 'idle', caller: 'Idle' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler starter failed: ', error);
@@ -59,7 +98,7 @@ export default class controlHandler {
             return message;
         };
         try {
-            return this.workerRequest({ request: 'record', caller: 'Record' }, callback);
+            return await this.workerRequest({ request: 'record', caller: 'Record' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler starter failed: ', error);
@@ -70,7 +109,7 @@ export default class controlHandler {
             return message;
         };
         try {
-            return this.workerRequest({ request: 'cmdrecord', caller: 'CmdRecord' }, callback);
+            return await this.workerRequest({ request: 'cmdrecord', caller: 'CmdRecord' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler compositeCmd failed: ', error);
@@ -81,7 +120,7 @@ export default class controlHandler {
             return message;
         };
         try {
-            return this.workerRequest({ request: 'wait', caller: 'Wait' }, callback);
+            return await this.workerRequest({ request: 'wait', caller: 'Wait' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler wait failed: ', error);
@@ -92,7 +131,7 @@ export default class controlHandler {
             return message;
         };
         try {
-            return this.workerRequest({ request: 'abortInfinityRecord', caller: 'AbortInfinityRecord' }, callback);
+            return await this.workerRequest({ request: 'abortInfinityRecord', caller: 'AbortInfinityRecord' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler wait failed: ', error);
@@ -104,7 +143,7 @@ export default class controlHandler {
             return message;
         };
         try {
-            return this.workerRequest({ request: 'abortInfinityRecord', caller: 'AbortInfinityRecord' }, callback);
+            return await this.workerRequest({ request: 'abortInfinityRecord', caller: 'AbortInfinityRecord' }, callback);
         }
         catch (error) {
             throw new CustomError('*Control Handler turnoff failed: ', error);

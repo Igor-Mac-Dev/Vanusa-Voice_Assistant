@@ -102,6 +102,7 @@ async function main() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const goIdle = async () => {
     try {
+        console.log('idle');
         if (red.isThereMessages()) {
             reproduceRedMessages();
         }
@@ -129,6 +130,7 @@ const wwHandler = async (ww) => {
                 await container.player.play_sucess();
                 container.phaseMenager.setPhase('record', 'wwHandler');
                 const input = await container.control.record();
+                console.log('   input: ' + input);
                 if (input === 'cancel' || input === '') {
                     await container.player.play_err();
                     container.player.once('Audio_Queue_End', () => {
@@ -136,10 +138,8 @@ const wwHandler = async (ww) => {
                     });
                 }
                 else {
-                    if (typeof input !== 'string') {
-                        goWait();
-                        goInputHandle(input);
-                    }
+                    goWait();
+                    goInputHandle(input);
                 }
                 break;
             case 'repeat':
@@ -211,41 +211,48 @@ const goWait = async () => {
     }
 };
 const goInputHandle = async (input) => {
-    if (Array.isArray(input)) {
-        rhinoRoute(input);
-    }
-    else {
-        container.player.play_sucess();
-        container.player.once('Audio_Queue_End', async () => {
-            const cancel = () => {
-                container.phaseMenager.setSubPhase(null, 'inputHandle');
-                goIdle();
-                return;
-            };
-            let asnwer;
-            let tts;
-            if (input.trim() === 'cancel')
-                cancel();
-            if (input && typeof input === 'string')
-                asnwer = await goComplet(input);
-            else
-                throw new CustomError('Impossible to process input and generating completion.');
-            if (asnwer === 'cancel')
-                cancel();
-            if (asnwer)
-                tts = await goTts(asnwer);
-            else
-                throw new CustomError('Impossible to sintetize TTS.');
-            if (tts === 'cancel')
-                cancel();
-            container.phaseMenager.setSubPhase('speaking', 'inputHandle');
-            if (tts === 'ok')
-                container.player.play_output();
+    try {
+        console.log('handling ' + input);
+        if (Array.isArray(input)) {
+            rhinoRoute(input);
+        }
+        else {
+            container.player.play_sucess();
             container.player.once('Audio_Queue_End', async () => {
-                container.phaseMenager.setSubPhase(null, 'inputHandle');
-                goIdle();
+                const cancel = () => {
+                    container.phaseMenager.setSubPhase(null, 'inputHandle');
+                    goIdle();
+                    return;
+                };
+                let asnwer;
+                let tts;
+                if (input.trim() === 'cancel')
+                    cancel();
+                if (input && typeof input === 'string')
+                    asnwer = await goComplet(input);
+                else
+                    throw new CustomError('Impossible to process input and generating completion.');
+                if (asnwer === 'cancel')
+                    cancel();
+                if (asnwer)
+                    tts = await goTts(asnwer);
+                else
+                    throw new CustomError('Impossible to sintetize TTS.');
+                if (tts === 'cancel')
+                    cancel();
+                container.phaseMenager.setSubPhase('speaking', 'inputHandle');
+                if (tts === 'ok')
+                    container.player.play_output();
+                container.player.once('Audio_Queue_End', async () => {
+                    container.phaseMenager.setSubPhase(null, 'inputHandle');
+                    goIdle();
+                });
             });
-        });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        await errorLog(new CustomError('*Input Handler failed: ', error));
     }
 };
 const rhinoRoute = async (input) => {

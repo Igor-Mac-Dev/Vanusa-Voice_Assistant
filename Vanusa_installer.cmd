@@ -120,14 +120,6 @@ if %errorlevel% equ 1 (
 
 :VANUSA
 
-pnpm -v >nul 2>&1
-IF %ERRORLEVEL% NEQ 0 (
-    echo pnpm is not installed. Installing pnpm...
-    powershell -Command "& { iwr -useb https://get.pnpm.io/install.ps1 | iex }"
-    SET "PNPM_DIR=%LOCALAPPDATA%\pnpm"
-    SET "PATH=%PNPM_DIR%;%PATH%"
-)
-
 IF NOT EXIST "%INSTALL_DIR%" (
     mkdir "%INSTALL_DIR%"
     echo Created installation directory: %INSTALL_DIR%
@@ -177,7 +169,7 @@ if not exist "%targetDir%" (
 )
 
 rd /s /q tests
-cmd /c pnpm install || echo "There was a problem installing dependencies"
+cmd /c npm install || echo "There was a problem installing dependencies"
 
 copy "PowerMonitorService\bin\Release\net8.0\win-x64\publish\PowerMonitorService.exe" "%INSTALL_DIR%"
 cmd /c sc stop %SERVICE_NAME%
@@ -196,7 +188,7 @@ echo File pm2_resurrect.bat created.
 
 echo Installation complete!
 echo Starting the app...
-pnpm run safe-start
+npx run safe-start
 
 :END
 
